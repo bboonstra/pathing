@@ -14,7 +14,10 @@ export default async function DashboardPage() {
             <div className="w-full max-w-3xl">
                 <div className="bg-white/80 dark:bg-[#181824]/80 rounded-2xl shadow-2xl p-10 border border-white/30 dark:border-white/10 mb-8 flex items-center justify-between">
                     <h1 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
-                        Welcome, {user.email}
+                        Welcome,{" "}
+                        {user.user_metadata.full_name ||
+                            user.user_metadata.name ||
+                            user.email}
                     </h1>
                     <SignOutButton />
                 </div>
