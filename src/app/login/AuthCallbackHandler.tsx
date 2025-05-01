@@ -6,18 +6,22 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 export default function AuthCallbackHandler() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const code = searchParams.get("code");
 
     useEffect(() => {
         const handleAuth = async () => {
+            const code = searchParams.get("code");
             if (code) {
-                const supabase = createClientComponentClient();
-                await supabase.auth.exchangeCodeForSession(code);
-                router.replace("/dashboard");
+                try {
+                    const supabase = createClientComponentClient();
+                    await supabase.auth.exchangeCodeForSession(code);
+                    router.replace("/dashboard");
+                } catch (error) {
+                    console.error("Auth error:", error);
+                }
             }
         };
         handleAuth();
-    }, [code, router]);
+    }, [searchParams, router]);
 
     return null;
 }
