@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import AuthCallbackHandler from "./AuthCallbackHandler";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -37,7 +38,9 @@ export default function LoginPage() {
 
     return (
         <>
-            <AuthCallbackHandler />
+            <Suspense fallback={null}>
+                <AuthCallbackHandler />
+            </Suspense>
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#181824]">
                 <div className="bg-white dark:bg-[#232336] rounded-xl shadow-md p-8 flex flex-col items-center max-w-sm w-full border border-gray-200 dark:border-gray-700">
                     <h1 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white text-center">
