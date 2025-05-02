@@ -34,7 +34,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
         domainId || null
     );
     const [events, setEvents] = useState<Event[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [timeFrame, setTimeFrame] = useState<TimeFrame>("24h");
 
@@ -42,7 +42,6 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
     useEffect(() => {
         async function fetchDomains() {
             try {
-                setIsLoading(true);
                 const { data, error } = await supabase
                     .from("domains")
                     .select("*")
@@ -62,7 +61,9 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                         : "An unknown error occurred"
                 );
             } finally {
-                setIsLoading(false);
+                if (!selectedDomain) {
+                    setIsLoading(false);
+                }
             }
         }
 
@@ -75,7 +76,6 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
 
         async function fetchEvents() {
             try {
-                setIsLoading(true);
                 const { data, error } = await supabase
                     .from("events")
                     .select("*")
@@ -118,7 +118,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                         analytics.
                     </p>
                     <a
-                        href="/dashboard?view=add-domain"
+                        href="/dashboard/add-domain"
                         className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                     >
                         Add & Verify Domain
@@ -198,7 +198,13 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                 <p className="text-lg font-bold">
                                     {events.length > 0
                                         ? new Date(
-                                              events[0].created_at
+                                              new Date(
+                                                  events[0].created_at
+                                              ).getTime() -
+                                                  new Date(
+                                                      events[0].created_at
+                                                  ).getTimezoneOffset() *
+                                                      60000
                                           ).toLocaleString()
                                         : "N/A"}
                                 </p>
@@ -242,7 +248,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white/50 dark:bg-[#212134]/50 divide-y divide-gray-200 dark:divide-gray-800">
-                                        {events.slice(0, 10).map((event) => (
+                                        {events.slice(0, 5).map((event) => (
                                             <tr
                                                 key={event.id}
                                                 className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
@@ -266,10 +272,11 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                         ))}
                                     </tbody>
                                 </table>
-                                {events.length > 10 && (
+                                {events.length > 5 && (
                                     <div className="text-center mt-4">
                                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            Showing 10 of {events.length} events
+                                            Showing 5 of {events.length} recent
+                                            events
                                         </p>
                                     </div>
                                 )}

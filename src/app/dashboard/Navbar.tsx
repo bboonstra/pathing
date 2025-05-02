@@ -47,13 +47,13 @@ export default function Navbar() {
                                 <HomeIcon className="w-5 h-5" />
                             </Link>
                             <Link
-                                href="/dashboard?view=analytics"
+                                href="/dashboard/analytics"
                                 className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                             >
                                 <ChartBarIcon className="w-5 h-5" />
                             </Link>
                             <Link
-                                href="/dashboard?view=add-domain"
+                                href="/dashboard/add-domain"
                                 className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                             >
                                 <PlusIcon className="w-5 h-5" />

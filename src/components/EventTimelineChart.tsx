@@ -70,10 +70,10 @@ export default function EventTimelineChart({
                 startTime.setHours(now.getHours() - 1);
                 break;
             case "24h":
-                startTime.setDate(now.getDate() - 1);
+                startTime.setHours(now.getHours() - 23); // include the current hour
                 break;
             case "7d":
-                startTime.setDate(now.getDate() - 7);
+                startTime.setDate(now.getDate() - 6);
                 break;
             case "30d":
                 startTime.setDate(now.getDate() - 30);

@@ -515,7 +515,16 @@ export default function Websites() {
                                     </div>
                                     <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-3">
                                         DNS changes may take up to 24-48 hours
-                                        to propagate.
+                                        to propagate. You can try to{" "}
+                                        <a
+                                            href="https://developers.google.com/speed/public-dns/cache"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="underline hover:text-yellow-500 dark:hover:text-yellow-300"
+                                        >
+                                            flush the cache
+                                        </a>{" "}
+                                        to potentially speed this up.
                                     </p>
                                     <button
                                         onClick={() => verifyDomain(domain.id)}

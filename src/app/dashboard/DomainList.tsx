@@ -177,7 +177,7 @@ export default function DomainList() {
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">Your Domains</h2>
                 <Link
-                    href="/dashboard?view=add-domain"
+                    href="/dashboard/add-domain"
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium"
                 >
                     Add New Domain
@@ -337,7 +337,7 @@ export default function DomainList() {
                                 <div className="flex items-center gap-2">
                                     {domain.verified && (
                                         <Link
-                                            href={`/dashboard?view=analytics&domain=${domain.id}`}
+                                            href={`/dashboard/analytics?domain=${domain.id}`}
                                             className="text-blue-500 hover:text-blue-700 p-1 text-sm"
                                         >
                                             View Analytics
@@ -413,7 +413,16 @@ export default function DomainList() {
                                     </div>
                                     <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-3">
                                         DNS changes may take up to 24-48 hours
-                                        to propagate.
+                                        to propagate. You can try to{" "}
+                                        <a
+                                            href="https://developers.google.com/speed/public-dns/cache"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="underline hover:text-yellow-500 dark:hover:text-yellow-300"
+                                        >
+                                            flush the cache
+                                        </a>{" "}
+                                        to potentially speed this up.
                                     </p>
                                     <button
                                         onClick={() => verifyDomain(domain.id)}
