@@ -1,48 +1,67 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
-import SignOutButton from "./SignOutButton";
+import Navbar from "./Navbar";
+import DomainList from "./DomainList";
+import DomainAnalytics from "./DomainAnalytics";
+import AddDomain from "./AddDomain";
 
-export default async function DashboardPage() {
+// Define the expected structure of search parameters
+type SearchParams = {
+    view?: string; // Optional view parameter (e.g., 'analytics', 'add-domain')
+    domain?: string; // Optional domain ID parameter, likely used for analytics view
+};
+
+// Define the props for the Page component
+interface PageProps {
+    searchParams: SearchParams; // Receives searchParams from Next.js
+}
+
+/**
+ * DashboardPage Server Component
+ * Displays different views (Domain List, Add Domain, Domain Analytics)
+ * based on URL search parameters.
+ */
+export default async function DashboardPage({ searchParams }: PageProps) {
+    // Initialize Supabase client for server-side operations
     const supabase = await createServerSupabaseClient();
+
+    // Fetch the current authenticated user
     const {
         data: { user },
     } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+
+    // If no user is found, redirect to the login page
+    if (!user) {
+        redirect("/login");
+    }
+
+    // Extract view and domain from searchParams to avoid synchronous access
+    // Extract view and domain from searchParams to avoid synchronous access
+    const { view, domain } = await searchParams;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#0a0a0a] dark:via-[#181824] dark:to-[#1a1a2e] flex flex-col items-center py-16 px-4">
-            <div className="w-full max-w-3xl">
-                <div className="bg-white/80 dark:bg-[#181824]/80 rounded-2xl shadow-2xl p-10 border border-white/30 dark:border-white/10 mb-8 flex items-center justify-between">
-                    <h1 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
-                        Welcome,{" "}
-                        {user.user_metadata.full_name ||
-                            user.user_metadata.name ||
-                            user.email}
-                    </h1>
-                    <SignOutButton />
-                </div>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">
-                    Your analytics dashboard is ready to grow with you.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 flex flex-col items-center justify-center min-h-[180px]">
-                        <span className="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-2">
-                            🚧
-                        </span>
-                        <span className="text-lg text-gray-500 dark:text-gray-400 text-center">
-                            Your analytics will appear here soon.
-                            <br />
-                            Start sending events to see the magic!
-                        </span>
-                    </div>
-                    <div className="bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 flex flex-col items-center justify-center min-h-[180px]">
-                        <span className="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-2">
-                            ✨
-                        </span>
-                        <span className="text-lg text-gray-500 dark:text-gray-400 text-center">
-                            More insights and charts coming soon.
-                        </span>
-                    </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#0a0a0a] dark:via-[#181824] dark:to-[#1a1a2e] flex flex-col">
+            {/* Render the navigation bar */}
+            <Navbar />
+
+            <div className="flex-grow flex flex-col items-center py-8 px-4">
+                <div className="w-full max-w-5xl">
+                    {/* Informational text */}
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                        Your analytics dashboard is ready to grow with you.
+                    </p>
+
+                    {/* Conditional Rendering based on view */}
+                    {view === "analytics" ? (
+                        // Render DomainAnalytics if view is 'analytics', passing the domainId
+                        <DomainAnalytics domainId={domain} />
+                    ) : view === "add-domain" ? (
+                        // Render AddDomain component if view is 'add-domain'
+                        <AddDomain />
+                    ) : (
+                        // Default view: Render the list of domains
+                        <DomainList />
+                    )}
                 </div>
             </div>
         </div>

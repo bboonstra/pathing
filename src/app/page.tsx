@@ -11,6 +11,20 @@ import {
 } from "@heroicons/react/24/solid";
 import { supabase } from "@/lib/supabase";
 
+// Add pathing type to global Window interface
+declare global {
+    interface Window {
+        pathing?: {
+            init: () => void;
+            track: (
+                type: string,
+                payload: Record<string, unknown>
+            ) => Promise<{ success: boolean; error?: string }>;
+            publicKey: string | null;
+        };
+    }
+}
+
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -23,7 +37,7 @@ export default function Home() {
     useEffect(() => {
         if (typeof window !== "undefined") {
             setCodeSnippet(
-                `<script src="${window.location.origin}/api/collect"></script>`
+                `<script src="${window.location.origin}/collect/js" pathing-api-key="API_KEY"></script>`
             );
         }
     }, []);
@@ -42,18 +56,54 @@ export default function Home() {
         };
     }, []);
 
+    // Load the pathing script when the component mounts
+    useEffect(() => {
+        // Only load if it's not already in the DOM
+        if (
+            typeof window !== "undefined" &&
+            !document.querySelector('script[src="/collect/js"]')
+        ) {
+            const script = document.createElement("script");
+            script.src = "/api/collect/js";
+            script.setAttribute(
+                "pathing-api-key",
+                "pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12"
+            );
+            script.async = true;
+            script.defer = true;
+            document.body.appendChild(script);
+        }
+    }, []);
+
     async function sendDemoEvent() {
         setLoading(true);
         try {
-            await fetch("/api/collect", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    type: "demo",
-                    payload: { action: "clicked demo" },
-                }),
-            });
-            setEventSent(true);
+            if (typeof window !== "undefined" && window.pathing) {
+                const result = await window.pathing.track("demo", {
+                    action: "clicked demo",
+                });
+                if (result.success) {
+                    setEventSent(true);
+                }
+            } else {
+                console.error("Pathing library not loaded");
+                // Fallback to direct API call if pathing isn't loaded
+                await fetch("/api/collect", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        type: "demo",
+                        payload: { action: "clicked demo" },
+                    }),
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Pathing-API-Key":
+                            "pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12",
+                    },
+                });
+                setEventSent(true);
+            }
+        } catch (error) {
+            console.error("Error sending demo event:", error);
         } finally {
             setLoading(false);
         }

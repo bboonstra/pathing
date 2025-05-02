@@ -14,7 +14,7 @@ export default function AuthCallbackHandler() {
                 try {
                     const supabase = createClientComponentClient();
                     await supabase.auth.exchangeCodeForSession(code);
-                    router.replace("/dashboard");
+                    window.close();
                 } catch (error) {
                     console.error("Auth error:", error);
                 }
