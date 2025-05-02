@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pathing.cc
+
+A privacy-first web analytics platform that helps you understand user journeys without sacrificing user privacy. No cookies, no tracking pixels, just clarity.
+
+## Features
+
+- **1-line install**: Simple JavaScript snippet to add to your website
+- **Privacy-first**: No cookies required, fully GDPR compliant
+- **User journey visualization**: See how users navigate through your site
+- **Domain verification**: Secure analytics for verified domains only
+- **Real-time analytics**: Monitor traffic as it happens
 
 ## Getting Started
 
-First, run the development server:
+1. Create an account at [pathing.cc](https://pathing.cc)
+2. Get an API key from the dashboard
+3. Add the JavaScript snippet to your website:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```html
+<script src="https://pathing.cc/api/collect/js" pathing-api-key="YOUR_API_KEY"></script>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Page views are tracked automatically. Track custom events with:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```javascript
+window.pathing.track("event_name", { 
+  property1: "value1",
+  property2: "value2"
+});
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Viewing Analytics
 
-## Learn More
+1. Log in to your Pathing dashboard
+2. Select a domain to view its analytics
+3. Explore user journeys, page views, and custom events
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js 15
+- React 19
+- Tailwind CSS 4
+- Supabase (Auth & Database)
+- Recharts (Data visualization)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+MIT
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
