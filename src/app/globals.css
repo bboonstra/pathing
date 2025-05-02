@@ -3,6 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --tooltip-bg: rgba(255, 255, 255, 0.9);
+  --tooltip-color: #171717;
+  --tooltip-border: 1px solid rgba(209, 213, 219, 0.5);
+  --tooltip-label-color: #171717;
+  --grid-color: rgba(156, 163, 175, 0.2);
+  --axis-color: #9ca3af;
+  --axis-line-color: rgba(156, 163, 175, 0.3);
+  --chart-stroke: #4f46e5;
+  --chart-dot-fill: white;
 }
 
 @theme inline {
@@ -16,6 +25,15 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --tooltip-bg: rgba(24, 24, 36, 0.9);
+    --tooltip-color: #ededed;
+    --tooltip-border: 1px solid rgba(64, 64, 84, 0.5);
+    --tooltip-label-color: #ededed;
+    --grid-color: rgba(75, 85, 99, 0.2);
+    --axis-color: #6b7280;
+    --axis-line-color: rgba(75, 85, 99, 0.3);
+    --chart-stroke: #6366f1;
+    --chart-dot-fill: #212134;
   }
 }
 

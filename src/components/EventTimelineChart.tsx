@@ -22,7 +22,7 @@ export type EventData = {
         [key: string]: string | number | boolean | null | undefined;
     } | null;
     created_at: string;
-    [key: string]: string | number | boolean | null | undefined | object; // Use object for complex nested properties
+    [key: string]: string | number | boolean | null | undefined | object;
 };
 
 export type EventsChartData = {
@@ -47,7 +47,6 @@ export default function EventTimelineChart({
     const [chartData, setChartData] = useState<EventsChartData[]>([]);
     const [localTimeFrame, setLocalTimeFrame] = useState<TimeFrame>(timeFrame);
 
-    // Handle time frame changes locally if no external handler is provided
     const handleTimeFrameChange = (newTimeFrame: TimeFrame) => {
         if (onTimeFrameChange) {
             onTimeFrameChange(newTimeFrame);
@@ -56,7 +55,6 @@ export default function EventTimelineChart({
         }
     };
 
-    // Process events data for chart visualization based on selected timeframe
     useEffect(() => {
         if (events.length === 0) {
             setChartData([]);
@@ -64,8 +62,6 @@ export default function EventTimelineChart({
         }
 
         const activeTimeFrame = onTimeFrameChange ? timeFrame : localTimeFrame;
-
-        // Filter events based on timeframe
         const now = new Date();
         const startTime = new Date(now);
 
@@ -84,26 +80,25 @@ export default function EventTimelineChart({
                 break;
         }
 
-        const filteredEvents = events.filter(
-            (event) => new Date(event.created_at) >= startTime
-        );
+        const filteredEvents = events.filter((event) => {
+            const eventDate = new Date(event.created_at);
+            // Convert event UTC time to local time for comparison
+            const eventLocalTime = new Date(
+                eventDate.getTime() - eventDate.getTimezoneOffset() * 60000
+            );
+            return eventLocalTime >= startTime;
+        });
 
-        // Determine time grouping format based on timeframe
-        let format: "minute" | "hour" | "day" = "day";
+        const format: "minute" | "hour" | "day" =
+            activeTimeFrame === "1h"
+                ? "minute"
+                : activeTimeFrame === "24h"
+                ? "hour"
+                : "day";
 
-        if (activeTimeFrame === "1h") {
-            format = "minute";
-        } else if (activeTimeFrame === "24h") {
-            format = "hour";
-        } else {
-            format = "day";
-        }
-
-        // Group events by the determined time format
         const eventsByTime: Record<string, number> = {};
-
-        // Create empty time slots for continuous display
         const timeSlots: string[] = [];
+
         if (format === "minute") {
             for (let i = 0; i < 60; i++) {
                 const date = new Date(startTime);
@@ -131,9 +126,11 @@ export default function EventTimelineChart({
             }
         }
 
-        // Count events for each time slot
         filteredEvents.forEach((event) => {
-            const date = new Date(event.created_at);
+            const serverDate = new Date(event.created_at);
+            const date = new Date(
+                serverDate.getTime() - serverDate.getTimezoneOffset() * 60000
+            );
             let timeKey: string;
 
             if (format === "minute") {
@@ -149,7 +146,6 @@ export default function EventTimelineChart({
             eventsByTime[timeKey] = (eventsByTime[timeKey] || 0) + 1;
         });
 
-        // Convert to array and format for chart
         const data = Object.entries(eventsByTime)
             .map(([timeKey, count]) => {
                 const date = new Date(timeKey);
@@ -177,28 +173,43 @@ export default function EventTimelineChart({
                         .padStart(2, "0")}`;
                 }
 
-                return {
-                    date: timeKey,
-                    formattedTime,
-                    count,
-                };
+                return { date: timeKey, formattedTime, count };
             })
             .sort((a, b) => a.date.localeCompare(b.date));
 
-        setChartData(data);
+        // Consolidate any data points with the same formatted time
+        const consolidatedData: EventsChartData[] = [];
+        const timeMap: Record<string, number> = {};
+
+        data.forEach((item) => {
+            if (timeMap[item.formattedTime] === undefined) {
+                timeMap[item.formattedTime] = consolidatedData.length;
+                consolidatedData.push(item);
+            } else {
+                const index = timeMap[item.formattedTime];
+                // Keep the entry with actual events (higher count)
+                if (item.count > consolidatedData[index].count) {
+                    consolidatedData[index] = item;
+                }
+            }
+        });
+
+        setChartData(consolidatedData);
     }, [events, timeFrame, localTimeFrame, onTimeFrameChange]);
 
+    const activeTimeFrame = onTimeFrameChange ? timeFrame : localTimeFrame;
+
     return (
-        <div className="p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800">
+        <div className="p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800 mb-6">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Event Timeline</h3>
                 <div className="flex space-x-2">
                     <select
-                        value={onTimeFrameChange ? timeFrame : localTimeFrame}
+                        value={activeTimeFrame}
                         onChange={(e) =>
                             handleTimeFrameChange(e.target.value as TimeFrame)
                         }
-                        className="px-3 py-1 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-1 text-sm bg-white/90 dark:bg-[#181824]/90 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="1h">Last Hour</option>
                         <option value="24h">Last 24 Hours</option>
@@ -207,7 +218,7 @@ export default function EventTimelineChart({
                     </select>
                 </div>
             </div>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 flex items-center justify-center min-h-[200px]">
+            <div className="bg-white/50 dark:bg-[#181824]/50 rounded-lg p-6 flex items-center justify-center min-h-[200px]">
                 {isLoading ? (
                     <p className="text-gray-500 dark:text-gray-400">
                         Loading data...
@@ -216,12 +227,7 @@ export default function EventTimelineChart({
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart
                             data={chartData}
-                            margin={{
-                                top: 5,
-                                right: 30,
-                                left: 20,
-                                bottom: 5,
-                            }}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                         >
                             <defs>
                                 <linearGradient
@@ -233,49 +239,55 @@ export default function EventTimelineChart({
                                 >
                                     <stop
                                         offset="5%"
-                                        stopColor="#3b82f6"
+                                        stopColor="var(--chart-stroke, #4f46e5)"
                                         stopOpacity={0.8}
                                     />
                                     <stop
                                         offset="95%"
-                                        stopColor="#3b82f6"
+                                        stopColor="var(--chart-stroke, #4f46e5)"
                                         stopOpacity={0.1}
                                     />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid
                                 strokeDasharray="3 3"
-                                stroke="#9ca3af30"
+                                stroke="var(--grid-color, rgba(156, 163, 175, 0.2))"
+                                vertical={false}
                             />
                             <XAxis
                                 dataKey="formattedTime"
                                 tick={{
-                                    fill: "var(--color-text-secondary)",
+                                    fill: "var(--axis-color, #9ca3af)",
                                     fontSize: 12,
                                 }}
                                 tickLine={false}
-                                axisLine={{ stroke: "#9ca3af50" }}
+                                axisLine={{
+                                    stroke: "var(--axis-line-color, rgba(156, 163, 175, 0.3))",
+                                }}
                             />
                             <YAxis
                                 tick={{
-                                    fill: "var(--color-text-secondary)",
+                                    fill: "var(--axis-color, #9ca3af)",
                                     fontSize: 12,
                                 }}
                                 tickLine={false}
-                                axisLine={{ stroke: "#9ca3af50" }}
+                                axisLine={{
+                                    stroke: "var(--axis-line-color, rgba(156, 163, 175, 0.3))",
+                                }}
                                 width={35}
                             />
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor:
-                                        "var(--color-background-secondary)",
-                                    border: "1px solid var(--color-border)",
+                                        "var(--tooltip-bg, rgba(255, 255, 255, 0.9))",
+                                    color: "var(--tooltip-color, #171717)",
+                                    border: "var(--tooltip-border, 1px solid rgba(209, 213, 219, 0.5))",
                                     borderRadius: "8px",
-                                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                                     padding: "10px 14px",
                                 }}
                                 labelStyle={{
-                                    color: "var(--color-text-primary)",
+                                    color: "var(--tooltip-label-color, #171717)",
                                     fontWeight: "bold",
                                     marginBottom: "4px",
                                 }}
@@ -286,14 +298,11 @@ export default function EventTimelineChart({
                                 labelFormatter={(_, data) => {
                                     if (data && data[0]) {
                                         const item = data[0].payload;
-                                        const activeTimeFrame =
-                                            onTimeFrameChange
-                                                ? timeFrame
-                                                : localTimeFrame;
-                                        if (activeTimeFrame === "1h") {
-                                            return `${item.formattedTime}`;
-                                        } else if (activeTimeFrame === "24h") {
-                                            return `${item.formattedTime}`;
+                                        if (
+                                            activeTimeFrame === "1h" ||
+                                            activeTimeFrame === "24h"
+                                        ) {
+                                            return item.formattedTime;
                                         } else {
                                             return new Date(
                                                 item.date
@@ -302,20 +311,21 @@ export default function EventTimelineChart({
                                     }
                                     return "";
                                 }}
+                                wrapperStyle={{ outline: "none" }}
                             />
                             <Area
                                 type="monotone"
                                 dataKey="count"
                                 name="Events"
-                                stroke="#3b82f6"
+                                stroke="var(--chart-stroke, #4f46e5)"
                                 strokeWidth={2}
                                 fillOpacity={1}
                                 fill="url(#colorCount)"
                                 activeDot={{
                                     r: 6,
-                                    stroke: "#3b82f6",
+                                    stroke: "var(--chart-stroke, #4f46e5)",
                                     strokeWidth: 2,
-                                    fill: "white",
+                                    fill: "var(--chart-dot-fill, white)",
                                 }}
                             />
                         </AreaChart>
