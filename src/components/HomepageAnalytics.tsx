@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 
 type Event = {
     id: string;
@@ -33,118 +32,144 @@ type Event = {
 
 export default function HomepageAnalytics() {
     const [events, setEvents] = useState<Event[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+    const [refreshCountdown, setRefreshCountdown] = useState<number | null>(
+        null
+    );
     const [error, setError] = useState<string | null>(null);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-    // Fetch events with caching - only refreshes on the hour
+    // Function to fetch events from our cached API endpoint
+    const fetchEvents = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch("/api/demo");
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(
+                    errorData.error || "Failed to fetch analytics data"
+                );
+            }
+
+            const result = await response.json();
+            setEvents(result.data || []);
+            setLastUpdated(new Date());
+            setRefreshCountdown(result.refreshesIn || null);
+        } catch (error) {
+            console.error(
+                "Error fetching analytics:",
+                error instanceof Error ? error.message : String(error)
+            );
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "An unknown error occurred"
+            );
+            setEvents([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Add useEffect to fetch events on component mount
     useEffect(() => {
-        const fetchEvents = async () => {
-            setIsLoading(true);
-            try {
-                // Get current time and calculate the timestamp for one hour ago
-                const now = new Date();
-
-                // Calculate the timestamp for 24 hours ago
-                const twentyFourHoursAgo = new Date(now);
-                twentyFourHoursAgo.setDate(now.getDate() - 1);
-
-                // Convert to ISO string for database query (which expects UTC)
-                const twentyFourHoursAgoISO = twentyFourHoursAgo.toISOString();
-
-                // Query for events from the last 24 hours (including current hour)
-                const { data, error } = await supabase
-                    .from("events")
-                    .select("*")
-                    .eq("type", "button")
-                    .eq("domain_id", "98fee0c9-eea5-4fbe-baf8-8a608918466c")
-                    .gte("created_at", twentyFourHoursAgoISO)
-                    .filter("payload->>action", "eq", "demo_click")
-                    .filter("payload->>location", "eq", "homepage")
-                    .order("created_at", { ascending: false });
-
-                if (error) {
-                    console.error(
-                        "Supabase query error:",
-                        error.message,
-                        error.details,
-                        error.hint
-                    );
-                    throw error;
-                }
-
-                console.log(data);
-
-                // Convert UTC timestamps to local time before using the data
-                const localizedEvents = (data || []).map((event) => {
-                    const date = new Date(event.created_at);
-                    // getTimezoneOffset returns minutes, and positive for timezones behind UTC
-                    // So we need to *subtract* the offset (in hours) to convert from UTC to local
-                    date.setHours(
-                        date.getHours() - date.getTimezoneOffset() / 60
-                    );
-                    return {
-                        ...event,
-                        created_at: date.toString(),
-                    };
-                });
-
-                console.log(localizedEvents);
-
-                setEvents(localizedEvents);
-                setLastUpdated(now);
-            } catch (error) {
-                console.error(
-                    "Error fetching demo events:",
-                    error instanceof Error ? error.message : String(error)
-                );
-                setError(
-                    error instanceof Error
-                        ? error.message
-                        : "An unknown error occurred"
-                );
-                setEvents([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        // Initial fetch
         fetchEvents();
-
-        // Set up hourly refresh
-        const interval = setInterval(() => {
-            const now = new Date();
-            // Only refresh if we're in a new hour
-            if (!lastUpdated || now.getHours() !== lastUpdated.getHours()) {
-                fetchEvents();
-            }
-        }, 60000); // Check every minute if we need to refresh
-
-        return () => clearInterval(interval);
     }, []);
+
+    // Countdown timer effect
+    useEffect(() => {
+        if (refreshCountdown === null || refreshCountdown <= 0) return;
+
+        const timer = setInterval(() => {
+            setRefreshCountdown((prev) =>
+                prev !== null ? Math.max(0, prev - 1) : null
+            );
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [refreshCountdown]);
+
+    // Format time from seconds to a readable format
+    const formatTime = (seconds: number): string => {
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+
+        if (hours === 0) {
+            return `${minutes} minute${minutes !== 1 ? "s" : ""}`;
+        }
+
+        return `${hours} hour${
+            hours !== 1 ? "s" : ""
+        } and ${remainingMinutes} minute${remainingMinutes !== 1 ? "s" : ""}`;
+    };
 
     // Calculate hourly distribution of events
     const hourlyData = Array(24).fill(0);
+    const currentHour = new Date().getHours();
+
     events.forEach((event) => {
         const eventDate = new Date(event.created_at);
-        const hour = eventDate.getHours();
-        hourlyData[hour]++;
+        const eventHour = eventDate.getHours();
+        // Calculate relative position with latest hour on the right
+        const hourIndex = (24 + eventHour - currentHour - 1) % 24;
+        hourlyData[hourIndex]++;
     });
 
     // Find max for scaling
     const maxEvents = Math.max(...hourlyData, 1);
 
+    // Determine if refresh is available
+    const canRefresh = refreshCountdown === 0 || refreshCountdown === null;
+
+    // Format relative hour label
+    const formatRelativeHour = (hoursAgo: number): string => {
+        if (hoursAgo === 0) {
+            return "Now";
+        } else if (hoursAgo === 1) {
+            return "1 hr ago";
+        } else if (hoursAgo === 24) {
+            return "24 hrs ago";
+        } else {
+            return `${hoursAgo} hrs ago`;
+        }
+    };
+
     return (
         <div className="w-full bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 mb-8">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">Live Demo Analytics</h2>
-                <div className="text-xs text-gray-500">
-                    {lastUpdated ? (
-                        <>Last updated: {lastUpdated.toISOString()}</>
-                    ) : (
-                        "Updating..."
+                <div className="flex items-center gap-3">
+                    <div className="text-xs text-gray-500">
+                        {lastUpdated ? (
+                            <>
+                                {refreshCountdown !== null &&
+                                refreshCountdown > 0 ? (
+                                    <span>
+                                        Updated at{" "}
+                                        {lastUpdated.toLocaleTimeString([], {
+                                            hour: "numeric",
+                                            minute: "2-digit",
+                                        })}{" "}
+                                        • New data available in{" "}
+                                        {formatTime(refreshCountdown)}
+                                    </span>
+                                ) : (
+                                    <span>Refresh available</span>
+                                )}
+                            </>
+                        ) : (
+                            "Not yet updated"
+                        )}
+                    </div>
+                    {canRefresh && (
+                        <button
+                            onClick={fetchEvents}
+                            className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30"
+                        >
+                            Refresh
+                        </button>
                     )}
                 </div>
             </div>
@@ -168,7 +193,7 @@ export default function HomepageAnalytics() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
                                 <p className="text-blue-800 dark:text-blue-300 text-sm mb-1">
-                                    Total Clicks
+                                    Clicks Today
                                 </p>
                                 <p className="text-2xl font-bold">
                                     {events.length}
@@ -216,7 +241,7 @@ export default function HomepageAnalytics() {
 
                     <div className="mb-6 p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800">
                         <div className="font-medium mb-2">
-                            Hourly Distribution (UTC Time)
+                            Hourly Distribution (Local Time)
                         </div>
                         <div className="h-32 flex items-end space-x-1">
                             {hourlyData.map((count, hour) => (
@@ -231,34 +256,22 @@ export default function HomepageAnalytics() {
                                     }}
                                 >
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
-                                        {hour === 0
-                                            ? "12 AM"
-                                            : hour === 12
-                                            ? "12 PM"
-                                            : hour > 12
-                                            ? `${hour - 12} PM`
-                                            : `${hour} AM`}{" "}
-                                        - {count} clicks
+                                        {formatRelativeHour(23 - hour)} -{" "}
+                                        {count} clicks
                                     </div>
                                 </div>
                             ))}
                         </div>
                         <div className="flex justify-between text-xs text-gray-500 mt-2">
-                            {/* Generate 5 evenly spaced hour markers */}
-                            {[0, 6, 12, 18, 24].map((hour) => (
-                                <span key={hour}>
-                                    {hour === 0 || hour === 24
-                                        ? "12 AM"
-                                        : hour === 12
-                                        ? "12 PM"
-                                        : hour > 12
-                                        ? `${hour - 12} PM`
-                                        : `${hour} AM`}
+                            {/* Generate 5 evenly spaced hour markers for the last 24 hours */}
+                            {[24, 18, 12, 6, 0].map((hoursAgo) => (
+                                <span key={hoursAgo}>
+                                    {formatRelativeHour(hoursAgo)}
                                 </span>
                             ))}
                         </div>
                         <div className="text-xs text-gray-500 mt-2 text-center">
-                            All times shown in UTC time zone
+                            All times shown in local time zone
                         </div>
                     </div>
                 </>
