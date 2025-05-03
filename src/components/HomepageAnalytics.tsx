@@ -240,14 +240,23 @@ export default function HomepageAnalytics() {
                     </div>
 
                     <div className="mb-6 p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800">
-                        <div className="font-medium mb-2">
-                            Hourly Distribution (Local Time)
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-semibold">
+                                Hourly Distribution (Local Time)
+                            </h3>
+                            <div className="flex gap-2">
+                                {/* Could add timeframe selector buttons here like in DomainAnalytics if needed */}
+                            </div>
                         </div>
-                        <div className="h-32 flex items-end space-x-1">
+                        <div className="h-32 flex items-end space-x-1 mt-4">
                             {hourlyData.map((count, hour) => (
                                 <div
                                     key={hour}
-                                    className="flex-1 bg-blue-400 dark:bg-blue-600 rounded-t transition-all duration-500 hover:bg-blue-500 dark:hover:bg-blue-500 relative group"
+                                    className={`flex-1 rounded-t transition-all duration-500 relative group ${
+                                        hour === 23
+                                            ? "bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] dark:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] hover:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] dark:hover:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)]"
+                                            : "bg-blue-500/80 dark:bg-blue-600/80 hover:bg-blue-600 dark:hover:bg-blue-500"
+                                    }`}
                                     style={{
                                         height: `${Math.max(
                                             (count / maxEvents) * 100,
@@ -258,6 +267,7 @@ export default function HomepageAnalytics() {
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
                                         {formatRelativeHour(23 - hour)} -{" "}
                                         {count} clicks
+                                        {hour === 23 && " (incomplete)"}
                                     </div>
                                 </div>
                             ))}
