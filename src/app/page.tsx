@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { supabase } from "@/lib/supabase";
 import { pathing } from "pathingjs";
+import HomepageAnalytics from "@/components/HomepageAnalytics";
 
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
@@ -22,6 +23,8 @@ export default function Home() {
     // Reference to the button
     const [demoButtonRef, setDemoButtonRef] =
         useState<HTMLButtonElement | null>(null);
+    // State to control analytics visibility
+    const [showAnalytics, setShowAnalytics] = useState(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -65,6 +68,15 @@ export default function Home() {
         setCopied(true);
         setTimeout(() => setCopied(false), 1200);
     }
+
+    const handleDemoClick = () => {
+        setEventSent(true);
+
+        // Show analytics after a short delay
+        setTimeout(() => {
+            setShowAnalytics(true);
+        }, 1000);
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#0a0a0a] dark:via-[#181824] dark:to-[#1a1a2e] text-[var(--foreground)] font-sans transition-colors duration-500">
@@ -155,19 +167,14 @@ export default function Home() {
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-center">
                     Add analytics in seconds
                 </h2>
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 font-mono text-base flex flex-col sm:flex-row items-center gap-4 shadow-lg border border-gray-200 dark:border-gray-800 relative">
-                    <div className="relative w-full">
-                        <code
-                            className="whitespace-pre text-blue-700 dark:text-blue-200 select-all bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded w-full text-center text-lg overflow-x-auto block scrollbar-thin scrollbar-thumb-blue-200 transition-all duration-300"
-                            style={{ WebkitOverflowScrolling: "touch" }}
-                        >
-                            {codeSnippet}
-                        </code>
-                        {/* Fade effect on the right edge */}
-                        <div className="pointer-events-none absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent" />
+                <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 font-mono shadow-lg border border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row sm:items-start gap-3">
+                    <div className="relative w-full overflow-hidden">
+                        <pre className="bg-gray-100 dark:bg-gray-800 rounded p-3 text-sm sm:text-base text-blue-700 dark:text-blue-200 overflow-x-auto whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal max-w-full">
+                            <code>{codeSnippet}</code>
+                        </pre>
                     </div>
                     <button
-                        className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-2 sm:mt-0 sm:ml-4 min-w-[90px] justify-center ${
+                        className={`self-center sm:self-center flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                             copied
                                 ? "bg-green-500 text-white"
                                 : "bg-blue-600 hover:bg-blue-700 text-white"
@@ -199,32 +206,106 @@ export default function Home() {
             {/* Demo event */}
             <section className="max-w-2xl mx-auto px-4 mb-28 text-center">
                 <h2 className="text-2xl font-bold mb-4">See it in action</h2>
-                <div className="flex justify-center">
-                    <button
-                        ref={setDemoButtonRef}
-                        className={`px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 ${
-                            eventSent ? "scale-105" : ""
+                <div className="flex justify-center flex-col items-center">
+                    {/* Animated container that expands to show analytics */}
+                    <div
+                        className={`transition-all duration-700 ease-in-out transform 
+                        ${
+                            showAnalytics
+                                ? "max-h-[800px] opacity-100 scale-100 mt-8"
+                                : "max-h-0 opacity-0 scale-95"
                         }`}
-                        id="demo-button"
-                        onClick={() => setEventSent(true)}
-                        disabled={eventSent}
                     >
-                        {eventSent ? (
-                            <span className="flex items-center gap-2">
-                                <CheckCircleIcon className="w-6 h-6 animate-pop" />{" "}
-                                Event Sent!
-                            </span>
-                        ) : (
-                            <span className="flex items-center gap-2">
-                                Send Demo Event
-                            </span>
-                        )}
-                    </button>
+                        <HomepageAnalytics />
+
+                        <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 p-5 rounded-lg border border-blue-100 dark:border-blue-800 text-left">
+                            <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
+                                This is just a taste of what Pathing offers
+                            </h3>
+                            <p className="text-gray-700 dark:text-gray-300 mb-3">
+                                What you&apos;re seeing above is real-time
+                                analytics displaying demo button clicks across
+                                all our users. With Pathing on your site,
+                                you&apos;ll get:
+                            </p>
+                            <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                                <li>
+                                    User journeys and page flows visualized in
+                                    intuitive charts
+                                </li>
+                                <li>
+                                    Real-time event tracking with zero cookie
+                                    usage
+                                </li>
+                                <li>Detailed device and session analytics</li>
+                                <li>
+                                    Custom event tracking for buttons, forms,
+                                    and more
+                                </li>
+                            </ul>
+                            <div className="mt-4">
+                                <a
+                                    href="/dashboard"
+                                    className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300"
+                                >
+                                    Get started for free
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4 ml-1"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 5l7 7-7 7"
+                                        />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Button container with conditional rendering */}
+                    <div
+                        className={`transition-all duration-500 ease-in-out ${
+                            showAnalytics
+                                ? "max-h-0 opacity-0 scale-95 mb-0 overflow-hidden"
+                                : "max-h-20 opacity-100 scale-100 mb-4"
+                        }`}
+                    >
+                        <button
+                            ref={setDemoButtonRef}
+                            className={`px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 ${
+                                eventSent && !showAnalytics ? "scale-105" : ""
+                            }`}
+                            id="demo-button"
+                            onClick={handleDemoClick}
+                            disabled={eventSent}
+                        >
+                            {eventSent ? (
+                                <span className="flex items-center gap-2">
+                                    <CheckCircleIcon className="w-6 h-6 animate-pop" />{" "}
+                                    Event Sent!
+                                </span>
+                            ) : (
+                                <span className="flex items-center gap-2">
+                                    Send Demo Event
+                                </span>
+                            )}
+                        </button>
+                    </div>
                 </div>
-                <div className="mt-4 text-gray-500 dark:text-gray-400 text-base">
+                <div
+                    className={`mt-4 text-gray-500 dark:text-gray-400 text-base transition-opacity duration-500 ${
+                        showAnalytics ? "opacity-0" : "opacity-100"
+                    }`}
+                >
                     {eventSent
-                        ? "Demo event sent to /api/collect. Check your dashboard!"
-                        : "Click to send a test event to your analytics backend."}
+                        ? "Demo event sent! Loading real analytics..."
+                        : "Click to send a test event and see analytics in action."}
                 </div>
             </section>
 
