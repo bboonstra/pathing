@@ -83,6 +83,9 @@ export async function POST(req: NextRequest) {
             {
                 type: body.type,
                 payload: body.payload,
+                metadata: body.metadata || {},
+                device_info: body.deviceInfo || {},
+                session_info: body.sessionInfo || {},
                 domain_id: domain.id,
             },
         ]);

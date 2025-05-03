@@ -22,7 +22,7 @@ type Event = {
         [key: string]: string | number | boolean | null | undefined;
     } | null;
     created_at: string;
-    sessionInfo?: {
+    session_info?: {
         sessionId?: string;
         visitCount?: number;
         lastSeenAt?: number;
@@ -30,7 +30,7 @@ type Event = {
         referrer?: string | null;
         entryPage?: string | null;
     };
-    deviceInfo?: {
+    device_info?: {
         userAgent?: string;
         language?: string;
         screenSize?: string;
@@ -380,7 +380,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                             </div>
                         </div>
 
-                        {selectedEvent.sessionInfo && (
+                        {selectedEvent.session_info && (
                             <div className="mb-4">
                                 <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
                                     Session Information
@@ -391,7 +391,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             Session ID
                                         </p>
                                         <p className="font-mono text-sm">
-                                            {selectedEvent.sessionInfo
+                                            {selectedEvent.session_info
                                                 .sessionId || "N/A"}
                                         </p>
                                     </div>
@@ -400,7 +400,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             Visit Count
                                         </p>
                                         <p>
-                                            {selectedEvent.sessionInfo
+                                            {selectedEvent.session_info
                                                 .visitCount || "N/A"}
                                         </p>
                                     </div>
@@ -409,10 +409,10 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             First Seen
                                         </p>
                                         <p>
-                                            {selectedEvent.sessionInfo
+                                            {selectedEvent.session_info
                                                 .firstSeenAt
                                                 ? new Date(
-                                                      selectedEvent.sessionInfo.firstSeenAt
+                                                      selectedEvent.session_info.firstSeenAt
                                                   ).toLocaleString()
                                                 : "N/A"}
                                         </p>
@@ -422,10 +422,10 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             Last Seen
                                         </p>
                                         <p>
-                                            {selectedEvent.sessionInfo
+                                            {selectedEvent.session_info
                                                 .lastSeenAt
                                                 ? new Date(
-                                                      selectedEvent.sessionInfo.lastSeenAt
+                                                      selectedEvent.session_info.lastSeenAt
                                                   ).toLocaleString()
                                                 : "N/A"}
                                         </p>
@@ -435,7 +435,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             Entry Page
                                         </p>
                                         <p className="truncate">
-                                            {selectedEvent.sessionInfo
+                                            {selectedEvent.session_info
                                                 .entryPage || "N/A"}
                                         </p>
                                     </div>
@@ -444,7 +444,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             Referrer
                                         </p>
                                         <p className="truncate">
-                                            {selectedEvent.sessionInfo
+                                            {selectedEvent.session_info
                                                 .referrer || "N/A"}
                                         </p>
                                     </div>
@@ -452,59 +452,59 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                             </div>
                         )}
 
-                        {selectedEvent.deviceInfo && (
+                        {selectedEvent.device_info && (
                             <div className="mb-4">
                                 <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
                                     Device Information
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4 mb-3">
-                                    {selectedEvent.deviceInfo.userAgent && (
+                                    {selectedEvent.device_info.userAgent && (
                                         <div>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                                 User Agent
                                             </p>
                                             <p className="text-sm truncate">
                                                 {
-                                                    selectedEvent.deviceInfo
+                                                    selectedEvent.device_info
                                                         .userAgent
                                                 }
                                             </p>
                                         </div>
                                     )}
-                                    {selectedEvent.deviceInfo.platform && (
+                                    {selectedEvent.device_info.platform && (
                                         <div>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                                 Platform
                                             </p>
                                             <p>
                                                 {
-                                                    selectedEvent.deviceInfo
+                                                    selectedEvent.device_info
                                                         .platform
                                                 }
                                             </p>
                                         </div>
                                     )}
-                                    {selectedEvent.deviceInfo.language && (
+                                    {selectedEvent.device_info.language && (
                                         <div>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                                 Language
                                             </p>
                                             <p>
                                                 {
-                                                    selectedEvent.deviceInfo
+                                                    selectedEvent.device_info
                                                         .language
                                                 }
                                             </p>
                                         </div>
                                     )}
-                                    {selectedEvent.deviceInfo.screenSize && (
+                                    {selectedEvent.device_info.screenSize && (
                                         <div>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                                 Screen Size
                                             </p>
                                             <p>
                                                 {
-                                                    selectedEvent.deviceInfo
+                                                    selectedEvent.device_info
                                                         .screenSize
                                                 }
                                             </p>
@@ -512,7 +512,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                     )}
                                 </div>
 
-                                {Object.keys(selectedEvent.deviceInfo).length >
+                                {Object.keys(selectedEvent.device_info).length >
                                     4 && (
                                     <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg overflow-x-auto">
                                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
@@ -522,7 +522,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                             {JSON.stringify(
                                                 Object.fromEntries(
                                                     Object.entries(
-                                                        selectedEvent.deviceInfo
+                                                        selectedEvent.device_info
                                                     ).filter(
                                                         ([key]) =>
                                                             ![
