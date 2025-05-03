@@ -206,17 +206,22 @@ export default function HomepageAnalytics() {
                                 <p className="text-2xl font-bold">
                                     {hourlyData.every((val) => val === 0)
                                         ? "N/A"
-                                        : (() => {
-                                              const peakHour =
-                                                  hourlyData.indexOf(
-                                                      Math.max(...hourlyData)
-                                                  );
-                                              const ampm =
-                                                  peakHour >= 12 ? "PM" : "AM";
-                                              const hour12 =
-                                                  peakHour % 12 || 12;
-                                              return `${hour12} ${ampm}`;
-                                          })()}
+                                        : new Date(
+                                              new Date().setHours(
+                                                  (24 +
+                                                      new Date().getHours() -
+                                                      (23 -
+                                                          hourlyData.indexOf(
+                                                              Math.max(
+                                                                  ...hourlyData
+                                                              )
+                                                          ))) %
+                                                      24
+                                              )
+                                          ).toLocaleTimeString("en-US", {
+                                              hour: "numeric",
+                                              hour12: true,
+                                          })}
                                 </p>
                             </div>
                             <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-100 dark:border-purple-800">
@@ -265,8 +270,23 @@ export default function HomepageAnalytics() {
                                     }}
                                 >
                                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
-                                        {formatRelativeHour(23 - hour)} -{" "}
-                                        {count} clicks
+                                        {(() => {
+                                            const actualHour =
+                                                (24 +
+                                                    new Date().getHours() -
+                                                    (23 - hour)) %
+                                                24;
+                                            const hour12 =
+                                                actualHour === 0
+                                                    ? 12
+                                                    : actualHour > 12
+                                                    ? actualHour - 12
+                                                    : actualHour;
+                                            const ampm =
+                                                actualHour >= 12 ? "PM" : "AM";
+                                            return `${hour12} ${ampm}`;
+                                        })()}{" "}
+                                        - {count} clicks
                                         {hour === 23 && " (incomplete)"}
                                     </div>
                                 </div>
