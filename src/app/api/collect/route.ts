@@ -6,6 +6,13 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// CORS headers to allow all origins
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "X-Pathing-API-Key, Content-Type",
+};
+
 export async function POST(req: NextRequest) {
     try {
         // Get the API key from headers
@@ -19,7 +26,10 @@ export async function POST(req: NextRequest) {
                 }),
                 {
                     status: 401,
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...corsHeaders,
+                    },
                 }
             );
         }
@@ -39,7 +49,10 @@ export async function POST(req: NextRequest) {
                 }),
                 {
                     status: 401,
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...corsHeaders,
+                    },
                 }
             );
         }
@@ -53,7 +66,10 @@ export async function POST(req: NextRequest) {
                 }),
                 {
                     status: 403,
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...corsHeaders,
+                    },
                 }
             );
         }
@@ -78,7 +94,10 @@ export async function POST(req: NextRequest) {
                 }),
                 {
                     status: 500,
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...corsHeaders,
+                    },
                 }
             );
         }
@@ -91,10 +110,7 @@ export async function POST(req: NextRequest) {
                 status: 200,
                 headers: {
                     "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "POST",
-                    "Access-Control-Allow-Headers":
-                        "X-Pathing-API-Key, Content-Type",
+                    ...corsHeaders,
                 },
             }
         );
@@ -107,7 +123,7 @@ export async function POST(req: NextRequest) {
             }),
             {
                 status: 500,
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", ...corsHeaders },
             }
         );
     }
@@ -117,11 +133,6 @@ export async function POST(req: NextRequest) {
 export async function OPTIONS() {
     return new Response(null, {
         status: 204,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST",
-            "Access-Control-Allow-Headers": "X-Pathing-API-Key, Content-Type",
-            "Access-Control-Max-Age": "86400",
-        },
+        headers: corsHeaders,
     });
 }
