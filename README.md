@@ -17,7 +17,7 @@ A privacy-first web analytics platform that helps you understand user journeys w
 3. Add the JavaScript snippet to your website:
 
 ```html
-<script src="https://pathing.cc/api/collect/js" pathing-api-key="YOUR_API_KEY"></script>
+<script src="https://pathing.cc/pathing.js" pathing-api-key="YOUR_API_KEY"></script>
 ```
 
 Page views are tracked automatically. Track custom events with:

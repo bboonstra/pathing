@@ -10,35 +10,27 @@ import {
     ClipboardIcon,
 } from "@heroicons/react/24/solid";
 import { supabase } from "@/lib/supabase";
-
-// Add pathing type to global Window interface
-declare global {
-    interface Window {
-        pathing?: {
-            init: () => void;
-            track: (
-                type: string,
-                payload: Record<string, unknown>
-            ) => Promise<{ success: boolean; error?: string }>;
-            publicKey: string | null;
-        };
-    }
-}
+import { pathing } from "pathingjs";
 
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [codeSnippet, setCodeSnippet] = useState(
-        '<script src="/collect.js"></script>'
+        '<script src="/pathing.js"></script>'
     );
+    // Reference to the button
+    const [demoButtonRef, setDemoButtonRef] =
+        useState<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
             setCodeSnippet(
-                `<script src="${window.location.origin}/collect/js" pathing-api-key="API_KEY"></script>`
+                `<script src="${window.location.origin}/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>`
             );
+
+            // Initialize pathing with API key when used as npm package
+            pathing.init("pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12");
         }
     }, []);
 
@@ -56,58 +48,17 @@ export default function Home() {
         };
     }, []);
 
-    // Load the pathing script when the component mounts
+    // Use pathing.link.button when the demo button is available
     useEffect(() => {
-        // Only load if it's not already in the DOM
-        if (
-            typeof window !== "undefined" &&
-            !document.querySelector('script[src="/collect/js"]')
-        ) {
-            const script = document.createElement("script");
-            script.src = "/api/collect/js";
-            script.setAttribute(
-                "pathing-api-key",
-                "pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12"
-            );
-            script.async = true;
-            script.defer = true;
-            document.body.appendChild(script);
+        if (demoButtonRef) {
+            // Link the button to an analytics event
+            pathing.link.button(demoButtonRef, {
+                location: "homepage",
+                action: "demo_click",
+                buttonId: "demo-button",
+            });
         }
-    }, []);
-
-    async function sendDemoEvent() {
-        setLoading(true);
-        try {
-            if (typeof window !== "undefined" && window.pathing) {
-                const result = await window.pathing.track("demo", {
-                    action: "clicked demo",
-                });
-                if (result.success) {
-                    setEventSent(true);
-                }
-            } else {
-                console.error("Pathing library not loaded");
-                // Fallback to direct API call if pathing isn't loaded
-                await fetch("/api/collect", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        type: "demo",
-                        payload: { action: "clicked demo" },
-                    }),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Pathing-API-Key":
-                            "pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12",
-                    },
-                });
-                setEventSent(true);
-            }
-        } catch (error) {
-            console.error("Error sending demo event:", error);
-        } finally {
-            setLoading(false);
-        }
-    }
+    }, [demoButtonRef]);
 
     function handleCopy() {
         navigator.clipboard.writeText(codeSnippet);
@@ -250,39 +201,18 @@ export default function Home() {
                 <h2 className="text-2xl font-bold mb-4">See it in action</h2>
                 <div className="flex justify-center">
                     <button
+                        ref={setDemoButtonRef}
                         className={`px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 ${
                             eventSent ? "scale-105" : ""
                         }`}
-                        onClick={sendDemoEvent}
-                        disabled={loading || eventSent}
+                        id="demo-button"
+                        onClick={() => setEventSent(true)}
+                        disabled={eventSent}
                     >
                         {eventSent ? (
                             <span className="flex items-center gap-2">
                                 <CheckCircleIcon className="w-6 h-6 animate-pop" />{" "}
                                 Event Sent!
-                            </span>
-                        ) : loading ? (
-                            <span className="flex items-center gap-2">
-                                <svg
-                                    className="w-5 h-5 animate-spin"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8v8z"
-                                    ></path>
-                                </svg>{" "}
-                                Sending...
                             </span>
                         ) : (
                             <span className="flex items-center gap-2">
@@ -295,6 +225,28 @@ export default function Home() {
                     {eventSent
                         ? "Demo event sent to /api/collect. Check your dashboard!"
                         : "Click to send a test event to your analytics backend."}
+                </div>
+            </section>
+
+            {/* Documentation CTA */}
+            <section className="max-w-4xl mx-auto px-4 mb-20">
+                <div className="backdrop-blur-lg bg-white/70 dark:bg-white/10 rounded-2xl p-8 sm:p-10 shadow-xl border border-white/40 dark:border-white/10 flex flex-col items-center text-center">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                        Ready to dive deeper?
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mb-8">
+                        Our comprehensive documentation covers everything from
+                        basic setup to advanced tracking strategies. Learn how
+                        to make the most of Pathing with our code examples, API
+                        reference, and best practices.
+                    </p>
+                    <a
+                        href="/docs"
+                        className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-10 py-4 rounded-full shadow-xl transition-all text-lg flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                    >
+                        Explore the Docs{" "}
+                        <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </a>
                 </div>
             </section>
 

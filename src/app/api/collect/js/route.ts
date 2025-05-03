@@ -4,8 +4,8 @@ import path from "path";
 
 export async function GET() {
     try {
-        // Read the collect.js file from the public directory
-        const filePath = path.resolve(process.cwd(), "public", "collect.js");
+        // Read the pathing.js file from the public directory
+        const filePath = path.resolve(process.cwd(), "public", "pathing.js");
         const fileContent = readFileSync(filePath, "utf8");
 
         // Return the JavaScript file with proper MIME type
@@ -20,7 +20,7 @@ export async function GET() {
             },
         });
     } catch (error) {
-        console.error("Error serving collect.js:", error);
+        console.error("Error serving pathing.js:", error);
         return new Response("Error serving script", { status: 500 });
     }
 }

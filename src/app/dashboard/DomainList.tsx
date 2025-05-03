@@ -169,7 +169,7 @@ export default function DomainList() {
     }
 
     function getSnippet(publicKey: string) {
-        return `<script src="${window.location.origin}/collect/js" pathing-api-key="${publicKey}"></script>`;
+        return `<script src="${window.location.origin}/pathing.js" pathing-api-key="${publicKey}"></script>`;
     }
 
     return (

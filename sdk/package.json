@@ -1,0 +1,41 @@
+{
+    "name": "pathingjs",
+    "version": "0.1.3",
+    "main": "dist/pathing.min.js",
+    "module": "dist/pathing.esm.js",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/types/index.d.ts",
+                "default": "./dist/pathing.esm.js"
+            },
+            "require": {
+                "types": "./dist/types/index.d.ts",
+                "default": "./dist/pathing.min.js"
+            }
+        }
+    },
+    "types": "dist/types/index.d.ts",
+    "type": "module",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "node build.js && tsc --emitDeclarationOnly --outDir dist/types",
+        "copy": "cp dist/pathing.min.js ../public/pathing.js && cp dist/pathing.min.js ../public/pathing.min.js",
+        "sdk": "npm version patch && npm run build && npm run copy && npm publish"
+    },
+    "description": "Enhanced analytics tracking library with comprehensive device, browser, and engagement data collection",
+    "keywords": [
+        "analytics",
+        "tracking",
+        "events",
+        "device-detection",
+        "performance-monitoring",
+        "user-engagement"
+    ],
+    "devDependencies": {
+        "esbuild": "^0.19.0",
+        "typescript": "^5.0.0"
+    }
+}

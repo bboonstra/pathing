@@ -22,6 +22,28 @@ type Event = {
         [key: string]: string | number | boolean | null | undefined;
     } | null;
     created_at: string;
+    sessionInfo?: {
+        sessionId?: string;
+        visitCount?: number;
+        lastSeenAt?: number;
+        firstSeenAt?: number;
+        referrer?: string | null;
+        entryPage?: string | null;
+    };
+    deviceInfo?: {
+        userAgent?: string;
+        language?: string;
+        screenSize?: string;
+        platform?: string;
+        [key: string]: string | number | boolean | undefined;
+    };
+    metadata?: Record<
+        string,
+        {
+            label: string;
+            key: string;
+        }
+    >;
 };
 
 interface DomainAnalyticsProps {
@@ -37,6 +59,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [timeFrame, setTimeFrame] = useState<TimeFrame>("24h");
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
     // Fetch domains on component mount
     useEffect(() => {
@@ -82,14 +105,6 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                     .eq("domain_id", selectedDomain)
                     .order("created_at", { ascending: false })
                     .limit(100);
-                console.log("Supabase query:", {
-                    table: "events",
-                    domain_id: selectedDomain,
-                    order: "created_at",
-                    ascending: false,
-                    limit: 100,
-                });
-                console.log("Fetched events:", data);
 
                 if (error) throw error;
                 setEvents(data || []);
@@ -251,7 +266,10 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                                         {events.slice(0, 5).map((event) => (
                                             <tr
                                                 key={event.id}
-                                                className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                                                onClick={() =>
+                                                    setSelectedEvent(event)
+                                                }
                                             >
                                                 <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                                                     {new Date(
@@ -284,6 +302,286 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                         )}
                     </div>
                 </>
+            )}
+
+            {/* Event Details Popup */}
+            {selectedEvent && (
+                <div
+                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                    onClick={() => setSelectedEvent(null)}
+                >
+                    <div
+                        className="bg-white dark:bg-[#23233a] rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">
+                                Event Details
+                            </h3>
+                            <button
+                                onClick={() => setSelectedEvent(null)}
+                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="mb-4">
+                            <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
+                                Basic Information
+                            </h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        Event ID
+                                    </p>
+                                    <p className="font-mono text-sm">
+                                        {selectedEvent.id}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        Event Type
+                                    </p>
+                                    <p className="font-medium">
+                                        {selectedEvent.type}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        Created At
+                                    </p>
+                                    <p>
+                                        {new Date(
+                                            selectedEvent.created_at
+                                        ).toLocaleString()}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        Domain ID
+                                    </p>
+                                    <p className="font-mono text-sm">
+                                        {selectedEvent.domain_id}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {selectedEvent.sessionInfo && (
+                            <div className="mb-4">
+                                <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
+                                    Session Information
+                                </h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Session ID
+                                        </p>
+                                        <p className="font-mono text-sm">
+                                            {selectedEvent.sessionInfo
+                                                .sessionId || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Visit Count
+                                        </p>
+                                        <p>
+                                            {selectedEvent.sessionInfo
+                                                .visitCount || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            First Seen
+                                        </p>
+                                        <p>
+                                            {selectedEvent.sessionInfo
+                                                .firstSeenAt
+                                                ? new Date(
+                                                      selectedEvent.sessionInfo.firstSeenAt
+                                                  ).toLocaleString()
+                                                : "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Last Seen
+                                        </p>
+                                        <p>
+                                            {selectedEvent.sessionInfo
+                                                .lastSeenAt
+                                                ? new Date(
+                                                      selectedEvent.sessionInfo.lastSeenAt
+                                                  ).toLocaleString()
+                                                : "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Entry Page
+                                        </p>
+                                        <p className="truncate">
+                                            {selectedEvent.sessionInfo
+                                                .entryPage || "N/A"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Referrer
+                                        </p>
+                                        <p className="truncate">
+                                            {selectedEvent.sessionInfo
+                                                .referrer || "N/A"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {selectedEvent.deviceInfo && (
+                            <div className="mb-4">
+                                <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
+                                    Device Information
+                                </h4>
+                                <div className="grid grid-cols-2 gap-4 mb-3">
+                                    {selectedEvent.deviceInfo.userAgent && (
+                                        <div>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                User Agent
+                                            </p>
+                                            <p className="text-sm truncate">
+                                                {
+                                                    selectedEvent.deviceInfo
+                                                        .userAgent
+                                                }
+                                            </p>
+                                        </div>
+                                    )}
+                                    {selectedEvent.deviceInfo.platform && (
+                                        <div>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                Platform
+                                            </p>
+                                            <p>
+                                                {
+                                                    selectedEvent.deviceInfo
+                                                        .platform
+                                                }
+                                            </p>
+                                        </div>
+                                    )}
+                                    {selectedEvent.deviceInfo.language && (
+                                        <div>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                Language
+                                            </p>
+                                            <p>
+                                                {
+                                                    selectedEvent.deviceInfo
+                                                        .language
+                                                }
+                                            </p>
+                                        </div>
+                                    )}
+                                    {selectedEvent.deviceInfo.screenSize && (
+                                        <div>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                Screen Size
+                                            </p>
+                                            <p>
+                                                {
+                                                    selectedEvent.deviceInfo
+                                                        .screenSize
+                                                }
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {Object.keys(selectedEvent.deviceInfo).length >
+                                    4 && (
+                                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg overflow-x-auto">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                                            Additional Device Info
+                                        </p>
+                                        <pre className="font-mono text-xs">
+                                            {JSON.stringify(
+                                                Object.fromEntries(
+                                                    Object.entries(
+                                                        selectedEvent.deviceInfo
+                                                    ).filter(
+                                                        ([key]) =>
+                                                            ![
+                                                                "userAgent",
+                                                                "platform",
+                                                                "language",
+                                                                "screenSize",
+                                                            ].includes(key)
+                                                    )
+                                                ),
+                                                null,
+                                                2
+                                            )}
+                                        </pre>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="mb-4">
+                            <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
+                                Payload
+                            </h4>
+                            <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                                {JSON.stringify(
+                                    selectedEvent.payload,
+                                    null,
+                                    2
+                                ) || "null"}
+                            </pre>
+                        </div>
+
+                        {selectedEvent.metadata &&
+                            Object.keys(selectedEvent.metadata).length > 0 && (
+                                <div className="mb-4">
+                                    <h4 className="text-md font-medium border-b pb-2 mb-3 border-gray-200 dark:border-gray-700">
+                                        Metadata
+                                    </h4>
+                                    <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                                        {JSON.stringify(
+                                            selectedEvent.metadata,
+                                            null,
+                                            2
+                                        )}
+                                    </pre>
+                                </div>
+                            )}
+
+                        <div className="mt-6 flex justify-end">
+                            <button
+                                onClick={() => setSelectedEvent(null)}
+                                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
