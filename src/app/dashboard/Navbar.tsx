@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import SignOutButton from "./SignOutButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { HomeIcon, PlusIcon, ChartBarIcon } from "@heroicons/react/24/solid";
+import {
+    HomeIcon,
+    PlusIcon,
+    ChartBarIcon,
+    BookOpenIcon,
+} from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
@@ -57,6 +62,12 @@ export default function Navbar() {
                                 className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                             >
                                 <PlusIcon className="w-5 h-5" />
+                            </Link>
+                            <Link
+                                href="/docs"
+                                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            >
+                                <BookOpenIcon className="w-5 h-5" />
                             </Link>
                         </nav>
                         <SignOutButton />

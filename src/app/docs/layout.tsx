@@ -9,6 +9,7 @@ import {
     BeakerIcon,
     Bars3Icon,
     XMarkIcon,
+    HomeIcon,
 } from "@heroicons/react/24/solid";
 
 export default function DocsLayout({
@@ -82,6 +83,13 @@ export default function DocsLayout({
                                 <BeakerIcon className="w-5 h-5" />
                                 <span>Examples</span>
                             </Link>
+                            <Link
+                                href="/dashboard"
+                                className="p-2 rounded-lg flex items-center gap-1.5 transition-colors text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            >
+                                <HomeIcon className="w-5 h-5" />
+                                <span>Dashboard</span>
+                            </Link>
                         </div>
 
                         {/* Mobile menu button */}
@@ -150,6 +158,14 @@ export default function DocsLayout({
                             >
                                 <BeakerIcon className="w-5 h-5" />
                                 <span>Examples</span>
+                            </Link>
+                            <Link
+                                href="/dashboard"
+                                className="block p-3 rounded-lg flex items-center gap-1.5 transition-colors text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                <HomeIcon className="w-5 h-5" />
+                                <span>Dashboard</span>
                             </Link>
                         </div>
                     </div>
