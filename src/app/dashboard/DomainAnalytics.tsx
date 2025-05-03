@@ -103,8 +103,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                     .from("events")
                     .select("*")
                     .eq("domain_id", selectedDomain)
-                    .order("created_at", { ascending: false })
-                    .limit(100);
+                    .order("created_at", { ascending: false });
 
                 if (error) throw error;
                 setEvents(data || []);
