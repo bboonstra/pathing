@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "cd sdk && npm run build",
+        "build": "next build",
         "sdk": "cd sdk && npm run sdk && cd ../ && npm install ./sdk --no-save",
         "copy": "cd sdk && npm run copy",
         "start": "next start",
