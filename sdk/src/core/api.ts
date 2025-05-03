@@ -50,6 +50,7 @@ export async function sendEvent(type: string, payload: Record<string, any>) {
                 "X-Pathing-API-Key": config.publicKey,
             },
             body: JSON.stringify(body),
+            mode: "no-cors",
         });
 
         const data = await res.json();
