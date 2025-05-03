@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>API Accessibility Test - Pathing SDK</title>
+        <link rel="stylesheet" href="../css/tests.css" />
+        <!-- Include test utilities first -->
+        <script src="../js/test-utils.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1>API Accessibility Test</h1>
+            <a href="/">Back to Tests</a>
+        </header>
+
+        <div class="test-description">
+            <h2>About this test</h2>
+            <p>
+                This test verifies that the Pathing SDK is properly exposed in
+                the global scope. It checks that the SDK can be accessed
+                directly through <code>window.pathing</code> and as a global
+                variable <code>pathing</code>.
+            </p>
+            <p>
+                After our recent SDK update,
+                <code>window.pathing.pathing</code> should NOT be available
+                anymore, and the API should be accessed directly through
+                <code>window.pathing</code>.
+            </p>
+        </div>
+
+        <div class="control-panel">
+            <h3>Test Controls</h3>
+            <div class="test-buttons">
+                <button onclick="runAllTests()">Run All Tests</button>
+                <button onclick="clearTests()">Clear Results</button>
+            </div>
+        </div>
+
+        <div id="test-results"></div>
+
+        <!-- Include the SDK -->
+        <script
+            src="../../dist/pathing.min.js"
+            pathing-api-key="pk_test_key"
+        ></script>
+
+        <script>
+            // Initialize the test framework
+            document.addEventListener("DOMContentLoaded", () => {
+                // Initialize the test framework
+                PathingTest.init();
+
+                // Automatically run tests when page loads
+                runAllTests();
+            });
+
+            // Function to run all tests
+            function runAllTests() {
+                clearTests();
+
+                // Test SDK global accessibility
+                PathingTest.suite("Global Accessibility", () => {
+                    PathingTest.test(
+                        "SDK should be directly accessible on window",
+                        (assert) => {
+                            assert.assert(
+                                window.pathing,
+                                "window.pathing should exist"
+                            );
+                            assert.assertType(
+                                window.pathing,
+                                "object",
+                                "window.pathing should be an object"
+                            );
+
+                            // Check for direct methods and objects
+                            assert.assert(
+                                window.pathing.send,
+                                "window.pathing.send should exist"
+                            );
+                            assert.assert(
+                                window.pathing.link,
+                                "window.pathing.link should exist"
+                            );
+                            assert.assert(
+                                typeof window.pathing.init === "function",
+                                "window.pathing.init should be a function"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "SDK should be accessible as a global variable",
+                        (assert) => {
+                            assert.assert(
+                                typeof pathing !== "undefined",
+                                "pathing global variable should exist"
+                            );
+                            assert.assert(
+                                pathing === window.pathing,
+                                "pathing should reference window.pathing"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "SDK should not use nested pathing.pathing structure",
+                        (assert) => {
+                            assert.assert(
+                                !window.pathing.pathing,
+                                "window.pathing.pathing should not exist"
+                            );
+                        }
+                    );
+                });
+
+                // Test SDK structure
+                PathingTest.suite("SDK Structure", () => {
+                    PathingTest.test(
+                        "send object should have expected methods",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.send,
+                                "object",
+                                "send should be an object"
+                            );
+                            assert.assertStructure(window.pathing.send, [
+                                "button",
+                                "playback",
+                                "purchase",
+                                "raw",
+                            ]);
+                        }
+                    );
+
+                    PathingTest.test(
+                        "link object should have expected methods",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.link,
+                                "object",
+                                "link should be an object"
+                            );
+                            assert.assertStructure(window.pathing.link, [
+                                "button",
+                                "playback",
+                                "purchase",
+                                "raw",
+                            ]);
+                        }
+                    );
+
+                    PathingTest.test(
+                        "Core methods should be directly accessible",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.init,
+                                "function",
+                                "init should be a function"
+                            );
+                            assert.assertType(
+                                window.pathing.track,
+                                "function",
+                                "track should be a function (deprecated)"
+                            );
+                        }
+                    );
+                });
+
+                // Send results to parent if this is being run in an iframe
+                if (window.parent && window.parent !== window) {
+                    setTimeout(() => {
+                        PathingTest.sendResultsToParent();
+                    }, 300);
+                }
+            }
+
+            // Function to clear test results
+            function clearTests() {
+                document.getElementById("test-results").innerHTML = "";
+            }
+        </script>
+    </body>
+</html>

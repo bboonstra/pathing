@@ -21,7 +21,7 @@ Pathing.js is a lightweight analytics tracking library that helps you understand
 Add the following script tag before the closing `</body>` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pathingjs/dist/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>
+<script src="https://www.pathing.cc/pathing.js" pathing-api-key="YOUR_API_KEY"></script>
 ```
 
 ### Option 2: NPM Package
@@ -47,6 +47,8 @@ pathing.init('pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12');
 ```
 
 ## Usage
+
+When loaded via script tag, the `pathing` object is now available globally as `window.pathing` (or just `pathing` in browser context).
 
 ### Tracking Events
 

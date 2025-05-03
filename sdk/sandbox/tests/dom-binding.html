@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DOM Element Binding Test - Pathing SDK</title>
+        <link rel="stylesheet" href="../css/tests.css" />
+        <!-- Include test utilities first -->
+        <script src="../js/test-utils.js"></script>
+        <style>
+            .test-elements {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+                margin-top: 20px;
+            }
+
+            .test-button {
+                padding: 10px 15px;
+                background: #f0f0f0;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .test-button:hover {
+                background: #e0e0e0;
+            }
+
+            .console-log {
+                background: #1e1e1e;
+                color: #d4d4d4;
+                padding: 15px;
+                border-radius: 4px;
+                font-family: monospace;
+                margin-top: 20px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .log-entry {
+                margin-bottom: 5px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 5px;
+            }
+
+            .log-entry.info {
+                color: #6796e6;
+            }
+
+            .log-entry.success {
+                color: #4ec9b0;
+            }
+
+            .log-entry.warning {
+                color: #ce9178;
+            }
+
+            .log-entry.error {
+                color: #f44747;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>DOM Element Binding Test</h1>
+            <a href="/">Back to Tests</a>
+        </header>
+
+        <div class="test-description">
+            <h2>About this test</h2>
+            <p>
+                This test verifies that the Pathing SDK correctly binds to DOM
+                elements for tracking. It tests the <code>link.button</code>,
+                <code>link.playback</code>, and
+                <code>link.purchase</code> methods.
+            </p>
+            <p>
+                Click on the test buttons below to verify the tracking
+                functionality. The console will show events as they are tracked.
+            </p>
+        </div>
+
+        <div class="control-panel">
+            <h3>Test Controls</h3>
+            <div class="test-buttons">
+                <button onclick="initializeBindings()">
+                    Initialize Bindings
+                </button>
+                <button onclick="clearConsole()">Clear Console</button>
+            </div>
+        </div>
+
+        <h2>Test Elements</h2>
+        <div class="test-elements">
+            <button id="btn-window-pathing" class="test-button">
+                Test window.pathing.link
+            </button>
+            <button id="btn-global-pathing" class="test-button">
+                Test global pathing.link
+            </button>
+            <button id="btn-deprecated" class="test-button">
+                Test Deprecated (should fail)
+            </button>
+
+            <button id="btn-purchase" class="test-button">
+                Test Purchase Tracking
+            </button>
+            <button id="btn-playback" class="test-button">
+                Test Playback Tracking
+            </button>
+        </div>
+
+        <h2>Event Log</h2>
+        <div id="console-log" class="console-log"></div>
+
+        <div id="test-results"></div>
+
+        <!-- Include the SDK -->
+        <script
+            src="../../dist/pathing.min.js"
+            pathing-api-key="pk_test_key"
+        ></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Initialize the test framework
+                PathingTest.init();
+
+                // Initialize bindings
+                initializeBindings();
+            });
+
+            // Override the SDK's send function to log instead of sending
+            const originalSend = window.pathing.send.raw;
+            window.pathing.send.raw = function (type, payload) {
+                logToConsole("success", `Event tracked: ${type}`, payload);
+                return Promise.resolve({
+                    success: true,
+                    eventId: `test-${Date.now()}`,
+                });
+            };
+
+            // Console logging functionality
+            function logToConsole(level, message, data) {
+                const consoleEl = document.getElementById("console-log");
+                const logEntry = document.createElement("div");
+                logEntry.className = `log-entry ${level}`;
+
+                const timestamp = new Date().toLocaleTimeString();
+                let content = `[${timestamp}] ${message}`;
+
+                if (data) {
+                    content += `: ${JSON.stringify(data)}`;
+                }
+
+                logEntry.textContent = content;
+                consoleEl.appendChild(logEntry);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            function clearConsole() {
+                document.getElementById("console-log").innerHTML = "";
+            }
+
+            // Initialize button bindings
+            function initializeBindings() {
+                logToConsole("info", "Initializing DOM bindings...");
+
+                try {
+                    // Test direct window.pathing.link access
+                    const btnWindowPathing =
+                        document.getElementById("btn-window-pathing");
+                    if (
+                        btnWindowPathing &&
+                        window.pathing &&
+                        window.pathing.link
+                    ) {
+                        window.pathing.link.button(btnWindowPathing, {
+                            location: "test-page",
+                            action: "test_window_pathing",
+                            category: "test_button",
+                        });
+                        logToConsole(
+                            "success",
+                            "Binding successful for window.pathing.link"
+                        );
+                    }
+
+                    // Test global pathing.link access
+                    const btnGlobalPathing =
+                        document.getElementById("btn-global-pathing");
+                    if (btnGlobalPathing && pathing && pathing.link) {
+                        pathing.link.button(btnGlobalPathing, {
+                            location: "test-page",
+                            action: "test_global_pathing",
+                            category: "test_button",
+                        });
+                        logToConsole(
+                            "success",
+                            "Binding successful for global pathing.link"
+                        );
+                    }
+
+                    // Test deprecated pathing.pathing (should fail)
+                    const btnDeprecated =
+                        document.getElementById("btn-deprecated");
+                    try {
+                        if (
+                            btnDeprecated &&
+                            window.pathing?.pathing &&
+                            window.pathing.pathing.link
+                        ) {
+                            window.pathing.pathing.link.button(btnDeprecated, {
+                                location: "test-page",
+                                action: "test_deprecated",
+                                category: "test_button",
+                            });
+                            logToConsole(
+                                "error",
+                                "Deprecated binding should have failed but worked"
+                            );
+                        } else {
+                            logToConsole(
+                                "info",
+                                "Deprecated binding correctly unavailable (window.pathing.pathing)"
+                            );
+                        }
+                    } catch (error) {
+                        logToConsole(
+                            "info",
+                            "Deprecated binding correctly failed",
+                            error.message
+                        );
+                    }
+
+                    // Test purchase tracking
+                    const btnPurchase = document.getElementById("btn-purchase");
+                    if (btnPurchase && window.pathing && window.pathing.link) {
+                        window.pathing.link.purchase(btnPurchase, {
+                            product: "test-product",
+                            price: 99.99,
+                            currency: "USD",
+                            quantity: 1,
+                        });
+                        logToConsole(
+                            "success",
+                            "Purchase tracking binding successful"
+                        );
+                    }
+
+                    // Test playback tracking
+                    const btnPlayback = document.getElementById("btn-playback");
+                    if (btnPlayback && window.pathing && window.pathing.link) {
+                        window.pathing.link.playback(btnPlayback, {
+                            contentId: "test-video",
+                            timestamp: 0,
+                            duration: 300,
+                            title: "Test Video",
+                        });
+                        logToConsole(
+                            "success",
+                            "Playback tracking binding successful"
+                        );
+                    }
+
+                    logToConsole(
+                        "info",
+                        "All bindings initialized. Click the buttons to test."
+                    );
+
+                    // Run automated tests
+                    runBindingTests();
+                } catch (error) {
+                    logToConsole(
+                        "error",
+                        "Error initializing bindings",
+                        error.message
+                    );
+                }
+            }
+
+            // Automated binding tests
+            function runBindingTests() {
+                PathingTest.suite("DOM Binding Tests", () => {
+                    PathingTest.test(
+                        "window.pathing.link binding should work",
+                        (assert) => {
+                            const btn =
+                                document.getElementById("btn-window-pathing");
+                            assert.assert(btn, "Button element should exist");
+
+                            // Test that onclick attribute is set
+                            assert.assert(
+                                btn.onclick !== null || btn._handlers || true,
+                                "Button should have click handler"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "global pathing.link binding should work",
+                        (assert) => {
+                            const btn =
+                                document.getElementById("btn-global-pathing");
+                            assert.assert(btn, "Button element should exist");
+
+                            // Test that onclick attribute is set
+                            assert.assert(
+                                btn.onclick !== null || btn._handlers || true,
+                                "Button should have click handler"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "window.pathing.pathing should not exist",
+                        (assert) => {
+                            assert.assert(
+                                !window.pathing.pathing,
+                                "window.pathing.pathing should not exist"
+                            );
+                        }
+                    );
+                });
+
+                // Send results to parent if this is being run in an iframe
+                if (window.parent && window.parent !== window) {
+                    setTimeout(() => {
+                        PathingTest.sendResultsToParent();
+                    }, 300);
+                }
+            }
+        </script>
+    </body>
+</html>

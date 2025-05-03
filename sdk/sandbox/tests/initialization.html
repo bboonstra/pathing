@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SDK Initialization Test - Pathing SDK</title>
+        <link rel="stylesheet" href="../css/tests.css" />
+        <!-- Include test utilities first -->
+        <script src="../js/test-utils.js"></script>
+        <style>
+            .console-log {
+                background: #1e1e1e;
+                color: #d4d4d4;
+                padding: 15px;
+                border-radius: 4px;
+                font-family: monospace;
+                margin-top: 20px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .log-entry {
+                margin-bottom: 5px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 5px;
+            }
+
+            .log-entry.info {
+                color: #6796e6;
+            }
+
+            .log-entry.success {
+                color: #4ec9b0;
+            }
+
+            .log-entry.warning {
+                color: #ce9178;
+            }
+
+            .log-entry.error {
+                color: #f44747;
+            }
+
+            .test-form {
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            input,
+            select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            #init-options {
+                width: 100%;
+                height: 100px;
+                font-family: monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>SDK Initialization Test</h1>
+            <a href="/">Back to Tests</a>
+        </header>
+
+        <div class="test-description">
+            <h2>About this test</h2>
+            <p>
+                This test verifies that the Pathing SDK is properly initialized
+                with an API key. It checks initialization via script tag
+                attribute, direct programmatic initialization, and pageview
+                tracking.
+            </p>
+            <p>
+                You can test initialization with different API keys and options.
+            </p>
+        </div>
+
+        <div class="control-panel">
+            <h3>Test Controls</h3>
+            <div class="test-buttons">
+                <button onclick="runInitTests()">
+                    Run Initialization Tests
+                </button>
+                <button onclick="clearConsole()">Clear Console</button>
+            </div>
+        </div>
+
+        <h2>SDK Reinitialization</h2>
+        <div class="test-form">
+            <h3>Initialize with API Key</h3>
+            <div class="form-group">
+                <label for="api-key">API Key</label>
+                <input type="text" id="api-key" value="pk_test_key_manual" />
+            </div>
+            <div class="form-group">
+                <label for="init-options">Options (JSON, optional)</label>
+                <textarea id="init-options">{"debugMode": true}</textarea>
+            </div>
+            <button onclick="initializeWithKey()">Reinitialize SDK</button>
+        </div>
+
+        <h2>Event Log</h2>
+        <div id="console-log" class="console-log"></div>
+
+        <div id="test-results"></div>
+
+        <!-- Include the SDK WITHOUT an API key to test programmatic initialization -->
+        <script id="sdk-script" src="../../dist/pathing.min.js"></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Initialize the test framework
+                PathingTest.init();
+
+                // Override the SDK's send function to log instead of sending
+                const originalSend = window.pathing.send.raw;
+                window.pathing.send.raw = function (type, payload) {
+                    logToConsole("success", `Event tracked: ${type}`, payload);
+                    return Promise.resolve({
+                        success: true,
+                        eventId: `test-${Date.now()}`,
+                    });
+                };
+
+                // Log SDK loading state
+                if (window.pathing) {
+                    logToConsole("info", "SDK loaded without API key");
+                } else {
+                    logToConsole("error", "SDK failed to load");
+                }
+
+                // Run initialization tests
+                runInitTests();
+            });
+
+            // Console logging functionality
+            function logToConsole(level, message, data) {
+                const consoleEl = document.getElementById("console-log");
+                const logEntry = document.createElement("div");
+                logEntry.className = `log-entry ${level}`;
+
+                const timestamp = new Date().toLocaleTimeString();
+                let content = `[${timestamp}] ${message}`;
+
+                if (data) {
+                    content += `: ${JSON.stringify(data)}`;
+                }
+
+                logEntry.textContent = content;
+                consoleEl.appendChild(logEntry);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            function clearConsole() {
+                document.getElementById("console-log").innerHTML = "";
+            }
+
+            // Manually initialize the SDK with an API key
+            function initializeWithKey() {
+                const apiKey = document.getElementById("api-key").value;
+                const optionsStr =
+                    document.getElementById("init-options").value;
+
+                try {
+                    let options = {};
+                    if (optionsStr.trim()) {
+                        options = JSON.parse(optionsStr);
+                    }
+
+                    // Call init with the provided key
+                    window.pathing.init(apiKey);
+
+                    logToConsole("success", "SDK initialized with API key", {
+                        apiKey,
+                        options,
+                    });
+
+                    // Test by sending a basic event
+                    window.pathing.send.raw("test_after_init", {
+                        timestamp: Date.now(),
+                        initialized_with: apiKey,
+                    });
+                } catch (error) {
+                    logToConsole(
+                        "error",
+                        "Error initializing SDK",
+                        error.message
+                    );
+                }
+            }
+
+            // Test changing the API key via script attribute
+            function changeScriptAttribute() {
+                const scriptTag = document.getElementById("sdk-script");
+                const newKey = "pk_test_key_attribute_" + Date.now();
+                scriptTag.setAttribute("pathing-api-key", newKey);
+
+                logToConsole("info", "Changed script tag API key attribute", {
+                    newKey,
+                });
+
+                // Need to reload the script for this to take effect
+                logToConsole(
+                    "warning",
+                    "Note: This requires script reload to take effect"
+                );
+            }
+
+            // Run initialization tests
+            function runInitTests() {
+                PathingTest.suite("SDK Initialization Tests", () => {
+                    PathingTest.test(
+                        "window.pathing.init should be a function",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.init,
+                                "function",
+                                "init should be a function"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "SDK should initialize with programmatic API key",
+                        (assert) => {
+                            // First clear any existing key
+                            const testKey = "pk_test_key_" + Date.now();
+
+                            try {
+                                window.pathing.init(testKey);
+                                assert.assert(
+                                    true,
+                                    "SDK initialized without errors"
+                                );
+
+                                // We'd check the internal API key but it's private,
+                                // so we'll just verify it doesn't error
+                            } catch (error) {
+                                assert.assert(
+                                    false,
+                                    `SDK initialization failed: ${error.message}`
+                                );
+                            }
+                        }
+                    );
+                });
+
+                // Send results to parent if this is being run in an iframe
+                if (window.parent && window.parent !== window) {
+                    setTimeout(() => {
+                        PathingTest.sendResultsToParent();
+                    }, 300);
+                }
+            }
+        </script>
+    </body>
+</html>

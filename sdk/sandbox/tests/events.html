@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Event Tracking Test - Pathing SDK</title>
+        <link rel="stylesheet" href="../css/tests.css" />
+        <!-- Include test utilities first -->
+        <script src="../js/test-utils.js"></script>
+        <style>
+            .console-log {
+                background: #1e1e1e;
+                color: #d4d4d4;
+                padding: 15px;
+                border-radius: 4px;
+                font-family: monospace;
+                margin-top: 20px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .log-entry {
+                margin-bottom: 5px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 5px;
+            }
+
+            .log-entry.info {
+                color: #6796e6;
+            }
+
+            .log-entry.success {
+                color: #4ec9b0;
+            }
+
+            .log-entry.warning {
+                color: #ce9178;
+            }
+
+            .log-entry.error {
+                color: #f44747;
+            }
+
+            .test-form {
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            input,
+            select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            .event-buttons {
+                margin-top: 20px;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Event Tracking Test</h1>
+            <a href="/">Back to Tests</a>
+        </header>
+
+        <div class="test-description">
+            <h2>About this test</h2>
+            <p>
+                This test verifies that the Pathing SDK properly tracks
+                different types of events using the direct
+                <code>send</code> methods.
+            </p>
+            <p>
+                Use the controls below to create and send events, then check the
+                console output to verify that the events are properly formatted
+                and tracked.
+            </p>
+        </div>
+
+        <div class="control-panel">
+            <h3>Test Controls</h3>
+            <div class="test-buttons">
+                <button onclick="runBasicTests()">Run Basic Tests</button>
+                <button onclick="clearConsole()">Clear Console</button>
+            </div>
+        </div>
+
+        <h2>Event Creation</h2>
+
+        <!-- Button Event Form -->
+        <div class="test-form">
+            <h3>Button Event</h3>
+            <div class="form-group">
+                <label for="btn-location">Location</label>
+                <input type="text" id="btn-location" value="test-page" />
+            </div>
+            <div class="form-group">
+                <label for="btn-action">Action</label>
+                <input type="text" id="btn-action" value="test_click" />
+            </div>
+            <div class="form-group">
+                <label for="btn-category">Category</label>
+                <input type="text" id="btn-category" value="test_button" />
+            </div>
+            <button onclick="trackButtonEvent()">Track Button Event</button>
+        </div>
+
+        <!-- Purchase Event Form -->
+        <div class="test-form">
+            <h3>Purchase Event</h3>
+            <div class="form-group">
+                <label for="purchase-product">Product</label>
+                <input type="text" id="purchase-product" value="test-product" />
+            </div>
+            <div class="form-group">
+                <label for="purchase-price">Price</label>
+                <input type="number" id="purchase-price" value="99.99" />
+            </div>
+            <div class="form-group">
+                <label for="purchase-currency">Currency</label>
+                <input type="text" id="purchase-currency" value="USD" />
+            </div>
+            <div class="form-group">
+                <label for="purchase-quantity">Quantity</label>
+                <input type="number" id="purchase-quantity" value="1" />
+            </div>
+            <button onclick="trackPurchaseEvent()">Track Purchase Event</button>
+        </div>
+
+        <!-- Playback Event Form -->
+        <div class="test-form">
+            <h3>Playback Event</h3>
+            <div class="form-group">
+                <label for="playback-contentId">Content ID</label>
+                <input type="text" id="playback-contentId" value="test-video" />
+            </div>
+            <div class="form-group">
+                <label for="playback-timestamp">Timestamp (seconds)</label>
+                <input type="number" id="playback-timestamp" value="30" />
+            </div>
+            <div class="form-group">
+                <label for="playback-duration">Duration (seconds)</label>
+                <input type="number" id="playback-duration" value="300" />
+            </div>
+            <div class="form-group">
+                <label for="playback-title">Title</label>
+                <input type="text" id="playback-title" value="Test Video" />
+            </div>
+            <button onclick="trackPlaybackEvent()">Track Playback Event</button>
+        </div>
+
+        <!-- Raw Event Form -->
+        <div class="test-form">
+            <h3>Raw Event</h3>
+            <div class="form-group">
+                <label for="raw-type">Event Type</label>
+                <input type="text" id="raw-type" value="custom_event" />
+            </div>
+            <div class="form-group">
+                <label for="raw-payload">Event Payload (JSON)</label>
+                <input
+                    type="text"
+                    id="raw-payload"
+                    value='{"key1": "value1", "key2": "value2"}'
+                />
+            </div>
+            <button onclick="trackRawEvent()">Track Raw Event</button>
+        </div>
+
+        <h2>Quick Event Tests</h2>
+        <div class="event-buttons">
+            <button
+                onclick="window.pathing.send.button({buttonId: 'quick-test', location: 'test', action: 'click'})"
+            >
+                Quick Button Test
+            </button>
+            <button
+                onclick="window.pathing.send.purchase({product: 'quick-product', price: 9.99, currency: 'USD'})"
+            >
+                Quick Purchase Test
+            </button>
+            <button
+                onclick="window.pathing.send.playback({contentId: 'quick-video', timestamp: 0, duration: 100})"
+            >
+                Quick Playback Test
+            </button>
+            <button
+                onclick="window.pathing.send.raw('quick_test', {data: 'test-data'})"
+            >
+                Quick Raw Event Test
+            </button>
+        </div>
+
+        <h2>Event Log</h2>
+        <div id="console-log" class="console-log"></div>
+
+        <div id="test-results"></div>
+
+        <!-- Include the SDK -->
+        <script
+            src="../../dist/pathing.min.js"
+            pathing-api-key="pk_test_key"
+        ></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Initialize the test framework
+                PathingTest.init();
+
+                // Run basic tests on load
+                runBasicTests();
+            });
+
+            // Override the SDK's send function to log instead of sending
+            const originalSend = window.pathing.send.raw;
+            window.pathing.send.raw = function (type, payload) {
+                logToConsole("success", `Event tracked: ${type}`, payload);
+                return Promise.resolve({
+                    success: true,
+                    eventId: `test-${Date.now()}`,
+                });
+            };
+
+            // Console logging functionality
+            function logToConsole(level, message, data) {
+                const consoleEl = document.getElementById("console-log");
+                const logEntry = document.createElement("div");
+                logEntry.className = `log-entry ${level}`;
+
+                const timestamp = new Date().toLocaleTimeString();
+                let content = `[${timestamp}] ${message}`;
+
+                if (data) {
+                    content += `: ${JSON.stringify(data)}`;
+                }
+
+                logEntry.textContent = content;
+                consoleEl.appendChild(logEntry);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            function clearConsole() {
+                document.getElementById("console-log").innerHTML = "";
+            }
+
+            // Track button event
+            function trackButtonEvent() {
+                const location = document.getElementById("btn-location").value;
+                const action = document.getElementById("btn-action").value;
+                const category = document.getElementById("btn-category").value;
+
+                try {
+                    window.pathing.send.button({
+                        buttonId: `test-button-${Date.now()}`,
+                        location: location,
+                        action: action,
+                        category: category,
+                    });
+                    logToConsole("info", "Button event sent");
+                } catch (error) {
+                    logToConsole(
+                        "error",
+                        "Error sending button event",
+                        error.message
+                    );
+                }
+            }
+
+            // Track purchase event
+            function trackPurchaseEvent() {
+                const product =
+                    document.getElementById("purchase-product").value;
+                const price = parseFloat(
+                    document.getElementById("purchase-price").value
+                );
+                const currency =
+                    document.getElementById("purchase-currency").value;
+                const quantity = parseInt(
+                    document.getElementById("purchase-quantity").value
+                );
+
+                try {
+                    window.pathing.send.purchase({
+                        product: product,
+                        price: price,
+                        currency: currency,
+                        quantity: quantity,
+                    });
+                    logToConsole("info", "Purchase event sent");
+                } catch (error) {
+                    logToConsole(
+                        "error",
+                        "Error sending purchase event",
+                        error.message
+                    );
+                }
+            }
+
+            // Track playback event
+            function trackPlaybackEvent() {
+                const contentId =
+                    document.getElementById("playback-contentId").value;
+                const timestamp = parseInt(
+                    document.getElementById("playback-timestamp").value
+                );
+                const duration = parseInt(
+                    document.getElementById("playback-duration").value
+                );
+                const title = document.getElementById("playback-title").value;
+
+                try {
+                    window.pathing.send.playback({
+                        contentId: contentId,
+                        timestamp: timestamp,
+                        duration: duration,
+                        title: title,
+                    });
+                    logToConsole("info", "Playback event sent");
+                } catch (error) {
+                    logToConsole(
+                        "error",
+                        "Error sending playback event",
+                        error.message
+                    );
+                }
+            }
+
+            // Track raw event
+            function trackRawEvent() {
+                const type = document.getElementById("raw-type").value;
+                const payloadStr = document.getElementById("raw-payload").value;
+
+                try {
+                    const payload = JSON.parse(payloadStr);
+                    window.pathing.send.raw(type, payload);
+                    logToConsole("info", "Raw event sent");
+                } catch (error) {
+                    logToConsole(
+                        "error",
+                        "Error sending raw event",
+                        error.message
+                    );
+                }
+            }
+
+            // Run basic tests
+            function runBasicTests() {
+                PathingTest.suite("Event Tracking Tests", () => {
+                    PathingTest.test(
+                        "window.pathing.send.button should be a function",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.send.button,
+                                "function",
+                                "send.button should be a function"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "window.pathing.send.purchase should be a function",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.send.purchase,
+                                "function",
+                                "send.purchase should be a function"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "window.pathing.send.playback should be a function",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.send.playback,
+                                "function",
+                                "send.playback should be a function"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "window.pathing.send.raw should be a function",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.send.raw,
+                                "function",
+                                "send.raw should be a function"
+                            );
+                        }
+                    );
+
+                    PathingTest.test(
+                        "window.pathing.track should be a function (deprecated)",
+                        (assert) => {
+                            assert.assertType(
+                                window.pathing.track,
+                                "function",
+                                "track should be a function"
+                            );
+                        }
+                    );
+                });
+
+                // Send results to parent if this is being run in an iframe
+                if (window.parent && window.parent !== window) {
+                    setTimeout(() => {
+                        PathingTest.sendResultsToParent();
+                    }, 300);
+                }
+            }
+        </script>
+    </body>
+</html>

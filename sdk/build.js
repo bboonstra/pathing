@@ -14,7 +14,6 @@ build({
     ...commonOptions,
     outfile: "dist/pathing.min.js",
     format: "iife",
-    globalName: "pathing", // makes it accessible as `window.pathing`
 }).catch(() => process.exit(1));
 
 // Build ESM version for npm imports

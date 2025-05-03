@@ -1,6 +1,6 @@
 {
     "name": "pathingjs",
-    "version": "0.1.8",
+    "version": "0.2.2",
     "main": "dist/pathing.min.js",
     "module": "dist/pathing.esm.js",
     "exports": {
@@ -23,7 +23,8 @@
     "scripts": {
         "build": "node build.js && tsc --emitDeclarationOnly --outDir dist/types",
         "copy": "cp dist/pathing.min.js ../public/pathing.js && cp dist/pathing.min.js ../public/pathing.min.js",
-        "sdk": "npm version patch && npm run build && npm run copy && npm publish"
+        "sdk": "npm version patch && npm run build && npm run copy && npm publish",
+        "sandbox": "node sandbox.js"
     },
     "description": "Enhanced analytics tracking library with comprehensive device, browser, and engagement data collection",
     "keywords": [
@@ -36,6 +37,7 @@
     ],
     "devDependencies": {
         "esbuild": "^0.25.3",
+        "express": "^5.1.0",
         "typescript": "^5.0.0"
     }
 }

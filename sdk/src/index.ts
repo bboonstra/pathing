@@ -5,9 +5,14 @@ import { send as rawSend } from "./send/raw";
 import { link as rawLink } from "./link/raw";
 import { Parameter } from "./core/parameter";
 import { init } from "./core/init";
+import { version } from "../package.json";
+
+// SDK version
+const SDK_VERSION = version;
 
 // Create the pathing object
 const pathing = {
+    version: SDK_VERSION,
     send: {
         ...send,
         raw: rawSend,
