@@ -43,7 +43,7 @@ export async function sendEvent(type: string, payload: Record<string, any>) {
     };
 
     try {
-        const res = await fetch("/api/collect", {
+        const res = await fetch("https://www.pathing.dev/api/collect", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
