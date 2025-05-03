@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+export const runtime = "nodejs"; // treat route as traditional node.js instead of edge runtime
 import { config } from "./config";
 import { Parameter } from "./parameter";
 import { DeviceInfo } from "./device-info";
@@ -50,7 +51,6 @@ export async function sendEvent(type: string, payload: Record<string, any>) {
                 "X-Pathing-API-Key": config.publicKey,
             },
             body: JSON.stringify(body),
-            mode: "no-cors",
         });
 
         const data = await res.json();

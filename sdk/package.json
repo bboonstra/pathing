@@ -1,6 +1,6 @@
 {
     "name": "pathingjs",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "main": "dist/pathing.min.js",
     "module": "dist/pathing.esm.js",
     "exports": {

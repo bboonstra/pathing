@@ -15,8 +15,10 @@ const corsHeaders = {
 
 export async function POST(req: NextRequest) {
     try {
-        // Get the API key from headers
-        const publicKey = req.headers.get("x-pathing-api-key");
+        // Get the API key from headers or query parameters
+        const publicKey =
+            req.headers.get("x-pathing-api-key") ||
+            req.nextUrl.searchParams.get("pathing-api-key");
 
         if (!publicKey) {
             return new Response(
