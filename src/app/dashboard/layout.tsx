@@ -26,7 +26,7 @@ export default async function DashboardLayout({
             <Navbar />
 
             <div className="flex-grow flex flex-col items-center py-8 px-4">
-                <div className="w-full max-w-5xl">
+                <div className="w-full">
                     {/* Page content will be rendered here */}
                     {children}
                 </div>
