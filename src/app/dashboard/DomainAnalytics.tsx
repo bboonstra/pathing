@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import WidgetDashboard from "@/components/WidgetDashboard";
 import { EventData } from "@/types/widgets";
+import { useSearchParams } from "next/navigation";
 
 type Domain = {
     id: string;
@@ -17,9 +18,10 @@ interface DomainAnalyticsProps {
 }
 
 export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
+    const searchParams = useSearchParams();
     const [domains, setDomains] = useState<Domain[]>([]);
     const [selectedDomain, setSelectedDomain] = useState<string | null>(
-        domainId || null
+        domainId || searchParams.get("domain") || null
     );
     const [events, setEvents] = useState<EventData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +41,11 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
 
                 // Auto-select the first domain if available and no domainId was provided
                 if (!selectedDomain && data && data.length > 0) {
-                    setSelectedDomain(data[0].id);
+                    const firstDomainId = data[0].id;
+                    setSelectedDomain(firstDomainId);
+
+                    // Update URL with the selected domain
+                    updateUrlWithDomain(firstDomainId);
                 }
             } catch (error) {
                 setError(
@@ -55,7 +61,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
         }
 
         fetchDomains();
-    }, [selectedDomain]);
+    }, []);
 
     // Fetch events when selected domain changes
     useEffect(() => {
@@ -84,6 +90,22 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
 
         fetchEvents();
     }, [selectedDomain]);
+
+    // Update URL with domain parameter without reloading the page
+    const updateUrlWithDomain = (domainId: string) => {
+        // Create a new URL object based on the current URL
+        const url = new URL(window.location.href);
+        // Set the domain query parameter
+        url.searchParams.set("domain", domainId);
+        // Update the URL without triggering a page navigation
+        window.history.pushState({}, "", url.toString());
+    };
+
+    // Handle domain selection
+    const handleDomainSelect = (domainId: string) => {
+        setSelectedDomain(domainId);
+        updateUrlWithDomain(domainId);
+    };
 
     // Show message if no domains are available
     if (domains.length === 0 && !isLoading) {
@@ -120,7 +142,7 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
                         {domains.map((domain) => (
                             <button
                                 key={domain.id}
-                                onClick={() => setSelectedDomain(domain.id)}
+                                onClick={() => handleDomainSelect(domain.id)}
                                 className={`px-3 py-1.5 text-sm rounded-full transition-all duration-300 ${
                                     selectedDomain === domain.id
                                         ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium shadow-md"

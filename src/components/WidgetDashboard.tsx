@@ -24,7 +24,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const DEFAULT_LAYOUT = {
     columns: 4,
-    rowHeight: 100,
+    rowHeight: 200,
     containerPadding: [10, 10] as [number, number],
     margin: [15, 15] as [number, number],
 };
@@ -39,6 +39,153 @@ const DEFAULT_DASHBOARD: DashboardConfig = {
     dateUpdated: new Date().toISOString(),
 };
 
+// Custom hook for insight suggestions
+const useInsightSuggestions = (
+    events: EventData[],
+    dashboard: DashboardConfig | null,
+    domainId: string,
+    isLoading: boolean,
+    isLoadingDashboard: boolean
+) => {
+    const [suggestedWidgets, setSuggestedWidgets] = useState<WidgetConfig[]>(
+        []
+    );
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    // Reset suggestions when domain changes
+    useEffect(() => {
+        setSuggestedWidgets([]);
+        setShowSuggestions(false);
+    }, [domainId]);
+
+    // Generate insights when events or dashboard change
+    useEffect(() => {
+        if (
+            !isLoading &&
+            !isLoadingDashboard &&
+            events.length > 0 &&
+            dashboard &&
+            dashboard.domainId === domainId
+        ) {
+            generateInsightsFromEvents(events, dashboard);
+        }
+    }, [events, isLoading, isLoadingDashboard, dashboard, domainId]);
+
+    // Generate insights from event data
+    const generateInsightsFromEvents = (
+        events: EventData[],
+        dashboard: DashboardConfig
+    ) => {
+        // Don't offer insights the user already has on their dashboard
+        const existingWidgetTypes = new Set(
+            dashboard.widgets.map((w) => w.type)
+        );
+
+        // Generate and filter insight widgets
+        const insights = generateInsightWidgets(events).filter(
+            (widget) => !existingWidgetTypes.has(widget.type)
+        );
+
+        if (insights.length > 0) {
+            setSuggestedWidgets(insights);
+        }
+    };
+
+    // Remove a widget from suggestions
+    const dismissSuggestion = (widgetId: string) => {
+        setSuggestedWidgets((current) =>
+            current.filter((w) => w.id !== widgetId)
+        );
+    };
+
+    // Clear a specific suggestion after it's been added to dashboard
+    const clearAddedSuggestion = (widgetId: string) => {
+        setSuggestedWidgets((current) =>
+            current.filter((w) => w.id !== widgetId)
+        );
+    };
+
+    return {
+        suggestedWidgets,
+        showSuggestions,
+        setShowSuggestions,
+        dismissSuggestion,
+        clearAddedSuggestion,
+    };
+};
+
+// Component for insight suggestions panel
+interface InsightsPanelProps {
+    suggestedWidgets: WidgetConfig[];
+    onClose: () => void;
+    onDismiss: (widgetId: string) => void;
+    onAddWidget: (widget: WidgetConfig) => void;
+}
+
+const InsightsPanel: React.FC<InsightsPanelProps> = ({
+    suggestedWidgets,
+    onClose,
+    onDismiss,
+    onAddWidget,
+}) => {
+    if (suggestedWidgets.length === 0) return null;
+
+    return (
+        <div className="mb-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800 p-4">
+            <div className="flex justify-between items-center mb-3">
+                <h3 className="text-md font-semibold text-purple-800 dark:text-purple-300">
+                    Insights Based on Your Data
+                </h3>
+                <button
+                    onClick={onClose}
+                    className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {suggestedWidgets.map((widget) => (
+                    <div
+                        key={widget.id}
+                        className="bg-white dark:bg-[#212134] rounded-lg shadow-sm border border-purple-100 dark:border-purple-800 p-3 flex flex-col"
+                    >
+                        <div className="font-medium mb-1">{widget.title}</div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                            We detected patterns that might be valuable to
+                            visualize.
+                        </p>
+                        <div className="mt-auto flex justify-end space-x-2">
+                            <button
+                                onClick={() => onDismiss(widget.id)}
+                                className="px-3 py-1 text-sm rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                            >
+                                Dismiss
+                            </button>
+                            <button
+                                onClick={() => onAddWidget(widget)}
+                                className="px-3 py-1 text-sm rounded-md bg-purple-600 hover:bg-purple-700 text-white"
+                            >
+                                Add to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 interface WidgetDashboardProps {
     domainId: string;
     events: EventData[];
@@ -51,13 +198,29 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
     isLoading,
 }) => {
     const [dashboard, setDashboard] = useState<DashboardConfig | null>(null);
+    const [tempDashboard, setTempDashboard] = useState<DashboardConfig | null>(
+        null
+    );
     const [isConfigMode, setIsConfigMode] = useState(false);
     const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [suggestedWidgets, setSuggestedWidgets] = useState<WidgetConfig[]>(
-        []
+    const [currentColumns, setCurrentColumns] = useState<number>(4);
+    const [showWarning, setShowWarning] = useState(false);
+
+    // Use the custom insights hook
+    const {
+        suggestedWidgets,
+        showSuggestions,
+        setShowSuggestions,
+        dismissSuggestion,
+        clearAddedSuggestion,
+    } = useInsightSuggestions(
+        events,
+        dashboard,
+        domainId,
+        isLoading,
+        isLoadingDashboard
     );
-    const [showSuggestions, setShowSuggestions] = useState(false);
 
     // Create default widgets for a new dashboard
     const createDefaultWidgets = useCallback((): WidgetConfig[] => {
@@ -88,6 +251,15 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
             ),
         ];
     }, []);
+
+    // Reset dashboard state when domainId changes
+    useEffect(() => {
+        setDashboard(null);
+        setTempDashboard(null);
+        setIsConfigMode(false);
+        setError(null);
+        setIsLoadingDashboard(true);
+    }, [domainId]);
 
     // Fetch dashboard configuration from domains table
     useEffect(() => {
@@ -146,25 +318,6 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         }
     }, [domainId, createDefaultWidgets]);
 
-    // Generate insights when events change
-    useEffect(() => {
-        if (!isLoading && events.length > 0 && dashboard) {
-            // Don't offer insights the user already has on their dashboard
-            const existingWidgetTypes = new Set(
-                dashboard.widgets.map((w) => w.type)
-            );
-
-            // Generate insight widgets
-            const insights = generateInsightWidgets(events).filter(
-                (widget) => !existingWidgetTypes.has(widget.type)
-            );
-
-            if (insights.length > 0) {
-                setSuggestedWidgets(insights);
-            }
-        }
-    }, [events, isLoading, dashboard]);
-
     // Save dashboard configuration to domains table
     const saveDashboard = async (updatedDashboard: DashboardConfig) => {
         try {
@@ -181,12 +334,12 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         }
     };
 
-    // Handle layout changes
+    // Handle layout changes - store temporarily without saving
     const handleLayoutChange = (layouts: ReactGridLayout.Layout[]) => {
-        if (!dashboard || !isConfigMode) return;
+        if (!dashboard || !tempDashboard || !isConfigMode) return;
 
-        // Update widget layouts
-        const updatedWidgets = dashboard.widgets.map((widget) => {
+        // Update widget layouts in the temporary dashboard
+        const updatedWidgets = tempDashboard.widgets.map((widget) => {
             const newLayout = layouts.find((l) => l.i === widget.layout.i);
             if (newLayout) {
                 return {
@@ -203,14 +356,13 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
             return widget;
         });
 
-        const updatedDashboard = {
-            ...dashboard,
+        const updatedTempDashboard = {
+            ...tempDashboard,
             widgets: updatedWidgets,
             dateUpdated: new Date().toISOString(),
         };
 
-        setDashboard(updatedDashboard);
-        saveDashboard(updatedDashboard);
+        setTempDashboard(updatedTempDashboard);
     };
 
     // Handle widget settings changes
@@ -270,23 +422,69 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         saveDashboard(updatedDashboard);
 
         // Remove from suggestions
-        setSuggestedWidgets((current) =>
-            current.filter((w) => w.id !== widget.id)
-        );
+        clearAddedSuggestion(widget.id);
     };
 
     // Remove a widget from dashboard
-    const removeWidget = (widgetId: string) => {
-        if (!dashboard) return;
+    const removeWidget = (
+        widgetId: string,
+        e: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        // Stop propagation to prevent drag
+        e.stopPropagation();
+
+        if (!tempDashboard || !isConfigMode) return;
+
+        const updatedTempDashboard = {
+            ...tempDashboard,
+            widgets: tempDashboard.widgets.filter((w) => w.id !== widgetId),
+        };
+
+        setTempDashboard(updatedTempDashboard);
+    };
+
+    // Handle entering configuration mode
+    const enterConfigMode = () => {
+        if (currentColumns < 4) {
+            setShowWarning(true);
+            return;
+        }
+
+        if (dashboard) {
+            // Create a temporary copy of the dashboard for editing
+            setTempDashboard(JSON.parse(JSON.stringify(dashboard)));
+            setIsConfigMode(true);
+        }
+    };
+
+    // Handle saving configuration changes
+    const saveConfigChanges = () => {
+        if (!tempDashboard) return;
 
         const updatedDashboard = {
-            ...dashboard,
-            widgets: dashboard.widgets.filter((w) => w.id !== widgetId),
+            ...tempDashboard,
             dateUpdated: new Date().toISOString(),
         };
 
         setDashboard(updatedDashboard);
         saveDashboard(updatedDashboard);
+        setIsConfigMode(false);
+        setTempDashboard(null);
+    };
+
+    // Handle canceling configuration changes
+    const cancelConfigChanges = () => {
+        setIsConfigMode(false);
+        setTempDashboard(null);
+    };
+
+    // Handle width changes and update column count
+    const handleWidthChange = (
+        width: number,
+        margin: [number, number],
+        cols: number
+    ) => {
+        setCurrentColumns(cols);
     };
 
     // Render appropriate widget by type
@@ -338,7 +536,10 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
 
     // Get layouts for responsive grid
     const layouts = {
-        lg: dashboard.widgets.map((w) => ({
+        lg: (isConfigMode && tempDashboard
+            ? tempDashboard
+            : dashboard
+        ).widgets.map((w) => ({
             ...w.layout,
             static: !isConfigMode,
         })),
@@ -357,16 +558,29 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                             Insights ({suggestedWidgets.length})
                         </button>
                     )}
-                    <button
-                        onClick={() => setIsConfigMode(!isConfigMode)}
-                        className={`px-4 py-2 rounded-lg ${
-                            isConfigMode
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
-                        }`}
-                    >
-                        {isConfigMode ? "Done" : "Configure"}
-                    </button>
+                    {isConfigMode ? (
+                        <>
+                            <button
+                                onClick={cancelConfigChanges}
+                                className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={saveConfigChanges}
+                                className="px-4 py-2 rounded-lg bg-blue-600 text-white"
+                            >
+                                Save
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={enterConfigMode}
+                            className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+                        >
+                            Configure
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -376,77 +590,47 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 </div>
             )}
 
+            {showWarning && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-[#23233a] p-6 rounded-lg max-w-md">
+                        <h3 className="text-lg font-semibold mb-3">
+                            Screen Size Warning
+                        </h3>
+                        <p className="mb-4 text-gray-700 dark:text-gray-300">
+                            Dashboard configuration is only available in full
+                            view (4 columns). Please expand your browser window
+                            or switch to a larger device.
+                        </p>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => setShowWarning(false)}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                            >
+                                Got it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {isConfigMode && (
                 <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
                     <p className="text-blue-800 dark:text-blue-300 text-sm">
                         <strong>Configuration Mode:</strong> Drag and resize
-                        widgets to customize your dashboard.
+                        widgets to customize your dashboard. Click Save to apply
+                        changes.
                     </p>
                 </div>
             )}
 
             {/* Widget Suggestions Panel */}
             {showSuggestions && suggestedWidgets.length > 0 && (
-                <div className="mb-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800 p-4">
-                    <div className="flex justify-between items-center mb-3">
-                        <h3 className="text-md font-semibold text-purple-800 dark:text-purple-300">
-                            Insights Based on Your Data
-                        </h3>
-                        <button
-                            onClick={() => setShowSuggestions(false)}
-                            className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {suggestedWidgets.map((widget) => (
-                            <div
-                                key={widget.id}
-                                className="bg-white dark:bg-[#212134] rounded-lg shadow-sm border border-purple-100 dark:border-purple-800 p-3 flex flex-col"
-                            >
-                                <div className="font-medium mb-1">
-                                    {widget.title}
-                                </div>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                                    We detected patterns that might be valuable
-                                    to visualize.
-                                </p>
-                                <div className="mt-auto flex justify-end space-x-2">
-                                    <button
-                                        onClick={() =>
-                                            setSuggestedWidgets((current) =>
-                                                current.filter(
-                                                    (w) => w.id !== widget.id
-                                                )
-                                            )
-                                        }
-                                        className="px-3 py-1 text-sm rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                                    >
-                                        Dismiss
-                                    </button>
-                                    <button
-                                        onClick={() => addWidget(widget)}
-                                        className="px-3 py-1 text-sm rounded-md bg-purple-600 hover:bg-purple-700 text-white"
-                                    >
-                                        Add to Dashboard
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <InsightsPanel
+                    suggestedWidgets={suggestedWidgets}
+                    onClose={() => setShowSuggestions(false)}
+                    onDismiss={dismissSuggestion}
+                    onAddWidget={addWidget}
+                />
             )}
 
             <ResponsiveGridLayout
@@ -458,16 +642,20 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 containerPadding={dashboard.layout.containerPadding}
                 margin={dashboard.layout.margin}
                 onLayoutChange={handleLayoutChange}
+                onWidthChange={handleWidthChange}
                 isDraggable={isConfigMode}
                 isResizable={isConfigMode}
                 useCSSTransforms={true}
             >
-                {dashboard.widgets.map((widget) => (
+                {(isConfigMode && tempDashboard
+                    ? tempDashboard
+                    : dashboard
+                ).widgets.map((widget) => (
                     <div key={widget.layout.i} style={{ overflow: "hidden" }}>
                         {isConfigMode && (
                             <div className="absolute top-0 right-0 z-10 p-1">
                                 <button
-                                    onClick={() => removeWidget(widget.id)}
+                                    onClick={(e) => removeWidget(widget.id, e)}
                                     className="bg-red-600 text-white p-1 rounded-md hover:bg-red-700"
                                     title="Remove widget"
                                 >
