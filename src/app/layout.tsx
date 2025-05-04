@@ -26,6 +26,13 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
+            <head>
+                <style>{`
+                    html, body {
+                        overscroll-behavior: none;
+                    }
+                `}</style>
+            </head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >

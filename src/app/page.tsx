@@ -132,7 +132,7 @@ export default function Home() {
             </header>
 
             {/* Value Props */}
-            <section className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-8 px-4 mb-24 relative z-10">
+            <section className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-8 px-4 mb-10 relative z-10">
                 <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl text-center border border-white/40 dark:border-white/10 flex flex-col items-center gap-3">
                     <BoltIcon className="w-8 h-8 text-blue-500 mb-2" />
                     <h3 className="font-extrabold text-lg mb-1">
@@ -162,8 +162,40 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* Minimalist Scroll Indicator */}
+            <div className="flex justify-center mb-10">
+                <div
+                    className="w-5 h-10 flex flex-col items-center cursor-pointer"
+                    onClick={() =>
+                        window.scrollTo({
+                            top:
+                                (document.getElementById("get-started")
+                                    ?.offsetTop ?? 0) - 20,
+                            behavior: "smooth",
+                        })
+                    }
+                >
+                    <span className="w-0.5 h-5 bg-gray-400/50 dark:bg-gray-500/50"></span>
+                    <svg
+                        className="w-5 h-5 text-gray-400/70 dark:text-gray-500/70 animate-pulse"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </div>
+            </div>
+
             {/* How it works */}
-            <section id="get-started" className="max-w-2xl mx-auto px-4 mb-20">
+            <section
+                id="get-started"
+                className="max-w-2xl mx-auto px-4 mb-20 mt-15"
+            >
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-center">
                     Add analytics in seconds
                 </h2>
@@ -194,6 +226,7 @@ export default function Home() {
                         )}
                     </button>
                 </div>
+
                 <p className="text-gray-500 dark:text-gray-400 mt-3 text-center">
                     Paste this before your{" "}
                     <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">
@@ -212,8 +245,8 @@ export default function Home() {
                         className={`transition-all duration-700 ease-in-out transform 
                         ${
                             showAnalytics
-                                ? "opacity-100 scale-100 mt-8"
-                                : "max-h-0 opacity-0 scale-95"
+                                ? "opacity-100 scale-100 mt-8 max-h-none"
+                                : "opacity-0 scale-80 max-h-0 overflow-hidden pointer-events-none absolute"
                         }`}
                     >
                         <HomepageAnalytics />
