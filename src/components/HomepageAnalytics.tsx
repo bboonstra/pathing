@@ -105,6 +105,17 @@ export default function HomepageAnalytics() {
         } and ${remainingMinutes} minute${remainingMinutes !== 1 ? "s" : ""}`;
     };
 
+    // Add this function to count unique sessions
+    const countUniqueSessions = (): number => {
+        const sessionIds = new Set<string>();
+        events.forEach((event) => {
+            if (event.session_info?.sessionId) {
+                sessionIds.add(event.session_info.sessionId);
+            }
+        });
+        return sessionIds.size;
+    };
+
     // Calculate hourly distribution of events
     const hourlyData = Array(24).fill(0);
     const currentHour = new Date().getHours();
@@ -138,23 +149,30 @@ export default function HomepageAnalytics() {
 
     return (
         <div className="w-full bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 mb-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center items-center text-center md:text-left mb-6 gap-3">
                 <h2 className="text-xl font-bold">Live Demo Analytics</h2>
-                <div className="flex items-center gap-3">
-                    <div className="text-xs text-gray-500">
+                <div className="flex flex-col items-center md:items-end gap-2">
+                    <div className="text-xs text-gray-500 max-w-[300px] text-center md:text-right">
                         {lastUpdated ? (
                             <>
                                 {refreshCountdown !== null &&
                                 refreshCountdown > 0 ? (
-                                    <span>
-                                        Updated at{" "}
-                                        {lastUpdated.toLocaleTimeString([], {
-                                            hour: "numeric",
-                                            minute: "2-digit",
-                                        })}{" "}
-                                        • New data available in{" "}
-                                        {formatTime(refreshCountdown)}
-                                    </span>
+                                    <div>
+                                        <div>
+                                            Updated at{" "}
+                                            {lastUpdated.toLocaleTimeString(
+                                                [],
+                                                {
+                                                    hour: "numeric",
+                                                    minute: "2-digit",
+                                                }
+                                            )}
+                                        </div>
+                                        <div>
+                                            New data available in{" "}
+                                            {formatTime(refreshCountdown)}
+                                        </div>
+                                    </div>
                                 ) : (
                                     <span>Refresh available</span>
                                 )}
@@ -191,7 +209,7 @@ export default function HomepageAnalytics() {
                     <div className="mb-6 p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800">
                         <h3 className="text-lg font-semibold mb-4">Overview</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
+                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-100 dark:border-blue-800 flex flex-col justify-center h-[100px]">
                                 <p className="text-blue-800 dark:text-blue-300 text-sm mb-1">
                                     Clicks Today
                                 </p>
@@ -199,7 +217,7 @@ export default function HomepageAnalytics() {
                                     {events.length}
                                 </p>
                             </div>
-                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800">
+                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800 flex flex-col justify-center h-[100px]">
                                 <p className="text-green-800 dark:text-green-300 text-sm mb-1">
                                     Peak Hour
                                 </p>
@@ -224,21 +242,12 @@ export default function HomepageAnalytics() {
                                           })}
                                 </p>
                             </div>
-                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-100 dark:border-purple-800">
+                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-100 dark:border-purple-800 flex flex-col justify-center h-[100px]">
                                 <p className="text-purple-800 dark:text-purple-300 text-sm mb-1">
-                                    Latest Click
+                                    Unique Visitors
                                 </p>
                                 <p className="text-2xl font-bold">
-                                    {events.length > 0
-                                        ? new Date(
-                                              events[0].created_at
-                                          ).toLocaleTimeString("en-US", {
-                                              hour12: true,
-                                              hour: "numeric",
-                                              minute: "2-digit",
-                                              second: "2-digit",
-                                          })
-                                        : "N/A"}
+                                    {countUniqueSessions()}
                                 </p>
                             </div>
                         </div>

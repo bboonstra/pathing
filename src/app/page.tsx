@@ -212,7 +212,7 @@ export default function Home() {
                         className={`transition-all duration-700 ease-in-out transform 
                         ${
                             showAnalytics
-                                ? "max-h-[800px] opacity-100 scale-100 mt-8"
+                                ? "opacity-100 scale-100 mt-8"
                                 : "max-h-0 opacity-0 scale-95"
                         }`}
                     >
