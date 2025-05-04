@@ -1,13 +1,19 @@
-import DomainList from "./DomainList";
+"use client";
+import * as React from "react";
+import DomainAnalytics from "./DomainAnalytics";
 
 /**
  * Default Dashboard Page Server Component
  * Displays the list of domains.
  */
-export default async function DashboardPage() {
-    // No need for supabase client or user check here, handled by layout.tsx
-    // No need to extract view or domain from searchParams
-
-    // Render the list of domains by default
-    return <DomainList />;
+export default function DashboardPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ domain?: string }>;
+}) {
+    // Unwrap the searchParams promise-like object
+    const unwrappedSearchParams = React.use(searchParams);
+    // Assert the type of the unwrapped value before destructuring
+    const { domain } = unwrappedSearchParams as { domain?: string };
+    return <DomainAnalytics domainId={domain} />;
 }

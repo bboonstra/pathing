@@ -6,6 +6,7 @@
         "dev": "next dev --turbopack",
         "build": "next build",
         "sdk": "cd sdk && npm run sdk && cd ../ && npm install ./sdk --no-save",
+        "publish": "cd sdk && npm run publish && cd ../ && npm install ./sdk --no-save",
         "copy": "cd sdk && npm run copy",
         "sandbox": "cd sdk && npm run sandbox",
         "start": "next start",

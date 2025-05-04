@@ -5,14 +5,26 @@ export function init(apiKey?: string) {
     // Check if API key is provided directly to the function
     if (apiKey) {
         config.publicKey = apiKey;
-    }
-    // If not, try to get it from script tag
-    else {
+    } else {
+        // Check script tag first
         const scripts = document.querySelectorAll("script[pathing-api-key]");
         if (scripts.length > 0) {
             const publicKey = scripts[0].getAttribute("pathing-api-key");
             if (publicKey) {
                 config.publicKey = publicKey;
+            }
+        } else {
+            // If no script tag found, check for data attribute
+            const dataKeyElement = document.querySelector(
+                "[data-pathing-api-key]"
+            );
+            if (dataKeyElement) {
+                const publicKey = dataKeyElement.getAttribute(
+                    "data-pathing-api-key"
+                );
+                if (publicKey) {
+                    config.publicKey = publicKey;
+                }
             }
         }
         // No warning here - we'll check for API key validity when events are sent

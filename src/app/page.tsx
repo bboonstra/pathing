@@ -32,9 +32,6 @@ export default function Home() {
             setCodeSnippet(
                 `<script src="${window.location.origin}/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>`
             );
-
-            // Initialize pathing with API key when used as npm package
-            pathing.init("pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12");
         }
     }, []);
 
@@ -99,7 +96,7 @@ export default function Home() {
                     </h1>
                 </div>
                 <h2 className="relative z-10 text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200">
-                    See analytics in your users&apos; shoes.
+                    Walk the path your users take.
                 </h2>
                 <p className="relative z-10 max-w-2xl mx-auto mb-10 text-lg sm:text-xl text-gray-500 dark:text-gray-400 font-medium">
                     Effortless, privacy-first analytics. Instantly understand

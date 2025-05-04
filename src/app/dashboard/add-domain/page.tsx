@@ -1,4 +1,4 @@
-import AddDomain from "../AddDomain"; // Adjust import path
+import AddDomain from "./AddDomain"; // Adjust import path
 
 // No need for SearchParams or PageProps here
 

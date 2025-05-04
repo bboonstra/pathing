@@ -337,7 +337,7 @@ export default function DomainList() {
                                 <div className="flex items-center gap-2">
                                     {domain.verified && (
                                         <Link
-                                            href={`/dashboard/analytics?domain=${domain.id}`}
+                                            href={`/dashboard?domain=${domain.id}`}
                                             className="text-blue-500 hover:text-blue-700 p-1 text-sm"
                                         >
                                             View Analytics

@@ -43,7 +43,7 @@ pathing.init('pk_[YOUR_API_KEY]');
 
 // Or using default import
 import pathing from 'pathingjs';
-pathing.init('pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12');
+pathing.init('pk_[YOUR_API_KEY]');
 ```
 
 ## Usage

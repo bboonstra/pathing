@@ -4,10 +4,11 @@ import SignOutButton from "./SignOutButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
     HomeIcon,
     PlusIcon,
-    ChartBarIcon,
+    GlobeAltIcon,
     BookOpenIcon,
 } from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
@@ -15,6 +16,7 @@ import { User } from "@supabase/supabase-js";
 export default function Navbar() {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const pathname = usePathname();
 
     useEffect(() => {
         async function getUser() {
@@ -26,6 +28,10 @@ export default function Navbar() {
     }, []);
 
     if (loading) return null;
+
+    const isActive = (path: string) => {
+        return pathname === path;
+    };
 
     return (
         <div className="bg-white/80 dark:bg-[#181824]/80 border-b border-white/30 dark:border-white/10 sticky top-0 z-10 backdrop-blur-sm">
@@ -39,7 +45,7 @@ export default function Navbar() {
                             height={32}
                             className="mr-2"
                         />
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent hidden sm:inline-block">
                             {!loading && user && (
                                 <>
                                     Welcome,{" "}
@@ -55,25 +61,41 @@ export default function Navbar() {
                         <nav className="flex items-center space-x-1 mr-4">
                             <Link
                                 href="/dashboard"
-                                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                className={`p-2 rounded-lg ${
+                                    isActive("/dashboard")
+                                        ? "bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400"
+                                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
                             >
                                 <HomeIcon className="w-5 h-5" />
                             </Link>
                             <Link
-                                href="/dashboard/analytics"
-                                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                href="/dashboard/domains"
+                                className={`p-2 rounded-lg ${
+                                    isActive("/dashboard/domains")
+                                        ? "bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400"
+                                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
                             >
-                                <ChartBarIcon className="w-5 h-5" />
+                                <GlobeAltIcon className="w-5 h-5" />
                             </Link>
                             <Link
                                 href="/dashboard/add-domain"
-                                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                className={`p-2 rounded-lg ${
+                                    isActive("/dashboard/add-domain")
+                                        ? "bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400"
+                                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
                             >
                                 <PlusIcon className="w-5 h-5" />
                             </Link>
                             <Link
                                 href="/docs"
-                                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                className={`p-2 rounded-lg ${
+                                    isActive("/docs")
+                                        ? "bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400"
+                                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
                             >
                                 <BookOpenIcon className="w-5 h-5" />
                             </Link>
