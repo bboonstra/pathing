@@ -17,7 +17,80 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
     title: "Pathing",
-    description: "Analytics how you want them.",
+    description: "See analytics in your user's shoes.",
+    metadataBase: new URL("https://www.pathing.cc"),
+    alternates: {
+        canonical: "/",
+    },
+    keywords: [
+        "analytics",
+        "privacy-first",
+        "user journeys",
+        "web analytics",
+        "no cookies",
+        "real-time analytics",
+        "user tracking",
+        "website analytics",
+        "privacy focused",
+        "website monitoring",
+        "user behavior",
+        "digital analytics",
+    ],
+    authors: [{ name: "bboonstra", url: "https://github.com/bboonstra" }],
+    creator: "bboonstra",
+    publisher: "pathing.cc",
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+        },
+    },
+    manifest: "/manifest.json",
+    applicationName: "Pathing Analytics",
+    referrer: "origin-when-cross-origin",
+    category: "web analytics",
+    colorScheme: "dark light",
+    openGraph: {
+        type: "website",
+        locale: "en",
+        url: "https://www.pathing.cc",
+        title: "Pathing - See analytics in your user's shoes",
+        description:
+            "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no cookies, just clarity.",
+        siteName: "Pathing",
+        images: [
+            {
+                url: "/pathing.png",
+                width: 72,
+                height: 72,
+                alt: "Pathing Logo",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary",
+        title: "Pathing - See analytics in your user's shoes",
+        description:
+            "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no cookies, just clarity.",
+        images: ["/pathing.png"],
+        creator: "@bboonstra",
+        site: "@bboonstra",
+    },
+    appleWebApp: {
+        capable: true,
+        title: "Pathing Analytics",
+        statusBarStyle: "default",
+    },
+    formatDetection: {
+        telephone: false,
+        date: false,
+        address: false,
+        email: false,
+    },
     icons: {
         icon: [
             { url: "/favicon.ico", sizes: "any" },
@@ -44,6 +117,16 @@ export const metadata: Metadata = {
             },
         ],
     },
+};
+
+export const viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "white" },
+        { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    ],
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
 };
 
 export default function RootLayout({

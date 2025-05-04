@@ -655,6 +655,8 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                         {isConfigMode && (
                             <div className="absolute top-0 right-0 z-10 p-1">
                                 <button
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    onTouchStart={(e) => e.stopPropagation()}
                                     onClick={(e) => removeWidget(widget.id, e)}
                                     className="bg-red-600 text-white p-1 rounded-md hover:bg-red-700"
                                     title="Remove widget"

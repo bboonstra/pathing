@@ -10,8 +10,14 @@ import {
     PlusIcon,
     GlobeAltIcon,
     BookOpenIcon,
+    ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
+
+const truncateName = (name: string, maxLength: number = 20) => {
+    if (name.length <= maxLength) return name;
+    return `${name.substring(0, maxLength)}...`;
+};
 
 export default function Navbar() {
     const [user, setUser] = useState<User | null>(null);
@@ -38,20 +44,24 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
-                        <Image
-                            src="/pathing.png"
-                            alt="Pathing Logo"
-                            width={32}
-                            height={32}
-                            className="mr-2"
-                        />
+                        <Link href="/">
+                            <Image
+                                src="/pathing.png"
+                                alt="Pathing Logo"
+                                width={32}
+                                height={32}
+                                className="mr-2"
+                            />
+                        </Link>
                         <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent hidden sm:inline-block">
                             {!loading && user && (
                                 <>
                                     Welcome,{" "}
-                                    {user.user_metadata.full_name ||
-                                        user.user_metadata.name ||
-                                        user.email}
+                                    {truncateName(
+                                        user.user_metadata.full_name ||
+                                            user.user_metadata.name ||
+                                            user.email
+                                    )}
                                 </>
                             )}
                         </h1>
@@ -98,6 +108,16 @@ export default function Navbar() {
                                 }`}
                             >
                                 <BookOpenIcon className="w-5 h-5" />
+                            </Link>
+                            <Link
+                                href="/dashboard/feedback"
+                                className={`p-2 rounded-lg ${
+                                    isActive("/dashboard/feedback")
+                                        ? "bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400"
+                                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
+                            >
+                                <ChatBubbleLeftRightIcon className="w-5 h-5" />
                             </Link>
                         </nav>
                         <SignOutButton />

@@ -13,6 +13,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { pathing } from "pathingjs";
 import HomepageAnalytics from "@/components/HomepageAnalytics";
+import BetaBadge from "@/components/BetaBadge";
 
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
@@ -94,6 +95,7 @@ export default function Home() {
                     <h1 className="relative z-10 text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
                         pathing<span className="text-blue-500">.cc</span>
                     </h1>
+                    <BetaBadge />
                 </div>
                 <h2 className="relative z-10 text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200">
                     Walk the path your users take.
