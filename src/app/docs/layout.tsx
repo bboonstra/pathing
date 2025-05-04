@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
     BookOpenIcon,
@@ -36,6 +37,13 @@ export default function DocsLayout({
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center">
                             <Link href="/" className="flex items-center">
+                                <Image
+                                    src="/pathing.png"
+                                    alt="Pathing Logo"
+                                    width={32}
+                                    height={32}
+                                    className="mr-2"
+                                />
                                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
                                     pathing
                                     <span className="text-blue-500">.cc</span>

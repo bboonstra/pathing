@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
     CheckCircleIcon,
     BoltIcon,
@@ -85,9 +86,18 @@ export default function Home() {
                 <div className="absolute inset-0 pointer-events-none z-0">
                     <div className="w-72 h-72 bg-gradient-to-tr from-blue-400/10 via-purple-400/10 to-transparent rounded-full blur-2xl absolute -top-20 -left-20" />
                 </div>
-                <h1 className="relative z-10 text-5xl sm:text-7xl font-extrabold mb-6 tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
-                    pathing<span className="text-blue-500">.cc</span>
-                </h1>
+                <div className="flex items-center justify-center mb-6">
+                    <Image
+                        src="/pathing.png"
+                        alt="Pathing Logo"
+                        width={72}
+                        height={72}
+                        className="m-0 p-0"
+                    />
+                    <h1 className="relative z-10 text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
+                        pathing<span className="text-blue-500">.cc</span>
+                    </h1>
+                </div>
                 <h2 className="relative z-10 text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200">
                     See analytics in your users&apos; shoes.
                 </h2>

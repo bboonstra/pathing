@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import SignOutButton from "./SignOutButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import Image from "next/image";
 import {
     HomeIcon,
     PlusIcon,
@@ -31,6 +32,13 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
+                        <Image
+                            src="/pathing.png"
+                            alt="Pathing Logo"
+                            width={32}
+                            height={32}
+                            className="mr-2"
+                        />
                         <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
                             {!loading && user && (
                                 <>
