@@ -5,7 +5,18 @@ module.exports = {
     moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
     testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],
     transform: {
-        "^.+\\.(ts|tsx)$": "babel-jest",
+        "^.+\\.(js|jsx|ts|tsx)$": [
+            "@swc/jest",
+            {
+                jsc: {
+                    transform: {
+                        react: {
+                            runtime: "automatic",
+                        },
+                    },
+                },
+            },
+        ],
     },
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/src/$1",
