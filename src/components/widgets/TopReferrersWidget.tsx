@@ -2,6 +2,39 @@ import React, { useMemo } from "react";
 import { WidgetProps } from "@/types/widgets";
 import BaseWidget from "./BaseWidget";
 import { TimeFrame } from "@/components/EventTimelineChart";
+import widgetRegistry from "@/utils/widgetRegistry";
+
+// Register widget definition
+widgetRegistry.register({
+    type: "topReferrers",
+    name: "Top Referrers",
+    description: "Display the most common sources of traffic to your site",
+    icon: "home",
+    constraints: {
+        minWidth: 1,
+        maxWidth: 2,
+        minHeight: 2,
+        maxHeight: 3,
+        defaultWidth: 2,
+        defaultHeight: 2,
+    },
+    configFields: [
+        {
+            key: "timeFrame",
+            type: "timeFrame",
+            label: "Time Frame",
+            defaultValue: "7d",
+            description: "Time period to analyze referrers",
+        },
+        {
+            key: "maxItems",
+            type: "number",
+            label: "Maximum Items",
+            defaultValue: 5,
+            description: "Maximum number of referrers to display",
+        },
+    ],
+});
 
 interface ReferrerCount {
     referrer: string;
@@ -14,7 +47,7 @@ const TopReferrersWidget: React.FC<WidgetProps> = (props) => {
 
     // Get settings
     const timeFrame = (config.settings.timeFrame as TimeFrame) || "7d";
-    const maxItems = (config.settings.displayOptions?.maxItems as number) || 5;
+    const maxItems = (config.settings.maxItems as number) || 5;
 
     // Format referrer URL for display
     const formatReferrer = (referrer: string): string => {

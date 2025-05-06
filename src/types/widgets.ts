@@ -40,7 +40,59 @@ export type WidgetType =
     | "topReferrers"
     | "pageVisits"
     | "conversionMetrics"
-    | "customInsight";
+    | "customInsight"
+    | "userFlow";
+
+// New types for configurable widgets
+export type FieldType =
+    | "string"
+    | "number"
+    | "boolean"
+    | "select"
+    | "multiSelect"
+    | "page"
+    | "event"
+    | "timeFrame";
+
+// Definition of a configurable field
+export interface ConfigField {
+    key: string;
+    type: FieldType;
+    label: string;
+    description?: string;
+    defaultValue?: string | number | boolean | Array<string>;
+    required?: boolean;
+    options?: Array<{
+        label: string;
+        value: string | number | boolean;
+    }>;
+    validation?: {
+        min?: number;
+        max?: number;
+        pattern?: string;
+        custom?: (value: unknown) => boolean;
+    };
+}
+
+// Widget constraints for sizing
+export interface WidgetConstraints {
+    minWidth: number;
+    maxWidth: number;
+    minHeight: number;
+    maxHeight: number;
+    defaultWidth: number;
+    defaultHeight: number;
+}
+
+// Widget definition metadata
+export interface WidgetDefinition {
+    type: WidgetType;
+    name: string;
+    description: string;
+    icon: string;
+    constraints: WidgetConstraints;
+    configFields: ConfigField[];
+}
 
 // Settings specific to each widget type
 export type WidgetSettings = {
@@ -57,7 +109,25 @@ export type WidgetSettings = {
         showLegend?: boolean;
         showGrid?: boolean;
         maxItems?: number;
-        chartType?: "line" | "bar" | "pie" | "area";
+        chartType?: "line" | "bar" | "pie" | "area" | "flow" | "heatmap";
+    };
+    // UserFlow specific settings
+    flowPages?: string[];
+    // ConversionMetrics specific settings
+    activatingPage?: string;
+    conversionEvent?: string;
+    conversionFilter?: {
+        property: string;
+        operator:
+            | ">"
+            | ">="
+            | "="
+            | "<"
+            | "<="
+            | "contains"
+            | "startsWith"
+            | "endsWith";
+        value: string | number;
     };
     [key: string]: unknown;
 };

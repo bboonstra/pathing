@@ -9,7 +9,9 @@ import {
     EventData,
 } from "@/types/widgets";
 import { supabase } from "@/lib/supabase";
-import { generateInsightWidgets, createWidget } from "@/utils/widgetFactory";
+import { createWidget } from "@/utils/widgetFactory";
+import { registerAllWidgets } from "@/utils";
+import widgetRegistry from "@/utils/widgetRegistry";
 
 // Import widget components
 import TimelineWidget from "./widgets/TimelineWidget";
@@ -18,13 +20,16 @@ import UniquePageWidget from "./widgets/UniquePageWidget";
 import RecentEventsWidget from "./widgets/RecentEventsWidget";
 import TopReferrersWidget from "./widgets/TopReferrersWidget";
 import ConversionMetricsWidget from "./widgets/ConversionMetricsWidget";
+import CorrelationInsightWidget from "./widgets/CorrelationInsightWidget";
+import UserFlowWidget from "./widgets/UserFlowWidget";
+import WidgetCreationManager from "./WidgetCreationManager";
 
 // Create a responsive grid layout
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const DEFAULT_LAYOUT = {
     columns: 4,
-    rowHeight: 200,
+    rowHeight: 100,
     containerPadding: [10, 10] as [number, number],
     margin: [15, 15] as [number, number],
 };
@@ -37,153 +42,6 @@ const DEFAULT_DASHBOARD: DashboardConfig = {
     widgets: [],
     dateCreated: new Date().toISOString(),
     dateUpdated: new Date().toISOString(),
-};
-
-// Custom hook for insight suggestions
-const useInsightSuggestions = (
-    events: EventData[],
-    dashboard: DashboardConfig | null,
-    domainId: string,
-    isLoading: boolean,
-    isLoadingDashboard: boolean
-) => {
-    const [suggestedWidgets, setSuggestedWidgets] = useState<WidgetConfig[]>(
-        []
-    );
-    const [showSuggestions, setShowSuggestions] = useState(false);
-
-    // Reset suggestions when domain changes
-    useEffect(() => {
-        setSuggestedWidgets([]);
-        setShowSuggestions(false);
-    }, [domainId]);
-
-    // Generate insights when events or dashboard change
-    useEffect(() => {
-        if (
-            !isLoading &&
-            !isLoadingDashboard &&
-            events.length > 0 &&
-            dashboard &&
-            dashboard.domainId === domainId
-        ) {
-            generateInsightsFromEvents(events, dashboard);
-        }
-    }, [events, isLoading, isLoadingDashboard, dashboard, domainId]);
-
-    // Generate insights from event data
-    const generateInsightsFromEvents = (
-        events: EventData[],
-        dashboard: DashboardConfig
-    ) => {
-        // Don't offer insights the user already has on their dashboard
-        const existingWidgetTypes = new Set(
-            dashboard.widgets.map((w) => w.type)
-        );
-
-        // Generate and filter insight widgets
-        const insights = generateInsightWidgets(events).filter(
-            (widget) => !existingWidgetTypes.has(widget.type)
-        );
-
-        if (insights.length > 0) {
-            setSuggestedWidgets(insights);
-        }
-    };
-
-    // Remove a widget from suggestions
-    const dismissSuggestion = (widgetId: string) => {
-        setSuggestedWidgets((current) =>
-            current.filter((w) => w.id !== widgetId)
-        );
-    };
-
-    // Clear a specific suggestion after it's been added to dashboard
-    const clearAddedSuggestion = (widgetId: string) => {
-        setSuggestedWidgets((current) =>
-            current.filter((w) => w.id !== widgetId)
-        );
-    };
-
-    return {
-        suggestedWidgets,
-        showSuggestions,
-        setShowSuggestions,
-        dismissSuggestion,
-        clearAddedSuggestion,
-    };
-};
-
-// Component for insight suggestions panel
-interface InsightsPanelProps {
-    suggestedWidgets: WidgetConfig[];
-    onClose: () => void;
-    onDismiss: (widgetId: string) => void;
-    onAddWidget: (widget: WidgetConfig) => void;
-}
-
-const InsightsPanel: React.FC<InsightsPanelProps> = ({
-    suggestedWidgets,
-    onClose,
-    onDismiss,
-    onAddWidget,
-}) => {
-    if (suggestedWidgets.length === 0) return null;
-
-    return (
-        <div className="mb-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800 p-4">
-            <div className="flex justify-between items-center mb-3">
-                <h3 className="text-md font-semibold text-purple-800 dark:text-purple-300">
-                    Insights Based on Your Data
-                </h3>
-                <button
-                    onClick={onClose}
-                    className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {suggestedWidgets.map((widget) => (
-                    <div
-                        key={widget.id}
-                        className="bg-white dark:bg-[#212134] rounded-lg shadow-sm border border-purple-100 dark:border-purple-800 p-3 flex flex-col"
-                    >
-                        <div className="font-medium mb-1">{widget.title}</div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                            We detected patterns that might be valuable to
-                            visualize.
-                        </p>
-                        <div className="mt-auto flex justify-end space-x-2">
-                            <button
-                                onClick={() => onDismiss(widget.id)}
-                                className="px-3 py-1 text-sm rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                            >
-                                Dismiss
-                            </button>
-                            <button
-                                onClick={() => onAddWidget(widget)}
-                                className="px-3 py-1 text-sm rounded-md bg-purple-600 hover:bg-purple-700 text-white"
-                            >
-                                Add to Dashboard
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
 };
 
 interface WidgetDashboardProps {
@@ -206,51 +64,7 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [currentColumns, setCurrentColumns] = useState<number>(4);
     const [showWarning, setShowWarning] = useState(false);
-
-    // Use the custom insights hook
-    const {
-        suggestedWidgets,
-        showSuggestions,
-        setShowSuggestions,
-        dismissSuggestion,
-        clearAddedSuggestion,
-    } = useInsightSuggestions(
-        events,
-        dashboard,
-        domainId,
-        isLoading,
-        isLoadingDashboard
-    );
-
-    // Create default widgets for a new dashboard
-    const createDefaultWidgets = useCallback((): WidgetConfig[] => {
-        return [
-            createWidget(
-                "timeline",
-                "Event Timeline",
-                { i: "timeline", x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
-                { timeFrame: "24h" }
-            ),
-            createWidget(
-                "eventCount",
-                "Total Events",
-                { i: "event-count", x: 0, y: 2, w: 1, h: 1 },
-                { timeFrame: "24h" }
-            ),
-            createWidget(
-                "uniquePages",
-                "Unique Pages",
-                { i: "unique-pages", x: 1, y: 2, w: 1, h: 1 },
-                { timeFrame: "24h" }
-            ),
-            createWidget(
-                "recentEvents",
-                "Recent Events",
-                { i: "recent-events", x: 0, y: 3, w: 2, h: 2, minH: 2 },
-                { maxItems: 5 }
-            ),
-        ];
-    }, []);
+    const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
     // Reset dashboard state when domainId changes
     useEffect(() => {
@@ -260,6 +74,57 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         setError(null);
         setIsLoadingDashboard(true);
     }, [domainId]);
+
+    // Create default widgets for a new dashboard
+    const createDefaultWidgets = useCallback((): WidgetConfig[] => {
+        return [
+            createWidget(
+                "timeline",
+                "Event Timeline",
+                { i: "timeline", x: 0, y: 0, w: 4, h: 4, minW: 2, minH: 2 },
+                { timeFrame: "24h" }
+            ),
+            createWidget(
+                "eventCount",
+                "Total Events",
+                { i: "event-count", x: 0, y: 4, w: 1, h: 2 },
+                { timeFrame: "24h" }
+            ),
+            createWidget(
+                "uniquePages",
+                "Unique Pages",
+                { i: "unique-pages", x: 1, y: 4, w: 1, h: 2 },
+                { timeFrame: "24h" }
+            ),
+            createWidget(
+                "recentEvents",
+                "Recent Events",
+                { i: "recent-events", x: 2, y: 4, w: 2, h: 2, minH: 2 },
+                { maxItems: 5 }
+            ),
+        ];
+    }, []);
+
+    // Apply widget constraints from registry
+    const applyWidgetConstraints = (
+        widgets: WidgetConfig[]
+    ): WidgetConfig[] => {
+        return widgets.map((widget) => {
+            const constraints = widgetRegistry.getConstraints(widget.type);
+
+            return {
+                ...widget,
+                layout: {
+                    ...widget.layout,
+                    // Always apply constraints from registry, not from saved config
+                    minW: constraints?.minWidth,
+                    maxW: constraints?.maxWidth,
+                    minH: constraints?.minHeight,
+                    maxH: constraints?.maxHeight,
+                },
+            };
+        });
+    };
 
     // Fetch dashboard configuration from domains table
     useEffect(() => {
@@ -279,13 +144,21 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 }
 
                 if (data?.dashboard_config) {
-                    setDashboard(data.dashboard_config);
+                    // Apply constraints from registry to loaded widgets
+                    const updatedDashboard = {
+                        ...data.dashboard_config,
+                        widgets: applyWidgetConstraints(
+                            data.dashboard_config.widgets
+                        ),
+                    };
+                    setDashboard(updatedDashboard);
                 } else {
                     // Create a default dashboard if none exists
+                    const defaultWidgets = createDefaultWidgets();
                     const defaultDashboard = {
                         ...DEFAULT_DASHBOARD,
                         domainId,
-                        widgets: createDefaultWidgets(),
+                        widgets: applyWidgetConstraints(defaultWidgets),
                     };
 
                     setDashboard(defaultDashboard);
@@ -303,10 +176,11 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                         : "An unknown error occurred"
                 );
                 // Still use default dashboard on error
+                const defaultWidgets = createDefaultWidgets();
                 setDashboard({
                     ...DEFAULT_DASHBOARD,
                     domainId,
-                    widgets: createDefaultWidgets(),
+                    widgets: applyWidgetConstraints(defaultWidgets),
                 });
             } finally {
                 setIsLoadingDashboard(false);
@@ -321,9 +195,25 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
     // Save dashboard configuration to domains table
     const saveDashboard = async (updatedDashboard: DashboardConfig) => {
         try {
+            // Strip out min/max constraints before saving to Supabase
+            const dashboardToSave = {
+                ...updatedDashboard,
+                widgets: updatedDashboard.widgets.map((widget) => ({
+                    ...widget,
+                    layout: {
+                        ...widget.layout,
+                        // Remove constraint properties
+                        minW: undefined,
+                        maxW: undefined,
+                        minH: undefined,
+                        maxH: undefined,
+                    },
+                })),
+            };
+
             const { error } = await supabase
                 .from("domains")
-                .update({ dashboard_config: updatedDashboard })
+                .update({ dashboard_config: dashboardToSave })
                 .eq("id", domainId);
 
             if (error) throw error;
@@ -342,6 +232,8 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         const updatedWidgets = tempDashboard.widgets.map((widget) => {
             const newLayout = layouts.find((l) => l.i === widget.layout.i);
             if (newLayout) {
+                const constraints = widgetRegistry.getConstraints(widget.type);
+
                 return {
                     ...widget,
                     layout: {
@@ -350,6 +242,11 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                         y: newLayout.y,
                         w: newLayout.w,
                         h: newLayout.h,
+                        // Always apply constraints from registry
+                        minW: constraints?.minWidth,
+                        maxW: constraints?.maxWidth,
+                        minH: constraints?.minHeight,
+                        maxH: constraints?.maxHeight,
                     },
                 };
             }
@@ -403,12 +300,19 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
             if (bottomY > maxY) maxY = bottomY;
         });
 
-        // Place the widget at the bottom of the dashboard
+        // Get constraints from registry for the widget type
+        const constraints = widgetRegistry.getConstraints(widget.type);
+
+        // Apply constraints from registry (overriding any existing constraints)
         const widgetWithPosition = {
             ...widget,
             layout: {
                 ...widget.layout,
                 y: maxY + 1, // Add some spacing
+                minW: constraints?.minWidth,
+                maxW: constraints?.maxWidth,
+                minH: constraints?.minHeight,
+                maxH: constraints?.maxHeight,
             },
         };
 
@@ -420,9 +324,6 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
 
         setDashboard(updatedDashboard);
         saveDashboard(updatedDashboard);
-
-        // Remove from suggestions
-        clearAddedSuggestion(widget.id);
     };
 
     // Remove a widget from dashboard
@@ -478,6 +379,37 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         setTempDashboard(null);
     };
 
+    // Reset dashboard to default
+    const resetDashboard = async () => {
+        if (!domainId) return;
+
+        // Create a default dashboard with constraints from registry
+        const defaultWidgets = createDefaultWidgets();
+        const defaultDashboard = {
+            ...DEFAULT_DASHBOARD,
+            domainId,
+            widgets: applyWidgetConstraints(defaultWidgets),
+            dateUpdated: new Date().toISOString(),
+        };
+
+        setDashboard(defaultDashboard);
+        setShowResetConfirmation(false);
+
+        // Save the default dashboard to the domains table
+        try {
+            await supabase
+                .from("domains")
+                .update({ dashboard_config: defaultDashboard })
+                .eq("id", domainId);
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Failed to save reset dashboard"
+            );
+        }
+    };
+
     // Handle width changes and update column count
     const handleWidthChange = (
         width: number,
@@ -485,6 +417,12 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         cols: number
     ) => {
         setCurrentColumns(cols);
+    };
+
+    // Get existing widget types for filtering insights
+    const getExistingWidgetTypes = (): Set<string> => {
+        if (!dashboard) return new Set();
+        return new Set(dashboard.widgets.map((w) => w.type));
     };
 
     // Render appropriate widget by type
@@ -512,6 +450,15 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 return (
                     <ConversionMetricsWidget key={widgetConfig.id} {...props} />
                 );
+            case "customInsight":
+                return (
+                    <CorrelationInsightWidget
+                        key={widgetConfig.id}
+                        {...props}
+                    />
+                );
+            case "userFlow":
+                return <UserFlowWidget key={widgetConfig.id} {...props} />;
             default:
                 return (
                     <div
@@ -523,6 +470,12 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 );
         }
     };
+
+    // Initialize widgets on component mount
+    useEffect(() => {
+        // Register all widgets
+        registerAllWidgets();
+    }, []);
 
     if (!dashboard) {
         return (
@@ -549,14 +502,15 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
         <div className="bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 w-full">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">Dashboard</h2>
-                <div className="flex space-x-2">
-                    {suggestedWidgets.length > 0 && (
-                        <button
-                            onClick={() => setShowSuggestions(!showSuggestions)}
-                            className="px-4 py-2 rounded-lg bg-purple-600 text-white"
-                        >
-                            Insights ({suggestedWidgets.length})
-                        </button>
+                <div className="flex space-x-2 items-center">
+                    {!isConfigMode && !isLoadingDashboard && (
+                        <WidgetCreationManager
+                            onAddWidget={addWidget}
+                            domainId={domainId}
+                            events={events}
+                            isLoading={isLoading}
+                            existingWidgetTypes={getExistingWidgetTypes()}
+                        />
                     )}
                     {isConfigMode ? (
                         <>
@@ -574,12 +528,20 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                             </button>
                         </>
                     ) : (
-                        <button
-                            onClick={enterConfigMode}
-                            className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
-                        >
-                            Configure
-                        </button>
+                        <>
+                            <button
+                                onClick={() => setShowResetConfirmation(true)}
+                                className="px-4 py-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800/50"
+                            >
+                                Reset
+                            </button>
+                            <button
+                                onClick={enterConfigMode}
+                                className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+                            >
+                                Configure
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
@@ -613,6 +575,35 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 </div>
             )}
 
+            {showResetConfirmation && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-[#23233a] p-6 rounded-lg max-w-md">
+                        <h3 className="text-lg font-semibold mb-3">
+                            Reset Dashboard
+                        </h3>
+                        <p className="mb-4 text-gray-700 dark:text-gray-300">
+                            Are you sure you want to reset the dashboard to its
+                            default configuration? This will remove all custom
+                            widgets and layouts.
+                        </p>
+                        <div className="flex justify-end space-x-2">
+                            <button
+                                onClick={() => setShowResetConfirmation(false)}
+                                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={resetDashboard}
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                            >
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {isConfigMode && (
                 <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
                     <p className="text-blue-800 dark:text-blue-300 text-sm">
@@ -621,16 +612,6 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                         changes.
                     </p>
                 </div>
-            )}
-
-            {/* Widget Suggestions Panel */}
-            {showSuggestions && suggestedWidgets.length > 0 && (
-                <InsightsPanel
-                    suggestedWidgets={suggestedWidgets}
-                    onClose={() => setShowSuggestions(false)}
-                    onDismiss={dismissSuggestion}
-                    onAddWidget={addWidget}
-                />
             )}
 
             <ResponsiveGridLayout

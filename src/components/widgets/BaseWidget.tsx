@@ -1,22 +1,181 @@
 import React, { useState, ReactNode } from "react";
-import { WidgetProps, WidgetSettings } from "@/types/widgets";
+import { WidgetProps, WidgetSettings, ConfigField } from "@/types/widgets";
 import { TimeFrame } from "@/components/EventTimelineChart";
+import widgetRegistry from "@/utils/widgetRegistry";
 
 interface BaseWidgetProps extends WidgetProps {
     children?: ReactNode;
+    customSettings?: ReactNode;
 }
 
 const BaseWidget: React.FC<BaseWidgetProps> = ({
     config,
+    events,
     isLoading,
     onSettingsChange,
     children,
+    customSettings,
 }) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const handleSettingsChange = (newSettings: Partial<WidgetSettings>) => {
         onSettingsChange(config.id, { ...config.settings, ...newSettings });
+    };
+
+    const applySettings = () => {
         setIsSettingsOpen(false);
+    };
+
+    // Get widget definition from registry
+    const widgetDefinition = widgetRegistry.getDefinition(config.type);
+    const configFields = widgetDefinition?.configFields || [];
+
+    // Render a field based on its type
+    const renderConfigField = (field: ConfigField) => {
+        const value =
+            config.settings[field.key] !== undefined
+                ? config.settings[field.key]
+                : field.defaultValue;
+
+        switch (field.type) {
+            case "string":
+                return (
+                    <input
+                        type="text"
+                        value={(value as string) || ""}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: e.target.value,
+                            })
+                        }
+                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                    />
+                );
+            case "number":
+                return (
+                    <input
+                        type="number"
+                        value={(value as number) || 0}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: parseFloat(e.target.value),
+                            })
+                        }
+                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                    />
+                );
+            case "boolean":
+                return (
+                    <input
+                        type="checkbox"
+                        checked={(value as boolean) || false}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: e.target.checked,
+                            })
+                        }
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                );
+            case "select":
+                return (
+                    <select
+                        value={(value as string) || ""}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: e.target.value,
+                            })
+                        }
+                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                    >
+                        {field.options?.map((option) => (
+                            <option
+                                key={String(option.value)}
+                                value={String(option.value)}
+                            >
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                );
+            case "timeFrame":
+                return (
+                    <select
+                        value={(value as TimeFrame) || "24h"}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: e.target.value as TimeFrame,
+                            })
+                        }
+                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                    >
+                        <option value="1h">Last Hour</option>
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                    </select>
+                );
+            case "page":
+                // Get unique pages from events
+                const pages = [
+                    ...new Set(
+                        events
+                            .map((e) =>
+                                typeof e.page === "string" ? e.page : ""
+                            )
+                            .filter(Boolean)
+                    ),
+                ];
+                return (
+                    <select
+                        value={(value as string) || ""}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: e.target.value,
+                            })
+                        }
+                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                    >
+                        <option value="">Select a page</option>
+                        {pages.map((page) => (
+                            <option key={page} value={page}>
+                                {page}
+                            </option>
+                        ))}
+                    </select>
+                );
+            case "event":
+                // Get unique event types from events
+                const eventTypes = [
+                    ...new Set(
+                        events
+                            .map((e) =>
+                                typeof e.type === "string" ? e.type : ""
+                            )
+                            .filter(Boolean)
+                    ),
+                ];
+                return (
+                    <select
+                        value={(value as string) || ""}
+                        onChange={(e) =>
+                            handleSettingsChange({
+                                [field.key]: e.target.value,
+                            })
+                        }
+                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                    >
+                        <option value="">Select an event</option>
+                        {eventTypes.map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                    </select>
+                );
+            default:
+                return <div>Unsupported field type: {field.type}</div>;
+        }
     };
 
     return (
@@ -87,84 +246,114 @@ const BaseWidget: React.FC<BaseWidgetProps> = ({
                                     </button>
                                 </div>
 
-                                {/* Default settings form - can be overridden by child widgets */}
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Time Frame
-                                        </label>
-                                        <select
-                                            value={
-                                                config.settings.timeFrame ||
-                                                "24h"
-                                            }
-                                            onChange={(e) =>
-                                                handleSettingsChange({
-                                                    timeFrame: e.target
-                                                        .value as TimeFrame,
-                                                })
-                                            }
-                                            className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
-                                        >
-                                            <option value="1h">
-                                                Last Hour
-                                            </option>
-                                            <option value="24h">
-                                                Last 24 Hours
-                                            </option>
-                                            <option value="7d">
-                                                Last 7 Days
-                                            </option>
-                                            <option value="30d">
-                                                Last 30 Days
-                                            </option>
-                                        </select>
-                                    </div>
+                                {/* Custom settings or dynamic settings form */}
+                                {customSettings ? (
+                                    customSettings
+                                ) : (
+                                    <div className="space-y-4">
+                                        {configFields.map((field) => (
+                                            <div key={field.key}>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    {field.label}
+                                                </label>
+                                                {renderConfigField(field)}
+                                                {field.description && (
+                                                    <p className="text-xs text-gray-500 mt-1">
+                                                        {field.description}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Refresh Interval (seconds)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="10"
-                                            value={
-                                                config.settings
-                                                    .refreshInterval || 0
-                                            }
-                                            onChange={(e) =>
-                                                handleSettingsChange({
-                                                    refreshInterval: parseInt(
-                                                        e.target.value
-                                                    ),
-                                                })
-                                            }
-                                            className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
-                                        />
-                                        <p className="text-xs text-gray-500 mt-1">
-                                            0 means no auto-refresh
-                                        </p>
-                                    </div>
+                                        {/* Default fields if no config fields provided */}
+                                        {configFields.length === 0 && (
+                                            <>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        Time Frame
+                                                    </label>
+                                                    <select
+                                                        value={
+                                                            config.settings
+                                                                .timeFrame ||
+                                                            "24h"
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleSettingsChange(
+                                                                {
+                                                                    timeFrame: e
+                                                                        .target
+                                                                        .value as TimeFrame,
+                                                                }
+                                                            )
+                                                        }
+                                                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                                                    >
+                                                        <option value="1h">
+                                                            Last Hour
+                                                        </option>
+                                                        <option value="24h">
+                                                            Last 24 Hours
+                                                        </option>
+                                                        <option value="7d">
+                                                            Last 7 Days
+                                                        </option>
+                                                        <option value="30d">
+                                                            Last 30 Days
+                                                        </option>
+                                                    </select>
+                                                </div>
 
-                                    <div className="pt-4 flex justify-end">
-                                        <button
-                                            onClick={() =>
-                                                setIsSettingsOpen(false)
-                                            }
-                                            className="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 mr-2"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                setIsSettingsOpen(false)
-                                            }
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                                        >
-                                            Apply
-                                        </button>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        Refresh Interval
+                                                        (seconds)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        step="10"
+                                                        value={
+                                                            config.settings
+                                                                .refreshInterval ||
+                                                            0
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleSettingsChange(
+                                                                {
+                                                                    refreshInterval:
+                                                                        parseInt(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        ),
+                                                                }
+                                                            )
+                                                        }
+                                                        className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm"
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-1">
+                                                        0 means no auto-refresh
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
+                                )}
+
+                                <div className="pt-4 flex justify-end">
+                                    <button
+                                        onClick={() => setIsSettingsOpen(false)}
+                                        className="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 mr-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={applySettings}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Apply
+                                    </button>
                                 </div>
                             </div>
                         )}

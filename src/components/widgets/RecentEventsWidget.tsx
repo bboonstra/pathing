@@ -1,6 +1,32 @@
 import React, { useMemo, useState } from "react";
 import { WidgetProps } from "@/types/widgets";
 import BaseWidget from "./BaseWidget";
+import widgetRegistry from "@/utils/widgetRegistry";
+
+// Register widget definition
+widgetRegistry.register({
+    type: "recentEvents",
+    name: "Recent Events",
+    description: "Display a list of the most recent events with details",
+    icon: "document-report",
+    constraints: {
+        minWidth: 2,
+        maxWidth: 4,
+        minHeight: 2,
+        maxHeight: 4,
+        defaultWidth: 2,
+        defaultHeight: 2,
+    },
+    configFields: [
+        {
+            key: "maxItems",
+            type: "number",
+            label: "Maximum Items",
+            defaultValue: 5,
+            description: "Maximum number of events to display",
+        },
+    ],
+});
 
 const RecentEventsWidget: React.FC<WidgetProps> = (props) => {
     const { config, events } = props;

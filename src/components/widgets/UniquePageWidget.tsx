@@ -2,6 +2,33 @@ import React, { useMemo } from "react";
 import { WidgetProps } from "@/types/widgets";
 import BaseWidget from "./BaseWidget";
 import { TimeFrame } from "@/components/EventTimelineChart";
+import widgetRegistry from "@/utils/widgetRegistry";
+
+// Register widget definition
+widgetRegistry.register({
+    type: "uniquePages",
+    name: "Unique Pages",
+    description:
+        "Display the count of unique pages visited in a given time period",
+    icon: "document-duplicate",
+    constraints: {
+        minWidth: 1,
+        maxWidth: 2,
+        minHeight: 2,
+        maxHeight: 4,
+        defaultWidth: 1,
+        defaultHeight: 1,
+    },
+    configFields: [
+        {
+            key: "timeFrame",
+            type: "timeFrame",
+            label: "Time Frame",
+            defaultValue: "24h",
+            description: "Time period to count unique pages for",
+        },
+    ],
+});
 
 const UniquePageWidget: React.FC<WidgetProps> = (props) => {
     const { config, events } = props;

@@ -2,6 +2,32 @@ import React, { useMemo } from "react";
 import { WidgetProps } from "@/types/widgets";
 import BaseWidget from "./BaseWidget";
 import { TimeFrame } from "@/components/EventTimelineChart";
+import widgetRegistry from "@/utils/widgetRegistry";
+
+// Register widget definition
+widgetRegistry.register({
+    type: "eventCount",
+    name: "Event Count",
+    description: "Display the total number of events in a given time period",
+    icon: "chart-bar",
+    constraints: {
+        minWidth: 1,
+        maxWidth: 2,
+        minHeight: 2,
+        maxHeight: 4,
+        defaultWidth: 1,
+        defaultHeight: 1,
+    },
+    configFields: [
+        {
+            key: "timeFrame",
+            type: "timeFrame",
+            label: "Time Frame",
+            defaultValue: "24h",
+            description: "Time period to count events for",
+        },
+    ],
+});
 
 const EventCountWidget: React.FC<WidgetProps> = (props) => {
     const { config, events } = props;
