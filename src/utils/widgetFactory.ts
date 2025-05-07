@@ -175,8 +175,10 @@ export function analyzeEventPatterns(events: EventData[]): {
     return patterns;
 }
 
-export default {
+const widgetFactory = {
     createWidget,
     generateInsightWidgets,
     analyzeEventPatterns,
 };
+
+export default widgetFactory;

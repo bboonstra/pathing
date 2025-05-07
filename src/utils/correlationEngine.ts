@@ -788,6 +788,8 @@ function getISOWeek(date: Date): number {
     return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-export default {
+const correlationEngine = {
     analyzeCorrelations,
 };
+
+export default correlationEngine;
