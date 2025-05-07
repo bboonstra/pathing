@@ -150,11 +150,21 @@ export default function Home() {
 
                 {/* Scroll Indicator - Fixed at bottom */}
                 <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center z-20">
-                    <p className="text-gray-700 dark:text-gray-200 mb-2 text-sm font-semibold bg-white/90 dark:bg-gray-900/90 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm">
+                    <p
+                        className="text-gray-700 dark:text-gray-200 mb-2 text-sm font-semibold bg-white/90 dark:bg-gray-900/90 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm cursor-pointer hover:bg-white dark:hover:bg-gray-900"
+                        onClick={() =>
+                            window.scrollTo({
+                                top:
+                                    (document.getElementById("demo-section")
+                                        ?.offsetTop ?? 0) - 20,
+                                behavior: "smooth",
+                            })
+                        }
+                    >
                         See the demo
                     </p>
                     <div
-                        className=""
+                        className="cursor-pointer"
                         onClick={() =>
                             window.scrollTo({
                                 top:
@@ -183,7 +193,7 @@ export default function Home() {
             {/* Demo Section */}
             <section
                 id="demo-section"
-                className="max-w-4xl mx-auto px-4 mb-16 mt-16"
+                className="max-w-4xl mx-auto px-4 mb-16 mt-16 pt-10"
             >
                 <div className="text-center mb-2">
                     <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
