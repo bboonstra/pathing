@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Sora } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
@@ -15,6 +16,12 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
+const sora = Sora({
+    variable: "--font-sora",
+    subsets: ["latin"],
+    weight: ["400", "600", "700"],
+});
+
 export const metadata: Metadata = {
     title: "Pathing",
     description: "See analytics in your user's shoes.",
@@ -27,7 +34,7 @@ export const metadata: Metadata = {
         "privacy-first",
         "user journeys",
         "web analytics",
-        "no cookies",
+        "anonymized",
         "real-time analytics",
         "user tracking",
         "website analytics",
@@ -53,14 +60,13 @@ export const metadata: Metadata = {
     applicationName: "Pathing Analytics",
     referrer: "origin-when-cross-origin",
     category: "web analytics",
-    colorScheme: "dark light",
     openGraph: {
         type: "website",
         locale: "en",
         url: "https://www.pathing.cc",
         title: "Pathing - See analytics in your user's shoes",
         description:
-            "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no cookies, just clarity.",
+            "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no popups, just clarity.",
         siteName: "Pathing",
         images: [
             {
@@ -75,7 +81,7 @@ export const metadata: Metadata = {
         card: "summary",
         title: "Pathing - See analytics in your user's shoes",
         description:
-            "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no cookies, just clarity.",
+            "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no popups, just clarity.",
         images: ["/pathing.png"],
         creator: "@bboonstra",
         site: "@bboonstra",
@@ -127,6 +133,7 @@ export const viewport = {
     width: "device-width",
     initialScale: 1,
     maximumScale: 1,
+    colorScheme: "dark light",
 };
 
 export default function RootLayout({
@@ -144,14 +151,14 @@ export default function RootLayout({
                 `}</style>
             </head>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} antialiased`}
             >
                 {children}
                 <SpeedInsights />
                 <Analytics />
                 <Script
                     src="/pathing.js"
-                    pathing-api-key="pk_664a345f3385ca311f2de6bc544d5e9dbcbe75d3e34a5a12"
+                    pathing-api-key={process.env.NEXT_PUBLIC_PATHING_API_KEY}
                     strategy="lazyOnload"
                 />
             </body>

@@ -1,11 +1,10 @@
 # Pathing.cc
 
-A privacy-first web analytics platform that helps you understand user journeys without sacrificing user privacy. No cookies, no tracking pixels, just clarity.
+A privacy-first web analytics platform that helps you understand user journeys without sacrificing user privacy. No popups, no tracking pixels, just clarity.
 
 ## Features
 
 - **1-line install**: Simple JavaScript snippet to add to your website
-- **Privacy-first**: No cookies required, fully GDPR compliant
 - **User journey visualization**: See how users navigate through your site
 - **Domain verification**: Secure analytics for verified domains only
 - **Real-time analytics**: Monitor traffic as it happens

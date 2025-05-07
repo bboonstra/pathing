@@ -42,3 +42,29 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Headline font */
+.font-headline {
+  font-family: var(--font-sora), var(--font-geist-sans), Arial, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Card style */
+.card {
+  @apply rounded-2xl shadow-xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/10 p-8 transition-transform duration-300 hover:scale-105 hover:shadow-2xl;
+}
+
+/* Fade/slide animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeInUp {
+  animation: fadeInUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}

@@ -13,12 +13,12 @@ import {
 import { supabase } from "@/lib/supabase";
 import { pathing } from "pathingjs";
 import HomepageAnalytics from "@/components/HomepageAnalytics";
-import BetaBadge from "@/components/BetaBadge";
+import EventTimelineChart from "@/components/EventTimelineChart";
+import type { EventData } from "@/components/EventTimelineChart";
 
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
     const [copied, setCopied] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [codeSnippet, setCodeSnippet] = useState(
         '<script src="/pathing.js"></script>'
     );
@@ -27,27 +27,37 @@ export default function Home() {
         useState<HTMLButtonElement | null>(null);
     // State to control analytics visibility
     const [showAnalytics, setShowAnalytics] = useState(false);
+    // Add state for user login
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+    // Add state for dummy events
+    const [dummyEvents, setDummyEvents] = useState<EventData[]>([]);
+
+    useEffect(() => {
+        // Fetch dummy events from API
+        console.log("Fetching dummy events...");
+        fetch("/api/dummy-events")
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("Dummy events received:", data.events.length);
+                setDummyEvents(data.events);
+            })
+            .catch((err) => console.error("Error fetching dummy events:", err));
+    }, []);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
             setCodeSnippet(
                 `<script src="${window.location.origin}/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>`
             );
+            // Check login state
+            supabase.auth.getUser().then(({ data }) => {
+                setIsLoggedIn(!!data.user);
+            });
         }
     }, []);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setIsLoggedIn(!!session);
-        });
-        const { data: listener } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setIsLoggedIn(!!session);
-            }
-        );
-        return () => {
-            listener?.subscription.unsubscribe();
-        };
+        pathing.init(process.env.NEXT_PUBLIC_PATHING_API_KEY);
     }, []);
 
     // Use pathing.link.button when the demo button is available
@@ -80,89 +90,121 @@ export default function Home() {
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#0a0a0a] dark:via-[#181824] dark:to-[#1a1a2e] text-[var(--foreground)] font-sans transition-colors duration-500">
             {/* Hero */}
-            <header className="flex-1 flex flex-col items-center justify-center px-4 pt-32 pb-16 text-center relative">
-                <div className="absolute inset-0 pointer-events-none z-0">
-                    <div className="w-72 h-72 bg-gradient-to-tr from-blue-400/10 via-purple-400/10 to-transparent rounded-full blur-2xl absolute -top-20 -left-20" />
+            <header className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-16 text-center relative overflow-hidden">
+                {/* Background Chart - Hidden on mobile */}
+                <div className="absolute inset-0 w-full h-full z-0 opacity-70 hidden sm:flex items-end justify-center">
+                    <div className="w-full h-[40vh] flex items-end p-4">
+                        <EventTimelineChart
+                            events={dummyEvents}
+                            timeFrame="30d"
+                            isLoading={false}
+                            hideBoundingBox={true}
+                            hideTooltip={true}
+                        />
+                    </div>
                 </div>
-                <div className="flex items-center justify-center mb-6">
-                    <Image
-                        src="/pathing.png"
-                        alt="Pathing Logo"
-                        width={72}
-                        height={72}
-                        className="m-0 p-0"
-                    />
-                    <h1 className="relative z-10 text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
-                        pathing<span className="text-blue-500">.cc</span>
-                    </h1>
-                    <BetaBadge />
-                </div>
-                <h2 className="relative z-10 text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200">
-                    Walk the path your users take.
-                </h2>
-                <p className="relative z-10 max-w-2xl mx-auto mb-10 text-lg sm:text-xl text-gray-500 dark:text-gray-400 font-medium">
-                    Effortless, privacy-first analytics. Instantly understand
-                    user journeys—no bloat, no cookies, just clarity.
-                </p>
-                <div className="relative z-10 flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                    {isLoggedIn ? (
-                        <a
-                            href="/dashboard"
-                            className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-10 py-4 rounded-full shadow-xl transition-all text-lg flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
-                        >
-                            Go to Dashboard{" "}
-                            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </a>
-                    ) : (
-                        <a
-                            href="/login"
-                            className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-10 py-4 rounded-full shadow-xl transition-all text-lg flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
-                        >
-                            Sign Up / Log In{" "}
-                            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </a>
-                    )}
+
+                {/* Overlay gradient to improve text readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/80 to-white/95 dark:from-[#0a0a0a]/95 dark:via-[#181824]/85 dark:to-[#1a1a2e]/90 z-1"></div>
+
+                {/* Content */}
+                <div className="flex-1 flex flex-col items-center justify-center z-10 text-center max-w-3xl">
+                    <div className="flex items-center justify-center mb-8 w-full">
+                        <Image
+                            src="/pathing.png"
+                            alt="Pathing Logo"
+                            width={64}
+                            height={64}
+                            className="m-0 p-0"
+                        />
+                        <h1 className="font-headline text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg ml-3">
+                            pathing<span className="text-blue-500">.cc</span>
+                        </h1>
+                    </div>
+                    <h2 className="font-headline text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200 w-full">
+                        Walk the path your users take.
+                    </h2>
+                    <p className="max-w-xl mb-10 text-lg sm:text-xl text-gray-500 dark:text-gray-400 font-medium w-full">
+                        Effortless, privacy-first analytics with a complex
+                        dashboard to help you understand your users.
+                    </p>
                     <a
-                        href="https://github.com/bboonstra/pathing"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="border-2 border-blue-600 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 font-bold px-10 py-4 rounded-full transition-all text-lg flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                        href="/dashboard"
+                        className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg focus:outline-none focus:ring-4 focus:ring-blue-300 animate-fadeInUp"
+                        style={{ animationDelay: "0.2s" }}
+                    >
+                        {isLoggedIn === null
+                            ? "Get Started Free"
+                            : isLoggedIn
+                            ? "Go to Dashboard"
+                            : "Get Started Free"}
+                    </a>
+                </div>
+
+                {/* Scroll Indicator - Fixed at bottom */}
+                <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center z-20">
+                    <p className="text-gray-700 dark:text-gray-200 mb-2 text-sm font-semibold bg-white/90 dark:bg-gray-900/90 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm">
+                        See the demo
+                    </p>
+                    <div
+                        className=""
+                        onClick={() =>
+                            window.scrollTo({
+                                top:
+                                    (document.getElementById("demo-section")
+                                        ?.offsetTop ?? 0) - 20,
+                                behavior: "smooth",
+                            })
+                        }
                     >
                         <svg
-                            className="w-5 h-5"
+                            className="w-5 h-5 text-blue-500 dark:text-blue-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
                             fill="currentColor"
-                            viewBox="0 0 24 24"
                         >
-                            <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.75.41-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.41-5.25 5.7.42.36.79 1.09.79 2.2 0 1.59-.01 2.87-.01 3.26 0 .31.21.68.8.56C20.71 21.39 24 17.08 24 12c0-6.27-5.23-11.5-12-11.5z" />
+                            <path
+                                fillRule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clipRule="evenodd"
+                            />
                         </svg>
-                        View on GitHub
-                    </a>
+                    </div>
                 </div>
             </header>
 
             {/* Value Props */}
-            <section className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-8 px-4 mb-10 relative z-10">
-                <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl text-center border border-white/40 dark:border-white/10 flex flex-col items-center gap-3">
+            <section className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-8 px-4 mb-20 relative z-10 pt-20">
+                <div
+                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
+                    style={{ animationDelay: "0.1s" }}
+                >
                     <BoltIcon className="w-8 h-8 text-blue-500 mb-2" />
-                    <h3 className="font-extrabold text-lg mb-1">
+                    <h3 className="font-headline font-extrabold text-lg mb-1">
                         1-line Install
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 font-medium">
                         Drop a script. Done. No config, no fuss.
                     </p>
                 </div>
-                <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl text-center border border-white/40 dark:border-white/10 flex flex-col items-center gap-3">
+                <div
+                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
+                    style={{ animationDelay: "0.2s" }}
+                >
                     <ShieldCheckIcon className="w-8 h-8 text-purple-500 mb-2" />
-                    <h3 className="font-extrabold text-lg mb-1">
+                    <h3 className="font-headline font-extrabold text-lg mb-1">
                         Privacy First
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 font-medium">
-                        No cookies, no tracking pixels, no creepy stuff.
+                        No popups, no tracking pixels, no creepy stuff.
                     </p>
                 </div>
-                <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl text-center border border-white/40 dark:border-white/10 flex flex-col items-center gap-3">
+                <div
+                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
+                    style={{ animationDelay: "0.3s" }}
+                >
                     <EyeIcon className="w-8 h-8 text-blue-400 mb-2" />
-                    <h3 className="font-extrabold text-lg mb-1">
+                    <h3 className="font-headline font-extrabold text-lg mb-1">
                         Crystal Clear
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 font-medium">
@@ -171,34 +213,191 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Minimalist Scroll Indicator */}
-            <div className="flex justify-center mb-10">
-                <div
-                    className="w-5 h-10 flex flex-col items-center cursor-pointer"
-                    onClick={() =>
-                        window.scrollTo({
-                            top:
-                                (document.getElementById("get-started")
-                                    ?.offsetTop ?? 0) - 20,
-                            behavior: "smooth",
-                        })
-                    }
-                >
-                    <span className="w-0.5 h-5 bg-gray-400/50 dark:bg-gray-500/50"></span>
-                    <svg
-                        className="w-5 h-5 text-gray-400/70 dark:text-gray-500/70 animate-pulse"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
+            {/* Demo Section */}
+            <section id="demo-section" className="max-w-4xl mx-auto px-4 mb-24">
+                <div className="text-center mb-2">
+                    <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                        Experience Pathing in Action
+                    </h2>
                 </div>
-            </div>
+
+                <div className="p-2 text-center animate-fadeInUp transform transition-all">
+                    <p className="text-lg text-gray-700 dark:text-gray-200 mb-6">
+                        Click the button below to send a demo event and watch
+                        the analytics update in real-time!
+                    </p>
+                    <div className="flex justify-center flex-col items-center">
+                        {/* Animated container that expands to show analytics */}
+                        <div
+                            className={`transition-all duration-700 ease-in-out transform 
+                            ${
+                                showAnalytics
+                                    ? "opacity-100 scale-100 mt-8 max-h-none"
+                                    : "opacity-0 scale-80 max-h-0 overflow-hidden pointer-events-none absolute"
+                            }`}
+                        >
+                            <HomepageAnalytics />
+
+                            <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 p-5 rounded-lg border border-blue-100 dark:border-blue-800 text-left">
+                                <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
+                                    This is just a taste of what Pathing offers
+                                </h3>
+                                <p className="text-gray-700 dark:text-gray-300 mb-3">
+                                    What you&apos;re seeing above is real-time
+                                    analytics displaying demo button clicks
+                                    across all our users. With Pathing on your
+                                    site, you&apos;ll get:
+                                </p>
+                                <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>
+                                        User journeys and page flows visualized
+                                        in intuitive charts
+                                    </li>
+                                    <li>
+                                        Real-time event tracking with zero
+                                        cookie usage
+                                    </li>
+                                    <li>
+                                        Detailed device and session analytics
+                                    </li>
+                                    <li>
+                                        Custom event tracking for buttons,
+                                        forms, and more
+                                    </li>
+                                </ul>
+                                <div className="mt-4">
+                                    <a
+                                        href="/dashboard"
+                                        className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300"
+                                    >
+                                        {isLoggedIn === null
+                                            ? "Get started for free"
+                                            : isLoggedIn
+                                            ? "Go to Dashboard"
+                                            : "Get started for free"}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-4 w-4 ml-1"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Button container with conditional rendering */}
+                        <div
+                            className={`transition-all duration-500 ease-in-out ${
+                                showAnalytics
+                                    ? "max-h-0 opacity-0 scale-95 mb-0 overflow-hidden"
+                                    : "max-h-20 opacity-100 scale-100 mb-4"
+                            }`}
+                        >
+                            <button
+                                ref={setDemoButtonRef}
+                                className={`px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 animate-fadeInUp border-2 border-blue-400`}
+                                id="demo-button"
+                                onClick={handleDemoClick}
+                                disabled={eventSent}
+                                style={{ animationDelay: "0.2s" }}
+                            >
+                                {eventSent ? (
+                                    <span className="flex items-center gap-2">
+                                        <CheckCircleIcon className="w-6 h-6 animate-pop" />{" "}
+                                        Event Sent!
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center gap-2">
+                                        Send Demo Event
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        className={`mt-4 text-gray-500 dark:text-gray-400 text-base transition-opacity duration-500 ${
+                            showAnalytics ? "opacity-0" : "opacity-100"
+                        }`}
+                    >
+                        {eventSent
+                            ? "Demo event sent! Loading real analytics..."
+                            : ""}
+                    </div>
+                </div>
+            </section>
+
+            {/* Beta Section */}
+            <section className="max-w-3xl mx-auto px-4 mb-10">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-6 text-center shadow-md animate-fadeInUp">
+                    <span className="inline-block bg-yellow-400 text-yellow-900 font-bold px-3 py-1 rounded-full text-xs mb-2">
+                        Beta
+                    </span>
+                    <h2 className="text-xl font-bold mb-2">
+                        Pathing is in Open Beta!
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-200">
+                        We&apos;re actively improving Pathing based on your
+                        feedback. Try it out and let us know what you think!
+                    </p>
+                </div>
+            </section>
+
+            {/* How it Works - Timeline style */}
+            <section className="max-w-4xl mx-auto px-4 mb-24">
+                <h2 className="font-headline text-2xl sm:text-3xl font-bold mb-10 text-center animate-fadeInUp">
+                    How it Works
+                </h2>
+                <ol className="relative border-l-2 border-blue-200 dark:border-blue-900 pl-8">
+                    <li
+                        className="mb-12 animate-fadeInUp"
+                        style={{ animationDelay: "0.1s" }}
+                    >
+                        <div className="absolute -left-5 top-1.5 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-[#181824]"></div>
+                        <h3 className="font-headline font-semibold text-lg mb-1">
+                            Add the Script
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300">
+                            Paste a single line before{" "}
+                            <code>&lt;/body&gt;</code> on your site.
+                        </p>
+                    </li>
+                    <li
+                        className="mb-12 animate-fadeInUp"
+                        style={{ animationDelay: "0.2s" }}
+                    >
+                        <div className="absolute -left-5 top-1.5 w-4 h-4 bg-purple-500 rounded-full border-4 border-white dark:border-[#181824]"></div>
+                        <h3 className="font-headline font-semibold text-lg mb-1">
+                            See Data Instantly
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300">
+                            Real-time user journeys and events appear in your
+                            dashboard.
+                        </p>
+                    </li>
+                    <li
+                        className="animate-fadeInUp"
+                        style={{ animationDelay: "0.3s" }}
+                    >
+                        <div className="absolute -left-5 top-1.5 w-4 h-4 bg-blue-400 rounded-full border-4 border-white dark:border-[#181824]"></div>
+                        <h3 className="font-headline font-semibold text-lg mb-1">
+                            Act on Insights
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300">
+                            Use clear analytics to improve UX, conversion, and
+                            retention.
+                        </p>
+                    </li>
+                </ol>
+            </section>
 
             {/* How it works */}
             <section
@@ -245,112 +444,6 @@ export default function Home() {
                 </p>
             </section>
 
-            {/* Demo event */}
-            <section className="max-w-2xl mx-auto px-4 mb-28 text-center">
-                <h2 className="text-2xl font-bold mb-4">See it in action</h2>
-                <div className="flex justify-center flex-col items-center">
-                    {/* Animated container that expands to show analytics */}
-                    <div
-                        className={`transition-all duration-700 ease-in-out transform 
-                        ${
-                            showAnalytics
-                                ? "opacity-100 scale-100 mt-8 max-h-none"
-                                : "opacity-0 scale-80 max-h-0 overflow-hidden pointer-events-none absolute"
-                        }`}
-                    >
-                        <HomepageAnalytics />
-
-                        <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 p-5 rounded-lg border border-blue-100 dark:border-blue-800 text-left">
-                            <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
-                                This is just a taste of what Pathing offers
-                            </h3>
-                            <p className="text-gray-700 dark:text-gray-300 mb-3">
-                                What you&apos;re seeing above is real-time
-                                analytics displaying demo button clicks across
-                                all our users. With Pathing on your site,
-                                you&apos;ll get:
-                            </p>
-                            <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
-                                <li>
-                                    User journeys and page flows visualized in
-                                    intuitive charts
-                                </li>
-                                <li>
-                                    Real-time event tracking with zero cookie
-                                    usage
-                                </li>
-                                <li>Detailed device and session analytics</li>
-                                <li>
-                                    Custom event tracking for buttons, forms,
-                                    and more
-                                </li>
-                            </ul>
-                            <div className="mt-4">
-                                <a
-                                    href="/dashboard"
-                                    className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300"
-                                >
-                                    Get started for free
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4 ml-1"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M9 5l7 7-7 7"
-                                        />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Button container with conditional rendering */}
-                    <div
-                        className={`transition-all duration-500 ease-in-out ${
-                            showAnalytics
-                                ? "max-h-0 opacity-0 scale-95 mb-0 overflow-hidden"
-                                : "max-h-20 opacity-100 scale-100 mb-4"
-                        }`}
-                    >
-                        <button
-                            ref={setDemoButtonRef}
-                            className={`px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 ${
-                                eventSent && !showAnalytics ? "scale-105" : ""
-                            }`}
-                            id="demo-button"
-                            onClick={handleDemoClick}
-                            disabled={eventSent}
-                        >
-                            {eventSent ? (
-                                <span className="flex items-center gap-2">
-                                    <CheckCircleIcon className="w-6 h-6 animate-pop" />{" "}
-                                    Event Sent!
-                                </span>
-                            ) : (
-                                <span className="flex items-center gap-2">
-                                    Send Demo Event
-                                </span>
-                            )}
-                        </button>
-                    </div>
-                </div>
-                <div
-                    className={`mt-4 text-gray-500 dark:text-gray-400 text-base transition-opacity duration-500 ${
-                        showAnalytics ? "opacity-0" : "opacity-100"
-                    }`}
-                >
-                    {eventSent
-                        ? "Demo event sent! Loading real analytics..."
-                        : "Click to send a test event and see analytics in action."}
-                </div>
-            </section>
-
             {/* Documentation CTA */}
             <section className="max-w-4xl mx-auto px-4 mb-20">
                 <div className="backdrop-blur-lg bg-white/70 dark:bg-white/10 rounded-2xl p-8 sm:p-10 shadow-xl border border-white/40 dark:border-white/10 flex flex-col items-center text-center">
@@ -375,8 +468,13 @@ export default function Home() {
 
             {/* Footer */}
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
-                &copy; {new Date().getFullYear()} pathing.cc &mdash; Easy
-                analytics for humans.
+                &copy; {new Date().getFullYear()} pathing.cc &mdash; Built by{" "}
+                <a
+                    href="https://github.com/bboonstra"
+                    className="text-blue-600 dark:text-blue-400 underline"
+                >
+                    Ben Boonstra
+                </a>
             </footer>
             <style jsx global>{`
                 @keyframes pop {

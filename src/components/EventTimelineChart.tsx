@@ -36,6 +36,8 @@ interface EventTimelineChartProps {
     timeFrame?: TimeFrame;
     onTimeFrameChange?: (timeFrame: TimeFrame) => void;
     isLoading?: boolean;
+    hideBoundingBox?: boolean;
+    hideTooltip?: boolean;
 }
 
 export default function EventTimelineChart({
@@ -43,9 +45,18 @@ export default function EventTimelineChart({
     timeFrame = "24h",
     onTimeFrameChange,
     isLoading = false,
+    hideBoundingBox = false,
+    hideTooltip = false,
 }: EventTimelineChartProps) {
     const [chartData, setChartData] = useState<EventsChartData[]>([]);
     const [localTimeFrame, setLocalTimeFrame] = useState<TimeFrame>(timeFrame);
+
+    console.log(
+        "EventTimelineChart render - events:",
+        events.length,
+        "timeFrame:",
+        timeFrame
+    );
 
     const handleTimeFrameChange = (newTimeFrame: TimeFrame) => {
         if (onTimeFrameChange) {
@@ -56,6 +67,10 @@ export default function EventTimelineChart({
     };
 
     useEffect(() => {
+        console.log(
+            "EventTimelineChart useEffect - processing events:",
+            events.length
+        );
         if (events.length === 0) {
             setChartData([]);
             return;
@@ -194,88 +209,84 @@ export default function EventTimelineChart({
             }
         });
 
+        console.log(
+            "Final chart data structure:",
+            JSON.stringify(consolidatedData[0], null, 2)
+        );
+        console.log("Chart data length:", consolidatedData.length);
         setChartData(consolidatedData);
     }, [events, timeFrame, localTimeFrame, onTimeFrameChange]);
 
     const activeTimeFrame = onTimeFrameChange ? timeFrame : localTimeFrame;
 
-    return (
-        <div className="p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800 mb-6">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Event Timeline</h3>
-                <div className="flex space-x-2">
-                    <select
-                        value={activeTimeFrame}
-                        onChange={(e) =>
-                            handleTimeFrameChange(e.target.value as TimeFrame)
-                        }
-                        className="px-3 py-1 text-sm bg-white/90 dark:bg-[#181824]/90 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    const chartContent = (
+        <div
+            className={`${
+                hideBoundingBox
+                    ? "w-full h-full"
+                    : "bg-white/50 dark:bg-[#181824]/50 rounded-lg p-6 w-full"
+            } flex items-center justify-center min-h-[300px]`}
+        >
+            {isLoading ? (
+                <p className="text-gray-500 dark:text-gray-400">
+                    Loading data...
+                </p>
+            ) : chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart
+                        data={chartData}
+                        margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
                     >
-                        <option value="1h">Last Hour</option>
-                        <option value="24h">Last 24 Hours</option>
-                        <option value="7d">Last 7 Days</option>
-                        <option value="30d">Last 30 Days</option>
-                    </select>
-                </div>
-            </div>
-            <div className="bg-white/50 dark:bg-[#181824]/50 rounded-lg p-6 flex items-center justify-center min-h-[200px]">
-                {isLoading ? (
-                    <p className="text-gray-500 dark:text-gray-400">
-                        Loading data...
-                    </p>
-                ) : chartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart
-                            data={chartData}
-                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                        >
-                            <defs>
-                                <linearGradient
-                                    id="colorCount"
-                                    x1="0"
-                                    y1="0"
-                                    x2="0"
-                                    y2="1"
-                                >
-                                    <stop
-                                        offset="5%"
-                                        stopColor="var(--chart-stroke, #4f46e5)"
-                                        stopOpacity={0.8}
-                                    />
-                                    <stop
-                                        offset="95%"
-                                        stopColor="var(--chart-stroke, #4f46e5)"
-                                        stopOpacity={0.1}
-                                    />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid
-                                strokeDasharray="3 3"
-                                stroke="var(--grid-color, rgba(156, 163, 175, 0.2))"
-                                vertical={false}
-                            />
-                            <XAxis
-                                dataKey="formattedTime"
-                                tick={{
-                                    fill: "var(--axis-color, #9ca3af)",
-                                    fontSize: 12,
-                                }}
-                                tickLine={false}
-                                axisLine={{
-                                    stroke: "var(--axis-line-color, rgba(156, 163, 175, 0.3))",
-                                }}
-                            />
-                            <YAxis
-                                tick={{
-                                    fill: "var(--axis-color, #9ca3af)",
-                                    fontSize: 12,
-                                }}
-                                tickLine={false}
-                                axisLine={{
-                                    stroke: "var(--axis-line-color, rgba(156, 163, 175, 0.3))",
-                                }}
-                                width={35}
-                            />
+                        <defs>
+                            <linearGradient
+                                id="colorCount"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="5%"
+                                    stopColor="var(--chart-stroke, #4f46e5)"
+                                    stopOpacity={0.8}
+                                />
+                                <stop
+                                    offset="95%"
+                                    stopColor="var(--chart-stroke, #4f46e5)"
+                                    stopOpacity={0.1}
+                                />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--grid-color, rgba(156, 163, 175, 0.2))"
+                            vertical={false}
+                        />
+                        <XAxis
+                            dataKey="formattedTime"
+                            tick={{
+                                fill: "var(--axis-color, #9ca3af)",
+                                fontSize: 12,
+                            }}
+                            tickLine={false}
+                            axisLine={{
+                                stroke: "var(--axis-line-color, rgba(156, 163, 175, 0.3))",
+                            }}
+                            interval="preserveStartEnd"
+                            minTickGap={20}
+                        />
+                        <YAxis
+                            tick={{
+                                fill: "var(--axis-color, #9ca3af)",
+                                fontSize: 12,
+                            }}
+                            tickLine={false}
+                            axisLine={{
+                                stroke: "var(--axis-line-color, rgba(156, 163, 175, 0.3))",
+                            }}
+                            width={35}
+                        />
+                        {!hideTooltip && (
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor:
@@ -313,29 +324,56 @@ export default function EventTimelineChart({
                                 }}
                                 wrapperStyle={{ outline: "none" }}
                             />
-                            <Area
-                                type="monotone"
-                                dataKey="count"
-                                name="Events"
-                                stroke="var(--chart-stroke, #4f46e5)"
-                                strokeWidth={2}
-                                fillOpacity={1}
-                                fill="url(#colorCount)"
-                                activeDot={{
-                                    r: 6,
-                                    stroke: "var(--chart-stroke, #4f46e5)",
-                                    strokeWidth: 2,
-                                    fill: "var(--chart-dot-fill, white)",
-                                }}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <p className="text-gray-500 dark:text-gray-400">
-                        No events recorded for this time period
-                    </p>
-                )}
+                        )}
+                        <Area
+                            type="monotone"
+                            dataKey="count"
+                            name="Events"
+                            stroke="var(--chart-stroke, #4f46e5)"
+                            strokeWidth={2}
+                            fillOpacity={1}
+                            fill="url(#colorCount)"
+                            activeDot={{
+                                r: 6,
+                                stroke: "var(--chart-stroke, #4f46e5)",
+                                strokeWidth: 2,
+                                fill: "var(--chart-dot-fill, white)",
+                            }}
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            ) : (
+                <p className="text-gray-500 dark:text-gray-400">
+                    No events recorded for this time period
+                </p>
+            )}
+        </div>
+    );
+
+    if (hideBoundingBox) {
+        return chartContent;
+    }
+
+    return (
+        <div className="p-4 bg-white/40 dark:bg-[#212134]/40 rounded-lg border border-gray-200 dark:border-gray-800 mb-6">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Event Timeline</h3>
+                <div className="flex space-x-2">
+                    <select
+                        value={activeTimeFrame}
+                        onChange={(e) =>
+                            handleTimeFrameChange(e.target.value as TimeFrame)
+                        }
+                        className="px-3 py-1 text-sm bg-white/90 dark:bg-[#181824]/90 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="1h">Last Hour</option>
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                    </select>
+                </div>
             </div>
+            {chartContent}
         </div>
     );
 }

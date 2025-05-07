@@ -11,6 +11,7 @@ import {
     GlobeAltIcon,
     BookOpenIcon,
     ChatBubbleLeftRightIcon,
+    CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
 
@@ -118,6 +119,16 @@ export default function Navbar() {
                                 }`}
                             >
                                 <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                            </Link>
+                            <Link
+                                href="/dashboard/pricing"
+                                className={`p-2 rounded-lg ${
+                                    isActive("/dashboard/pricing")
+                                        ? "bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400"
+                                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
+                            >
+                                <CurrencyDollarIcon className="w-5 h-5" />
                             </Link>
                         </nav>
                         <SignOutButton />
