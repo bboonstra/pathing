@@ -21,7 +21,7 @@ export default function ApiReference() {
                             A class for adding metadata to event properties.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`new pathing.Parameter(
   label: string, 
   key: string, 
@@ -40,7 +40,7 @@ export default function ApiReference() {
                             behavior.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.config({
   trackPageviews: boolean,
   trackClicks: boolean,
@@ -67,7 +67,7 @@ export default function ApiReference() {
                             Tracks a purchase or conversion event.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.send.purchase({
   product: string | Parameter,
   price: number | Parameter,
@@ -87,7 +87,7 @@ export default function ApiReference() {
                             Tracks media playback events (video/audio).
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.send.playback({
   content: string | Parameter,
   duration: number | Parameter,
@@ -104,7 +104,7 @@ export default function ApiReference() {
                             Tracks any custom event type.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.send.raw(
   type: string, 
   data: Record<string, any>
@@ -130,7 +130,7 @@ export default function ApiReference() {
                             event.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.link.purchase(
   element: HTMLElement,
   data: Record<string, any>,
@@ -148,7 +148,7 @@ export default function ApiReference() {
                             Bind playback tracking to a media element.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.link.playback(
   element: HTMLMediaElement,
   data: Record<string, any>
@@ -163,7 +163,7 @@ export default function ApiReference() {
                             Bind any custom event to an element.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.link.raw(
   element: HTMLElement,
   type: string,
@@ -188,7 +188,7 @@ export default function ApiReference() {
                             Using with React for automatic route tracking.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
-                            <pre className="text-blue-700 dark:text-blue-300 text-sm">
+                            <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`// components/PathingTracker.tsx
 'use client';
   

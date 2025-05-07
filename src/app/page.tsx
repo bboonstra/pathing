@@ -35,11 +35,9 @@ export default function Home() {
 
     useEffect(() => {
         // Fetch dummy events from API
-        console.log("Fetching dummy events...");
         fetch("/api/dummy-events")
             .then((res) => res.json())
             .then((data) => {
-                console.log("Dummy events received:", data.events.length);
                 setDummyEvents(data.events);
             })
             .catch((err) => console.error("Error fetching dummy events:", err));
@@ -485,18 +483,18 @@ export default function Home() {
 
             {/* Footer */}
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-0">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-2">
                     <div>
                         &copy; {new Date().getFullYear()} pathing.cc &mdash;
                         Built by{" "}
                         <a
                             href="https://github.com/bboonstra"
-                            className="text-blue-600 dark:text-blue-400 underline"
+                            className="text-blue-600 dark:text-blue-400"
                         >
                             Ben Boonstra
                         </a>
                     </div>
-                    <div className="hidden sm:inline">{" | "}</div>
+                    <div className="hidden sm:block mx-2">|</div>
                     <a
                         href="/tos"
                         className="text-blue-600 dark:text-blue-400 hover:underline"

@@ -51,13 +51,6 @@ export default function EventTimelineChart({
     const [chartData, setChartData] = useState<EventsChartData[]>([]);
     const [localTimeFrame, setLocalTimeFrame] = useState<TimeFrame>(timeFrame);
 
-    console.log(
-        "EventTimelineChart render - events:",
-        events.length,
-        "timeFrame:",
-        timeFrame
-    );
-
     const handleTimeFrameChange = (newTimeFrame: TimeFrame) => {
         if (onTimeFrameChange) {
             onTimeFrameChange(newTimeFrame);
@@ -67,10 +60,6 @@ export default function EventTimelineChart({
     };
 
     useEffect(() => {
-        console.log(
-            "EventTimelineChart useEffect - processing events:",
-            events.length
-        );
         if (events.length === 0) {
             setChartData([]);
             return;
@@ -209,11 +198,6 @@ export default function EventTimelineChart({
             }
         });
 
-        console.log(
-            "Final chart data structure:",
-            JSON.stringify(consolidatedData[0], null, 2)
-        );
-        console.log("Chart data length:", consolidatedData.length);
         setChartData(consolidatedData);
     }, [events, timeFrame, localTimeFrame, onTimeFrameChange]);
 

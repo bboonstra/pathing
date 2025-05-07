@@ -9,17 +9,23 @@ import Script from "next/script";
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
+    display: "swap",
+    preload: true,
 });
 
 const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
     subsets: ["latin"],
+    display: "swap",
+    preload: true,
 });
 
 const sora = Sora({
     variable: "--font-sora",
     subsets: ["latin"],
     weight: ["400", "600", "700"],
+    display: "swap",
+    preload: true,
 });
 
 export const metadata: Metadata = {
@@ -56,7 +62,6 @@ export const metadata: Metadata = {
             "max-snippet": -1,
         },
     },
-    manifest: "/manifest.json",
     applicationName: "Pathing Analytics",
     referrer: "origin-when-cross-origin",
     category: "web analytics",

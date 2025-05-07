@@ -379,8 +379,9 @@ export default function Pricing() {
                         Compare features across all tiers
                     </p>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl shadow-xl border border-white/40 dark:border-white/10">
+                {/* Desktop Table - Hidden on small screens */}
+                <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl shadow-xl">
                         <thead>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
                                 <th className="px-6 py-4 text-left">Feature</th>
@@ -444,6 +445,132 @@ export default function Pricing() {
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile Cards - Shown only on small screens */}
+                <div className="sm:hidden space-y-6">
+                    {/* Event Storage */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-4">
+                            Event Storage
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="font-medium">Free:</span>
+                                <span>1,000 events</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based:
+                                </span>
+                                <span>Unlimited</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based Plus:
+                                </span>
+                                <span>Unlimited</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* API Access */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-4">
+                            API Access
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="font-medium">Free:</span>
+                                <span>Full</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based:
+                                </span>
+                                <span>Full</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based Plus:
+                                </span>
+                                <span>Full</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Dashboard Access */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-4">
+                            Dashboard Access
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="font-medium">Free:</span>
+                                <span>Complex</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based:
+                                </span>
+                                <span>Advanced</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based Plus:
+                                </span>
+                                <span>Enterprise</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Support */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-4">Support</h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="font-medium">Free:</span>
+                                <span>Community</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based:
+                                </span>
+                                <span>Email</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based Plus:
+                                </span>
+                                <span>Priority</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Custom Integrations */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-4">
+                            Custom Integrations
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="font-medium">Free:</span>
+                                <span>-</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based:
+                                </span>
+                                <span>-</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based Plus:
+                                </span>
+                                <span>✓</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

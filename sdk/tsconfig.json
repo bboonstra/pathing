@@ -10,7 +10,8 @@
         "declarationDir": "dist/types",
         "emitDeclarationOnly": true,
         "rootDir": "src",
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "skipLibCheck": true
     },
     "include": ["src/**/*"]
 }
