@@ -111,8 +111,8 @@ export default function TermsOfService() {
                                     Pathing.cc provides web analytics services
                                     that allow website owners to track and
                                     analyze user behavior on their websites. Our
-                                    service is provided "as is" and "as
-                                    available."
+                                    service is provided &quot;as is&quot; and
+                                    &quot;as available.&quot;
                                 </p>
                             </div>
 

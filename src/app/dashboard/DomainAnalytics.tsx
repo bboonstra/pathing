@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import WidgetDashboard from "@/components/WidgetDashboard";
 import { EventData } from "@/types/widgets";
@@ -27,79 +27,115 @@ export default function DomainAnalytics({ domainId }: DomainAnalyticsProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch domains on component mount
-    useEffect(() => {
-        async function fetchDomains() {
-            try {
-                const { data, error } = await supabase
-                    .from("domains")
-                    .select("*")
-                    .eq("verified", true);
-
-                if (error) throw error;
-                setDomains(data || []);
-
-                // Auto-select the first domain if available and no domainId was provided
-                if (!selectedDomain && data && data.length > 0) {
-                    const firstDomainId = data[0].id;
-                    setSelectedDomain(firstDomainId);
-
-                    // Update URL with the selected domain
-                    updateUrlWithDomain(firstDomainId);
-                }
-            } catch (error) {
-                setError(
-                    error instanceof Error
-                        ? error.message
-                        : "An unknown error occurred"
-                );
-            } finally {
-                if (!selectedDomain) {
-                    setIsLoading(false);
-                }
-            }
-        }
-
-        fetchDomains();
-    }, []);
-
-    // Fetch events when selected domain changes
-    useEffect(() => {
-        if (!selectedDomain) return;
-
-        async function fetchEvents() {
-            try {
-                const { data, error } = await supabase
-                    .from("events")
-                    .select("*")
-                    .eq("domain_id", selectedDomain)
-                    .order("created_at", { ascending: false });
-
-                if (error) throw error;
-                setEvents(data || []);
-            } catch (error) {
-                setError(
-                    error instanceof Error
-                        ? error.message
-                        : "An unknown error occurred"
-                );
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        fetchEvents();
-    }, [selectedDomain]);
-
     // Update URL with domain parameter without reloading the page
-    const updateUrlWithDomain = (domainId: string) => {
+    const updateUrlWithDomain = useCallback((domainId: string) => {
         // Create a new URL object based on the current URL
         const url = new URL(window.location.href);
         // Set the domain query parameter
         url.searchParams.set("domain", domainId);
         // Update the URL without triggering a page navigation
         window.history.pushState({}, "", url.toString());
-    };
+    }, []);
+
+    // Fetch domains on component mount
+    useEffect(() => {
+        let isMounted = true;
+        async function fetchDomainsData() {
+            // setIsLoading(true) is implicitly handled by the initial state
+            try {
+                const { data, error: fetchError } = await supabase
+                    .from("domains")
+                    .select("*")
+                    .eq("verified", true);
+
+                if (!isMounted) return;
+
+                if (fetchError) throw fetchError;
+                setDomains(data || []);
+            } catch (err) {
+                if (!isMounted) return;
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "An unknown error occurred"
+                );
+                setIsLoading(false); // On error fetching domains, stop loading.
+            }
+        }
+
+        fetchDomainsData();
+        return () => {
+            isMounted = false;
+        };
+    }, []); // setError, setDomains, setIsLoading are stable and don't need to be listed
+
+    // Auto-select domain if needed, and manage isLoading if no domain gets selected
+    useEffect(() => {
+        if (selectedDomain) {
+            // A domain is selected (either initially, or by a previous auto-selection).
+            // The event fetching useEffect is responsible for isLoading. Do nothing here.
+            return;
+        }
+
+        // At this point, selectedDomain is null.
+        if (domains.length > 0) {
+            // domains are loaded and not empty
+            const firstDomainId = domains[0].id;
+            setSelectedDomain(firstDomainId);
+            updateUrlWithDomain(firstDomainId); // updateUrlWithDomain is now declared above
+            // Event fetcher will be triggered by setSelectedDomain and will manage isLoading.
+        } else if (domains.length === 0) {
+            // domains have been fetched and are empty. No domain to select.
+            setIsLoading(false);
+        }
+        // If domains is still the initial empty array before fetch completes, this effect might run,
+        // but the conditions ensure correct behavior once domains are populated.
+    }, [domains, selectedDomain, updateUrlWithDomain]); // setSelectedDomain, setIsLoading are stable
+
+    // Fetch events when selected domain changes
+    useEffect(() => {
+        if (!selectedDomain) {
+            // If no domain is selected (e.g. after initial load and domain fetch, still no selection),
+            // ensure loading is false. This might be redundant if the auto-select effect already handled it.
+            // However, if selectedDomain becomes null due to other reasons, this is a safeguard.
+            // Consider if this line is truly needed given the auto-select effect's isLoading handling.
+            // For now, keeping it simple: if no selectedDomain, no event fetching, so not actively loading events.
+            // The auto-select effect should correctly set isLoading to false if no domain is ultimately selected.
+            return;
+        }
+
+        let isMounted = true;
+        async function fetchEvents() {
+            setIsLoading(true); // Set loading true before fetching events
+            try {
+                const { data, error: fetchError } = await supabase
+                    .from("events")
+                    .select("*")
+                    .eq("domain_id", selectedDomain)
+                    .order("created_at", { ascending: false });
+
+                if (!isMounted) return;
+                if (fetchError) throw fetchError;
+                setEvents(data || []);
+            } catch (err) {
+                if (!isMounted) return;
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "An unknown error occurred"
+                );
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        }
+
+        fetchEvents();
+        return () => {
+            isMounted = false;
+        };
+    }, [selectedDomain]); // setError, setEvents, setIsLoading are stable
 
     // Handle domain selection
     const handleDomainSelect = (domainId: string) => {

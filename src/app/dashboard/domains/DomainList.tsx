@@ -10,6 +10,10 @@ import {
     ShieldExclamationIcon,
     InformationCircleIcon,
     ExclamationTriangleIcon,
+    ChevronDownIcon,
+    ChevronUpIcon,
+    CodeBracketIcon,
+    DocumentTextIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
@@ -24,6 +28,12 @@ type Domain = {
     verification_token: string;
 };
 
+type InstallOption = {
+    name: string;
+    icon: string;
+    code: (publicKey: string) => string;
+};
+
 export default function DomainList() {
     const [domains, setDomains] = useState<Domain[]>([]);
     const [loading, setLoading] = useState(true);
@@ -35,6 +45,66 @@ export default function DomainList() {
     const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
+    const [visibleConfig, setVisibleConfig] = useState<Record<string, boolean>>(
+        {}
+    );
+    const [activeInstallTab, setActiveInstallTab] = useState<
+        Record<string, string>
+    >({});
+
+    const installOptions: InstallOption[] = [
+        {
+            name: "HTML Script Tag",
+            icon: "html",
+            code: (publicKey: string) =>
+                `<script src="${window.location.origin}/pathing.js" pathing-api-key="${publicKey}"></script>`,
+        },
+        {
+            name: "React",
+            icon: "react",
+            code: (publicKey: string) =>
+                `// Install the package\nnpm install pathingjs\n\n` +
+                `// In your app entry point (e.g. _app.js, App.jsx)\nimport { pathing } from 'pathingjs';\n\n` +
+                `function MyApp({ Component, pageProps }) {\n  useEffect(() => {\n    pathing.init('${publicKey}');\n  }, []);\n\n  return (\n    <>\n      <Component {...pageProps} />\n    </>\n  );\n}`,
+        },
+        {
+            name: "JavaScript",
+            icon: "js",
+            code: (publicKey: string) =>
+                `// ESM import (recommended)
+import { pathing } from 'pathingjs';
+
+// Initialize with your API key
+pathing.init('${publicKey}');
+
+// Track a custom event
+pathing.link.button(document.getElementById('my-button'), {
+    event: 'button_clicked',
+    data: {
+        button_id: 'my-button',
+        button_text: 'Click me',
+        button_color: 'blue'
+    }
+});`,
+        },
+        {
+            name: "Next.js",
+            icon: "nextjs",
+            code: (publicKey: string) =>
+                `// Install the package\nnpm install pathingjs\n\n` +
+                `// In your _app.js or _app.tsx\nimport { pathing } from 'pathingjs';\n\n` +
+                `export default function App({ Component, pageProps }) {\n  return (\n    <>\n      {/* Initialize Pathing.js */}\n      <script dangerouslySetInnerHTML={{\n        __html: \`\n          (function() {\n            window.pathing && window.pathing.init('${publicKey}');\n          })();\n        \`,\n      }} />\n      <Component {...pageProps} />\n    </>\n  );\n}`,
+        },
+        {
+            name: "TypeScript",
+            icon: "ts",
+            code: (publicKey: string) =>
+                `// Install the package\nnpm install pathingjs\n\n` +
+                `// Import with types\nimport { pathing, ButtonData, EventResponse } from 'pathingjs';\n\n` +
+                `// Initialize with your API key\npathing.init('${publicKey}');\n\n` +
+                `// TypeScript example\nfunction trackButtonClick(data: ButtonData): Promise<EventResponse> {\n  return pathing.send.button(data);\n}`,
+        },
+    ];
 
     useEffect(() => {
         fetchDomains();
@@ -168,9 +238,13 @@ export default function DomainList() {
         setTimeout(() => setCopySuccess(null), 2000);
     }
 
-    function getSnippet(publicKey: string) {
-        return `<script src="${window.location.origin}/pathing.js" pathing-api-key="${publicKey}"></script>`;
-    }
+    const toggleConfigVisibility = (domainId: string) => {
+        setVisibleConfig((prev) => ({ ...prev, [domainId]: !prev[domainId] }));
+    };
+
+    const setInstallTab = (domainId: string, tabName: string) => {
+        setActiveInstallTab((prev) => ({ ...prev, [domainId]: tabName }));
+    };
 
     return (
         <div className="bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 w-full mb-8">
@@ -436,70 +510,302 @@ export default function DomainList() {
                                 </div>
                             )}
 
-                            <div className="mb-3">
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        Public Key
-                                    </div>
-                                    <button
-                                        onClick={() =>
-                                            copyToClipboard(
-                                                domain.public_key,
-                                                `key-${domain.id}`
-                                            )
-                                        }
-                                        className="text-blue-500 hover:text-blue-700 p-1 flex items-center gap-1 text-sm"
-                                    >
-                                        {copySuccess === `key-${domain.id}` ? (
-                                            <>
-                                                <CheckCircleIcon className="w-4 h-4" />{" "}
-                                                Copied!
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ClipboardIcon className="w-4 h-4" />{" "}
-                                                Copy
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                                <div className="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto">
-                                    {domain.public_key}
-                                </div>
+                            {/* Toggle Configuration Button */}
+                            <div className="mt-4 mb-3">
+                                <button
+                                    onClick={() =>
+                                        toggleConfigVisibility(domain.id)
+                                    }
+                                    className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium py-1"
+                                >
+                                    {visibleConfig[domain.id] ? (
+                                        <>
+                                            <ChevronUpIcon className="w-4 h-4" />
+                                            Hide Configuration
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ChevronDownIcon className="w-4 h-4" />
+                                            Show Configuration
+                                        </>
+                                    )}
+                                </button>
                             </div>
 
-                            <div>
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        Installation Snippet
+                            {/* Conditionally render Public Key and Snippet */}
+                            {visibleConfig[domain.id] && (
+                                <>
+                                    <div className="mb-3">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                Public Key
+                                            </div>
+                                            <button
+                                                onClick={() =>
+                                                    copyToClipboard(
+                                                        domain.public_key,
+                                                        `key-${domain.id}`
+                                                    )
+                                                }
+                                                className="text-blue-500 hover:text-blue-700 p-1 flex items-center gap-1 text-sm"
+                                            >
+                                                {copySuccess ===
+                                                `key-${domain.id}` ? (
+                                                    <>
+                                                        <CheckCircleIcon className="w-4 h-4" />{" "}
+                                                        Copied!
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ClipboardIcon className="w-4 h-4" />{" "}
+                                                        Copy
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                        <div className="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto">
+                                            {domain.public_key}
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={() =>
-                                            copyToClipboard(
-                                                getSnippet(domain.public_key),
-                                                `snippet-${domain.id}`
-                                            )
-                                        }
-                                        className="text-blue-500 hover:text-blue-700 p-1 flex items-center gap-1 text-sm"
-                                    >
-                                        {copySuccess ===
-                                        `snippet-${domain.id}` ? (
-                                            <>
-                                                <CheckCircleIcon className="w-4 h-4" />{" "}
-                                                Copied!
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ClipboardIcon className="w-4 h-4" />{" "}
-                                                Copy
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                                <div className="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto">
-                                    {getSnippet(domain.public_key)}
-                                </div>
-                            </div>
+
+                                    {/* Ways to Install Section */}
+                                    <div className="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                        <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                                            <h4 className="font-medium flex items-center gap-2">
+                                                <CodeBracketIcon className="w-5 h-5 text-blue-500" />
+                                                Ways to Install
+                                            </h4>
+                                        </div>
+
+                                        {/* Installation Tabs */}
+                                        <div className="border-b border-gray-200 dark:border-gray-700">
+                                            <nav className="flex overflow-x-auto">
+                                                {installOptions.map(
+                                                    (option) => (
+                                                        <button
+                                                            key={option.name}
+                                                            onClick={() =>
+                                                                setInstallTab(
+                                                                    domain.id,
+                                                                    option.name
+                                                                )
+                                                            }
+                                                            className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                                                                activeInstallTab[
+                                                                    domain.id
+                                                                ] ===
+                                                                    option.name ||
+                                                                (!activeInstallTab[
+                                                                    domain.id
+                                                                ] &&
+                                                                    option.name ===
+                                                                        installOptions[0]
+                                                                            .name)
+                                                                    ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+                                                                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                                            }`}
+                                                        >
+                                                            <span className="flex items-center gap-2">
+                                                                <span
+                                                                    className={`w-5 h-5 flex items-center justify-center rounded bg-gray-200 dark:bg-gray-700 text-xs font-bold ${
+                                                                        option.icon ===
+                                                                        "html"
+                                                                            ? "text-orange-500"
+                                                                            : option.icon ===
+                                                                              "react"
+                                                                            ? "text-blue-400"
+                                                                            : option.icon ===
+                                                                              "js"
+                                                                            ? "text-yellow-500"
+                                                                            : option.icon ===
+                                                                              "nextjs"
+                                                                            ? "text-black dark:text-white"
+                                                                            : option.icon ===
+                                                                              "ts"
+                                                                            ? "text-blue-600"
+                                                                            : ""
+                                                                    }`}
+                                                                >
+                                                                    {option.icon ===
+                                                                    "html"
+                                                                        ? "H"
+                                                                        : option.icon ===
+                                                                          "react"
+                                                                        ? "R"
+                                                                        : option.icon ===
+                                                                          "js"
+                                                                        ? "JS"
+                                                                        : option.icon ===
+                                                                          "nextjs"
+                                                                        ? "N"
+                                                                        : option.icon ===
+                                                                          "ts"
+                                                                        ? "TS"
+                                                                        : ""}
+                                                                </span>
+                                                                {option.name}
+                                                            </span>
+                                                        </button>
+                                                    )
+                                                )}
+                                            </nav>
+                                        </div>
+
+                                        {/* Installation Code */}
+                                        {installOptions.map((option) => {
+                                            const isActive =
+                                                activeInstallTab[domain.id] ===
+                                                    option.name ||
+                                                (!activeInstallTab[domain.id] &&
+                                                    option.name ===
+                                                        installOptions[0].name);
+
+                                            if (!isActive) return null;
+
+                                            const snippetCode = option.code(
+                                                domain.public_key
+                                            );
+                                            const snippetId = `${option.name
+                                                .toLowerCase()
+                                                .replace(/\s+/g, "-")}-${
+                                                domain.id
+                                            }`;
+
+                                            // Split code into sections based on comments for better presentation
+                                            const codeLines =
+                                                snippetCode.split("\n");
+                                            const sections: Array<{
+                                                type: "code" | "comment";
+                                                lines: string[];
+                                            }> = [];
+                                            let currentSection: {
+                                                type: "code" | "comment";
+                                                lines: string[];
+                                            } = { type: "code", lines: [] };
+
+                                            codeLines.forEach((line) => {
+                                                if (
+                                                    line
+                                                        .trim()
+                                                        .startsWith("// ")
+                                                ) {
+                                                    if (
+                                                        currentSection.lines
+                                                            .length > 0
+                                                    ) {
+                                                        sections.push({
+                                                            ...currentSection,
+                                                        });
+                                                        currentSection = {
+                                                            type: "code",
+                                                            lines: [],
+                                                        };
+                                                    }
+                                                    sections.push({
+                                                        type: "comment",
+                                                        lines: [line],
+                                                    });
+                                                } else {
+                                                    currentSection.lines.push(
+                                                        line
+                                                    );
+                                                }
+                                            });
+
+                                            if (
+                                                currentSection.lines.length > 0
+                                            ) {
+                                                sections.push(currentSection);
+                                            }
+
+                                            return (
+                                                <div
+                                                    key={option.name}
+                                                    className="p-4"
+                                                >
+                                                    <div className="flex items-center justify-between mb-3">
+                                                        <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                                                            {option.name}{" "}
+                                                            Integration
+                                                        </span>
+                                                        <button
+                                                            onClick={() =>
+                                                                copyToClipboard(
+                                                                    snippetCode,
+                                                                    snippetId
+                                                                )
+                                                            }
+                                                            className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 px-2 py-1 rounded flex items-center gap-1 text-sm transition-colors"
+                                                        >
+                                                            {copySuccess ===
+                                                            snippetId ? (
+                                                                <>
+                                                                    <CheckCircleIcon className="w-4 h-4" />{" "}
+                                                                    Copied!
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <ClipboardIcon className="w-4 h-4" />{" "}
+                                                                    Copy Code
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                                        {sections.map(
+                                                            (section, idx) => (
+                                                                <div
+                                                                    key={idx}
+                                                                    className={`${
+                                                                        section.type ===
+                                                                        "comment"
+                                                                            ? "bg-gray-100 dark:bg-gray-800 px-4 py-2 text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 font-medium"
+                                                                            : "font-mono text-sm p-4 overflow-x-auto"
+                                                                    }`}
+                                                                >
+                                                                    {section.type ===
+                                                                    "comment" ? (
+                                                                        <div>
+                                                                            {section.lines[0]
+                                                                                .replace(
+                                                                                    "//",
+                                                                                    ""
+                                                                                )
+                                                                                .trim()}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <pre className="whitespace-pre text-blue-800 dark:text-blue-300">
+                                                                            {section.lines.join(
+                                                                                "\n"
+                                                                            )}
+                                                                        </pre>
+                                                                    )}
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* Documentation CTA */}
+                                        <div className="px-4 py-3 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-100 dark:border-blue-800 flex items-center justify-between">
+                                            <span className="text-sm text-blue-700 dark:text-blue-300">
+                                                Need more detailed installation
+                                                instructions?
+                                            </span>
+                                            <Link
+                                                href="/documentation/installation"
+                                                className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                            >
+                                                <DocumentTextIcon className="w-4 h-4" />
+                                                Read the docs
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     ))}
                 </div>
