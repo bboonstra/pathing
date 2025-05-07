@@ -14,6 +14,7 @@ import { supabase } from "@/lib/supabase";
 import { pathing } from "pathingjs";
 import HomepageAnalytics from "@/components/HomepageAnalytics";
 import EventTimelineChart from "@/components/EventTimelineChart";
+import Navbar from "@/components/Navbar";
 import type { EventData } from "@/components/EventTimelineChart";
 
 export default function Home() {
@@ -91,6 +92,9 @@ export default function Home() {
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#0a0a0a] dark:via-[#181824] dark:to-[#1a1a2e] text-[var(--foreground)] font-sans transition-colors duration-500">
             {/* Hero */}
             <header className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-16 text-center relative overflow-hidden">
+                {/* Navbar */}
+                <Navbar />
+
                 {/* Background Chart - Hidden on mobile */}
                 <div className="absolute inset-0 w-full h-full z-0 opacity-70 hidden sm:flex items-end justify-center">
                     <div className="w-full h-[40vh] flex items-end p-4">
@@ -117,8 +121,11 @@ export default function Home() {
                             height={64}
                             className="m-0 p-0"
                         />
-                        <h1 className="font-headline text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg ml-3">
-                            pathing<span className="text-blue-500">.cc</span>
+                        <h1 className="font-headline text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent ml-3 pb-1">
+                            pathing
+                            <span className="text-indigo-600 dark:text-purple-400 opacity-90 font-semibold">
+                                .cc
+                            </span>
                         </h1>
                     </div>
                     <h2 className="font-headline text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200 w-full">
@@ -130,7 +137,7 @@ export default function Home() {
                     </p>
                     <a
                         href="/dashboard"
-                        className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg focus:outline-none focus:ring-4 focus:ring-blue-300 animate-fadeInUp"
+                        className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 animated-gradient text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg focus:outline-none focus:ring-4 focus:ring-blue-300/50 animate-fadeInUp"
                         style={{ animationDelay: "0.2s" }}
                     >
                         {isLoggedIn === null
@@ -173,50 +180,13 @@ export default function Home() {
                 </div>
             </header>
 
-            {/* Value Props */}
-            <section className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-8 px-4 mb-20 relative z-10 pt-20">
-                <div
-                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
-                    style={{ animationDelay: "0.1s" }}
-                >
-                    <BoltIcon className="w-8 h-8 text-blue-500 mb-2" />
-                    <h3 className="font-headline font-extrabold text-lg mb-1">
-                        1-line Install
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 font-medium">
-                        Drop a script. Done. No config, no fuss.
-                    </p>
-                </div>
-                <div
-                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
-                    style={{ animationDelay: "0.2s" }}
-                >
-                    <ShieldCheckIcon className="w-8 h-8 text-purple-500 mb-2" />
-                    <h3 className="font-headline font-extrabold text-lg mb-1">
-                        Privacy First
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 font-medium">
-                        No popups, no tracking pixels, no creepy stuff.
-                    </p>
-                </div>
-                <div
-                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
-                    style={{ animationDelay: "0.3s" }}
-                >
-                    <EyeIcon className="w-8 h-8 text-blue-400 mb-2" />
-                    <h3 className="font-headline font-extrabold text-lg mb-1">
-                        Crystal Clear
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 font-medium">
-                        See every step your users take, instantly.
-                    </p>
-                </div>
-            </section>
-
             {/* Demo Section */}
-            <section id="demo-section" className="max-w-4xl mx-auto px-4 mb-24">
+            <section
+                id="demo-section"
+                className="max-w-4xl mx-auto px-4 mb-16 mt-16"
+            >
                 <div className="text-center mb-2">
-                    <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                    <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
                         Experience Pathing in Action
                     </h2>
                 </div>
@@ -304,7 +274,7 @@ export default function Home() {
                         >
                             <button
                                 ref={setDemoButtonRef}
-                                className={`px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-60 animate-fadeInUp border-2 border-blue-400`}
+                                className={`px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 animated-gradient text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300/50 disabled:opacity-60 animate-fadeInUp`}
                                 id="demo-button"
                                 onClick={handleDemoClick}
                                 disabled={eventSent}
@@ -335,8 +305,48 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* Value Props */}
+            <section className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-8 px-4 mb-16 relative z-10">
+                <div
+                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
+                    style={{ animationDelay: "0.1s" }}
+                >
+                    <BoltIcon className="w-8 h-8 text-blue-500 mb-2" />
+                    <h3 className="font-headline font-extrabold text-lg mb-1">
+                        1-line Install
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 font-medium">
+                        Drop a script. Done. No config, no fuss.
+                    </p>
+                </div>
+                <div
+                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
+                    style={{ animationDelay: "0.2s" }}
+                >
+                    <ShieldCheckIcon className="w-8 h-8 text-purple-500 mb-2" />
+                    <h3 className="font-headline font-extrabold text-lg mb-1">
+                        Privacy First
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 font-medium">
+                        No popups, no tracking pixels, no creepy stuff.
+                    </p>
+                </div>
+                <div
+                    className="card flex flex-col items-center gap-3 animate-fadeInUp"
+                    style={{ animationDelay: "0.3s" }}
+                >
+                    <EyeIcon className="w-8 h-8 text-blue-400 mb-2" />
+                    <h3 className="font-headline font-extrabold text-lg mb-1">
+                        Crystal Clear
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 font-medium">
+                        See every step your users take, instantly.
+                    </p>
+                </div>
+            </section>
+
             {/* Beta Section */}
-            <section className="max-w-3xl mx-auto px-4 mb-10">
+            <section className="max-w-3xl mx-auto px-4 mb-16">
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-6 text-center shadow-md animate-fadeInUp">
                     <span className="inline-block bg-yellow-400 text-yellow-900 font-bold px-3 py-1 rounded-full text-xs mb-2">
                         Beta
@@ -352,7 +362,7 @@ export default function Home() {
             </section>
 
             {/* How it Works - Timeline style */}
-            <section className="max-w-4xl mx-auto px-4 mb-24">
+            <section className="max-w-4xl mx-auto px-4 mb-16">
                 <h2 className="font-headline text-2xl sm:text-3xl font-bold mb-10 text-center animate-fadeInUp">
                     How it Works
                 </h2>
@@ -400,10 +410,7 @@ export default function Home() {
             </section>
 
             {/* How it works */}
-            <section
-                id="get-started"
-                className="max-w-2xl mx-auto px-4 mb-20 mt-15"
-            >
+            <section id="get-started" className="max-w-2xl mx-auto px-4 mb-16">
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-center">
                     Add analytics in seconds
                 </h2>
@@ -445,9 +452,9 @@ export default function Home() {
             </section>
 
             {/* Documentation CTA */}
-            <section className="max-w-4xl mx-auto px-4 mb-20">
+            <section className="max-w-4xl mx-auto px-4 mb-16">
                 <div className="backdrop-blur-lg bg-white/70 dark:bg-white/10 rounded-2xl p-8 sm:p-10 shadow-xl border border-white/40 dark:border-white/10 flex flex-col items-center text-center">
-                    <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
                         Ready to dive deeper?
                     </h2>
                     <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mb-8">
@@ -458,7 +465,7 @@ export default function Home() {
                     </p>
                     <a
                         href="/docs"
-                        className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-10 py-4 rounded-full shadow-xl transition-all text-lg flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                        className="group bg-gradient-to-r from-blue-500 to-indigo-600 animated-gradient text-white font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300/50"
                     >
                         Explore the Docs{" "}
                         <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -468,13 +475,25 @@ export default function Home() {
 
             {/* Footer */}
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
-                &copy; {new Date().getFullYear()} pathing.cc &mdash; Built by{" "}
-                <a
-                    href="https://github.com/bboonstra"
-                    className="text-blue-600 dark:text-blue-400 underline"
-                >
-                    Ben Boonstra
-                </a>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-0">
+                    <div>
+                        &copy; {new Date().getFullYear()} pathing.cc &mdash;
+                        Built by{" "}
+                        <a
+                            href="https://github.com/bboonstra"
+                            className="text-blue-600 dark:text-blue-400 underline"
+                        >
+                            Ben Boonstra
+                        </a>
+                    </div>
+                    <div className="hidden sm:inline">{" | "}</div>
+                    <a
+                        href="/tos"
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                        Terms of Service
+                    </a>
+                </div>
             </footer>
             <style jsx global>{`
                 @keyframes pop {
@@ -493,6 +512,16 @@ export default function Home() {
                 }
                 .animate-pop {
                     animation: pop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                .animated-gradient {
+                    background-size: 200% 200%;
+                    background-position: 0% 50%;
+                    transition: background-position 0.5s ease-in-out;
+                }
+
+                .animated-gradient:hover {
+                    background-position: 100% 50%;
                 }
             `}</style>
         </div>

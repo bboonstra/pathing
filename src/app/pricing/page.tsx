@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { pathing } from "pathingjs";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 export default function Pricing() {
     const router = useRouter();
@@ -94,6 +95,9 @@ export default function Pricing() {
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#0a0a0a] dark:via-[#181824] dark:to-[#1a1a2e] text-[var(--foreground)] font-sans transition-colors duration-500">
+            {/* Navbar */}
+            <Navbar />
+
             {/* Hero Section */}
             <header className="flex-1 flex flex-col items-center justify-center px-4 pt-32 pb-16 text-center relative">
                 <div className="absolute inset-0 pointer-events-none z-0">
