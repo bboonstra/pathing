@@ -167,7 +167,7 @@ export default function Pricing() {
                         <button
                             data-tier="free"
                             onClick={() => router.push("/dashboard")}
-                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
+                            className="w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 animated-gradient text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-500 text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300/50 mt-auto"
                         >
                             Start Free
                         </button>
@@ -221,7 +221,7 @@ export default function Pricing() {
                         <button
                             data-tier="usage-based"
                             onClick={() => router.push("/dashboard/pricing")}
-                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
+                            className="w-full px-8 py-4 bg-gradient-to-r from-purple-500 to-fuchsia-600 animated-gradient text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-500 text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-purple-300/50 mt-auto"
                         >
                             Get Started
                         </button>
@@ -275,7 +275,7 @@ export default function Pricing() {
                                 (window.location.href =
                                     "mailto:enterprise@pathing.cc")
                             }
-                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
+                            className="w-full px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 animated-gradient text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-500 text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-orange-300/50 mt-auto"
                         >
                             Contact Sales
                         </button>
@@ -794,6 +794,17 @@ export default function Pricing() {
                 &copy; {new Date().getFullYear()} pathing.cc &mdash; Easy
                 analytics for humans.
             </footer>
+            <style jsx global>{`
+                .animated-gradient {
+                    background-size: 200% 200%;
+                    background-position: 0% 50%;
+                    transition: background-position 0.3s ease-in-out;
+                }
+
+                .animated-gradient:hover {
+                    background-position: 100% 50%;
+                }
+            `}</style>
         </div>
     );
 }
