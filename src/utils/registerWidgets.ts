@@ -14,6 +14,7 @@ import "@/components/widgets/RecentEventsWidget";
 import "@/components/widgets/TopReferrersWidget";
 import "@/components/widgets/UserFlowWidget";
 import "@/components/widgets/CorrelationInsightWidget";
+import "@/components/widgets/TracebackWidget";
 // Add other widget imports as needed
 
 export default function registerAllWidgets() {

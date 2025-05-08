@@ -41,7 +41,8 @@ export type WidgetType =
     | "pageVisits"
     | "conversionMetrics"
     | "customInsight"
-    | "userFlow";
+    | "userFlow"
+    | "traceback";
 
 // New types for configurable widgets
 export type FieldType =

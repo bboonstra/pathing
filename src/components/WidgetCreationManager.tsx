@@ -33,6 +33,7 @@ const WidgetCreationManager: React.FC<WidgetCreationManagerProps> = ({
             description: definition.description,
             icon: getIconForType(definition.icon),
             constraints: definition.constraints,
+            isNew: definition.type === "traceback", // Mark traceback widget as new
         }));
     }, []);
 
@@ -106,6 +107,22 @@ const WidgetCreationManager: React.FC<WidgetCreationManagerProps> = ({
                             strokeLinejoin="round"
                             strokeWidth={1.5}
                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        />
+                    </svg>
+                );
+            case "traceback":
+                return (
+                    <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M6 18L18 6M6 6l12 12"
                         />
                     </svg>
                 );
@@ -234,19 +251,40 @@ const WidgetCreationManager: React.FC<WidgetCreationManagerProps> = ({
                                     {widgetTemplates.map((template) => (
                                         <div
                                             key={template.type}
-                                            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                            className={`border ${
+                                                template.isNew
+                                                    ? "border-green-300 dark:border-green-700 shadow-sm"
+                                                    : "border-gray-200 dark:border-gray-700"
+                                            } rounded-lg p-4 cursor-pointer ${
+                                                template.isNew
+                                                    ? "hover:bg-green-50 dark:hover:bg-green-900/20"
+                                                    : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                            } transition-colors`}
                                             onClick={() =>
                                                 createNewWidget(template.type)
                                             }
                                         >
                                             <div className="flex items-start">
-                                                <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-2 mr-3 text-blue-600 dark:text-blue-400">
+                                                <div
+                                                    className={`${
+                                                        template.isNew
+                                                            ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                                                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                                                    } rounded-lg p-2 mr-3`}
+                                                >
                                                     {template.icon}
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-medium">
-                                                        {template.title}
-                                                    </h4>
+                                                    <div className="flex items-center">
+                                                        <h4 className="font-medium">
+                                                            {template.title}
+                                                        </h4>
+                                                        {template.isNew && (
+                                                            <span className="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-2 py-0.5 rounded-full">
+                                                                NEW
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                                         {template.description}
                                                     </p>

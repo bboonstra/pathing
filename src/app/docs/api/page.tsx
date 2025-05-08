@@ -1,6 +1,17 @@
 "use client";
 
+import { useState } from "react";
+import { ClipboardIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+
 export default function ApiReference() {
+    const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+
+    const copyToClipboard = (text: string, snippetId: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedSnippet(snippetId);
+        setTimeout(() => setCopiedSnippet(null), 2000);
+    };
+
     return (
         <>
             <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
@@ -20,7 +31,7 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             A class for adding metadata to event properties.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`new pathing.Parameter(
   label: string, 
@@ -28,6 +39,26 @@ export default function ApiReference() {
   value: any
 )`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `new pathing.Parameter(
+  label: string, 
+  key: string, 
+  value: any
+)`,
+                                        "parameter-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "parameter-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -39,7 +70,7 @@ export default function ApiReference() {
                             Configuration object for customizing tracking
                             behavior.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.config({
   trackPageviews: boolean,
@@ -48,6 +79,27 @@ export default function ApiReference() {
   respectDNT: boolean
 })`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.config({
+  trackPageviews: boolean,
+  trackClicks: boolean,
+  trackForms: boolean,
+  respectDNT: boolean
+})`,
+                                        "config-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "config-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -66,7 +118,7 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Tracks a purchase or conversion event.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.send.purchase({
   product: string | Parameter,
@@ -76,6 +128,28 @@ export default function ApiReference() {
   category?: string | Parameter
 }): Promise<void>`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.send.purchase({
+  product: string | Parameter,
+  price: number | Parameter,
+  currency?: string | Parameter,
+  quantity?: number | Parameter,
+  category?: string | Parameter
+}): Promise<void>`,
+                                        "purchase-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "purchase-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -86,7 +160,7 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Tracks media playback events (video/audio).
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.send.playback({
   content: string | Parameter,
@@ -95,6 +169,27 @@ export default function ApiReference() {
   action?: 'play' | 'pause' | 'seek' | 'complete' | string | Parameter
 }): Promise<void>`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.send.playback({
+  content: string | Parameter,
+  duration: number | Parameter,
+  progress: number | Parameter, // 0-1 ratio
+  action?: 'play' | 'pause' | 'seek' | 'complete' | string | Parameter
+}): Promise<void>`,
+                                        "playback-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "playback-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -103,13 +198,32 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Tracks any custom event type.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.send.raw(
   type: string, 
   data: Record<string, any>
 ): Promise<void>`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.send.raw(
+  type: string, 
+  data: Record<string, any>
+): Promise<void>`,
+                                        "raw-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "raw-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -129,7 +243,7 @@ export default function ApiReference() {
                             Bind purchase tracking to an element&apos;s click
                             event.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.link.purchase(
   element: HTMLElement,
@@ -137,6 +251,26 @@ export default function ApiReference() {
   options?: { preventDefault?: boolean }
 ): HTMLElement`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.link.purchase(
+  element: HTMLElement,
+  data: Record<string, any>,
+  options?: { preventDefault?: boolean }
+): HTMLElement`,
+                                        "link-purchase-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "link-purchase-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -147,13 +281,32 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Bind playback tracking to a media element.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.link.playback(
   element: HTMLMediaElement,
   data: Record<string, any>
 ): HTMLMediaElement`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.link.playback(
+  element: HTMLMediaElement,
+  data: Record<string, any>
+): HTMLMediaElement`,
+                                        "link-playback-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "link-playback-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -162,7 +315,7 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Bind any custom event to an element.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`pathing.link.raw(
   element: HTMLElement,
@@ -171,6 +324,27 @@ export default function ApiReference() {
   options?: { preventDefault?: boolean }
 ): HTMLElement`}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `pathing.link.raw(
+  element: HTMLElement,
+  type: string,
+  data: Record<string, any>,
+  options?: { preventDefault?: boolean }
+): HTMLElement`,
+                                        "link-raw-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "link-raw-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -187,7 +361,7 @@ export default function ApiReference() {
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Using with React for automatic route tracking.
                         </p>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4 relative">
                             <pre className="overflow-x-auto text-blue-700 dark:text-blue-300 text-sm">
                                 {`// components/PathingTracker.tsx
 'use client';
@@ -214,6 +388,44 @@ export function PathingTracker() {
 // Add <PathingTracker /> to your layout.tsx
 `}
                             </pre>
+                            <button
+                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                onClick={() =>
+                                    copyToClipboard(
+                                        `// components/PathingTracker.tsx
+'use client';
+  
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+
+export function PathingTracker() {
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    if (window.pathing && pathname) {
+      window.pathing.send.raw("pageview", {
+        path: pathname,
+        title: document.title,
+        isVirtualPageview: true
+      });
+    }
+  }, [pathname]);
+
+  return null;
+}
+
+// Add <PathingTracker /> to your layout.tsx`,
+                                        "react-code"
+                                    )
+                                }
+                                aria-label="Copy code"
+                            >
+                                {copiedSnippet === "react-code" ? (
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                ) : (
+                                    <ClipboardIcon className="h-5 w-5" />
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -22,6 +22,7 @@ import TopReferrersWidget from "./widgets/TopReferrersWidget";
 import ConversionMetricsWidget from "./widgets/ConversionMetricsWidget";
 import CorrelationInsightWidget from "./widgets/CorrelationInsightWidget";
 import UserFlowWidget from "./widgets/UserFlowWidget";
+import TracebackWidget from "./widgets/TracebackWidget";
 import WidgetCreationManager from "./WidgetCreationManager";
 
 // Create a responsive grid layout
@@ -459,6 +460,8 @@ const WidgetDashboard: React.FC<WidgetDashboardProps> = ({
                 );
             case "userFlow":
                 return <UserFlowWidget key={widgetConfig.id} {...props} />;
+            case "traceback":
+                return <TracebackWidget key={widgetConfig.id} {...props} />;
             default:
                 return (
                     <div
