@@ -356,12 +356,10 @@ export default function Pricing() {
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mt-10">
-                                <span>10 events</span>
+                            <div className="flex justify-center text-sm text-gray-600 dark:text-gray-400 mt-10">
                                 <span>
                                     {eventVolume.toLocaleString()} events
                                 </span>
-                                <span>1M events</span>
                             </div>
                         </div>
                         <div>
