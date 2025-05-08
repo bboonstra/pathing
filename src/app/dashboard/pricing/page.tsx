@@ -228,15 +228,15 @@ export default function PricingDashboard() {
                         )}
                     </div>
 
-                    {/* Stripe integration */}
+                    {/* Paddle integration */}
                     <div className="mt-8">
                         <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
                             <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                                🚧 Stripe Integration Coming Soon
+                                🚧 Paddle Integration Coming Soon
                             </h3>
                             <p className="text-yellow-700 dark:text-yellow-300">
                                 We&apos;re currently working on integrating
-                                Stripe for seamless payments. This feature will
+                                Paddle for seamless payments. This feature will
                                 be available soon. For now, you can continue
                                 using the free tier of our service.
                             </p>
@@ -280,7 +280,7 @@ export default function PricingDashboard() {
                                 contact our sales team.
                             </p>
                             <a
-                                href="mailto:sales@bboonstra.dev"
+                                href="mailto:enterprise@pathing.cc"
                                 className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300"
                             >
                                 Contact Sales

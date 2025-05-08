@@ -273,7 +273,7 @@ export default function Pricing() {
                             data-tier="enterprise"
                             onClick={() =>
                                 (window.location.href =
-                                    "mailto:sales@bboonstra.dev")
+                                    "mailto:enterprise@pathing.cc")
                             }
                             className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
                         >
