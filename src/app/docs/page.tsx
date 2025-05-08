@@ -14,10 +14,10 @@ export default function SDKDocumentation() {
                 <div className="bg-white dark:bg-gray-900 rounded-lg p-4 mb-4 relative">
                     <div className="relative">
                         <pre className="bg-gray-100 dark:bg-gray-800 rounded p-4 text-sm sm:text-base text-blue-700 dark:text-blue-200 overflow-x-auto whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal">
-                            <code>{`<script src="https://cdn.pathing.co/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}</code>
+                            <code>{`<script src="https://pathing.cc/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}</code>
                         </pre>
                         <CopyButton
-                            text={`<script src="https://cdn.pathing.co/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}
+                            text={`<script src="https://pathing.cc/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}
                             className="absolute top-2 right-2 p-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-600 hover:bg-blue-700 text-white"
                             iconClassName="w-5 h-5"
                             showText={true}
@@ -339,8 +339,8 @@ pathing.send.purchase({
                         <div className="bg-white dark:bg-gray-900 rounded-lg p-4 mb-4 relative">
                             <div className="relative">
                                 <pre className="bg-gray-100 dark:bg-gray-800 rounded p-4 text-sm sm:text-base text-blue-700 dark:text-blue-200 overflow-x-auto whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal">
-                                    <code>{`<!-- From pathing.co (primary) -->
-<script src="https://cdn.pathing.co/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>
+                                    <code>{`<!-- From pathing.cc (primary) -->
+<script src="https://pathing.cc/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>
 
 <!-- From unpkg (fallback) -->
 <script src="https://unpkg.com/pathingjs@latest/dist/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>
@@ -349,8 +349,8 @@ pathing.send.purchase({
 <script src="https://cdn.jsdelivr.net/npm/pathingjs@latest/dist/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}</code>
                                 </pre>
                                 <CopyButton
-                                    text={`<!-- From pathing.co (primary) -->
-<script src="https://cdn.pathing.co/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}
+                                    text={`<!-- From pathing.cc (primary) -->
+<script src="https://pathing.cc/pathing.min.js" pathing-api-key="YOUR_API_KEY"></script>`}
                                     className="absolute top-2 right-2 p-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-600 hover:bg-blue-700 text-white"
                                     iconClassName="w-5 h-5"
                                     showText={true}
