@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { WidgetProps } from "@/types/widgets";
 import BaseWidget from "./BaseWidget";
-import { TimeFrame } from "@/components/EventTimelineChart";
+import { TimeFrame } from "@/components/analytica/EventTimelineChart";
 import widgetRegistry from "@/utils/widgetRegistry";
 
 // Add type for session info

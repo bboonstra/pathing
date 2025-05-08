@@ -8,18 +8,17 @@ import {
     EyeIcon,
     ShieldCheckIcon,
     ArrowRightIcon,
-    ClipboardIcon,
 } from "@heroicons/react/24/solid";
 import { supabase } from "@/lib/supabase";
 import { pathing } from "pathingjs";
-import HomepageAnalytics from "@/components/HomepageAnalytics";
-import EventTimelineChart from "@/components/EventTimelineChart";
+import HomepageAnalytics from "@/components/analytica/HomepageAnalytics";
+import EventTimelineChart from "@/components/analytica/EventTimelineChart";
 import Navbar from "@/components/Navbar";
-import type { EventData } from "@/components/EventTimelineChart";
+import type { EventData } from "@/components/analytica/EventTimelineChart";
+import CopyButton from "@/components/CopyButton";
 
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
-    const [copied, setCopied] = useState(false);
     const [codeSnippet, setCodeSnippet] = useState(
         '<script src="/pathing.js"></script>'
     );
@@ -70,12 +69,6 @@ export default function Home() {
             });
         }
     }, [demoButtonRef]);
-
-    function handleCopy() {
-        navigator.clipboard.writeText(codeSnippet);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1200);
-    }
 
     const handleDemoClick = () => {
         setEventSent(true);
@@ -428,26 +421,14 @@ export default function Home() {
                             <code>{codeSnippet}</code>
                         </pre>
                     </div>
-                    <button
-                        className={`self-center sm:self-center flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                            copied
-                                ? "bg-green-500 text-white"
-                                : "bg-blue-600 hover:bg-blue-700 text-white"
-                        }`}
-                        onClick={handleCopy}
-                        aria-label="Copy code"
-                    >
-                        {copied ? (
-                            <span className="flex items-center gap-1">
-                                <CheckCircleIcon className="w-5 h-5 animate-pop" />{" "}
-                                Copied!
-                            </span>
-                        ) : (
-                            <span className="flex items-center gap-1">
-                                <ClipboardIcon className="w-5 h-5" /> Copy
-                            </span>
-                        )}
-                    </button>
+                    <CopyButton
+                        text={codeSnippet}
+                        className="self-center sm:self-center flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-600 hover:bg-blue-700 text-white"
+                        iconClassName="w-5 h-5"
+                        showText={true}
+                        defaultText="Copy"
+                        successText="Copied!"
+                    />
                 </div>
 
                 <p className="text-gray-500 dark:text-gray-400 mt-3 text-center">

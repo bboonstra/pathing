@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import {
     TrashIcon,
-    ClipboardIcon,
-    CheckCircleIcon,
     ShieldCheckIcon,
     ShieldExclamationIcon,
     InformationCircleIcon,
@@ -16,6 +14,7 @@ import {
     DocumentTextIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import CopyButton from "@/components/CopyButton";
 
 type Domain = {
     id: string;
@@ -40,7 +39,6 @@ export default function DomainList() {
     const [verifyingDomain, setVerifyingDomain] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const [copySuccess, setCopySuccess] = useState<string | null>(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -230,12 +228,6 @@ pathing.link.button(document.getElementById('my-button'), {
         } finally {
             setVerifyingDomain(null);
         }
-    }
-
-    function copyToClipboard(text: string, id: string) {
-        navigator.clipboard.writeText(text);
-        setCopySuccess(id);
-        setTimeout(() => setCopySuccess(null), 2000);
     }
 
     const toggleConfigVisibility = (domainId: string) => {
@@ -460,27 +452,14 @@ pathing.link.button(document.getElementById('my-button'), {
                                                     Value:
                                                 </span>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    <code className="font-mono text-xs bg-gray-100 dark:bg-gray-900 p-1 rounded flex-1 break-all">
-                                                        {
+                                                    <CopyButton
+                                                        text={
                                                             domain.verification_token
                                                         }
-                                                    </code>
-                                                    <button
-                                                        onClick={() =>
-                                                            copyToClipboard(
-                                                                domain.verification_token,
-                                                                `token-${domain.id}`
-                                                            )
-                                                        }
                                                         className="text-blue-500 hover:text-blue-700 p-1 flex items-center gap-1 text-sm"
-                                                    >
-                                                        {copySuccess ===
-                                                        `token-${domain.id}` ? (
-                                                            <CheckCircleIcon className="w-4 h-4" />
-                                                        ) : (
-                                                            <ClipboardIcon className="w-4 h-4" />
-                                                        )}
-                                                    </button>
+                                                        iconClassName="w-4 h-4"
+                                                        showText={false}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -540,28 +519,12 @@ pathing.link.button(document.getElementById('my-button'), {
                                             <div className="text-sm text-gray-500 dark:text-gray-400">
                                                 Public Key
                                             </div>
-                                            <button
-                                                onClick={() =>
-                                                    copyToClipboard(
-                                                        domain.public_key,
-                                                        `key-${domain.id}`
-                                                    )
-                                                }
+                                            <CopyButton
+                                                text={domain.public_key}
                                                 className="text-blue-500 hover:text-blue-700 p-1 flex items-center gap-1 text-sm"
-                                            >
-                                                {copySuccess ===
-                                                `key-${domain.id}` ? (
-                                                    <>
-                                                        <CheckCircleIcon className="w-4 h-4" />{" "}
-                                                        Copied!
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <ClipboardIcon className="w-4 h-4" />{" "}
-                                                        Copy
-                                                    </>
-                                                )}
-                                            </button>
+                                                iconClassName="w-4 h-4"
+                                                showText={true}
+                                            />
                                         </div>
                                         <div className="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto">
                                             {domain.public_key}
@@ -665,11 +628,6 @@ pathing.link.button(document.getElementById('my-button'), {
                                             const snippetCode = option.code(
                                                 domain.public_key
                                             );
-                                            const snippetId = `${option.name
-                                                .toLowerCase()
-                                                .replace(/\s+/g, "-")}-${
-                                                domain.id
-                                            }`;
 
                                             // Split code into sections based on comments for better presentation
                                             const codeLines =
@@ -728,28 +686,14 @@ pathing.link.button(document.getElementById('my-button'), {
                                                             {option.name}{" "}
                                                             Integration
                                                         </span>
-                                                        <button
-                                                            onClick={() =>
-                                                                copyToClipboard(
-                                                                    snippetCode,
-                                                                    snippetId
-                                                                )
-                                                            }
+                                                        <CopyButton
+                                                            text={snippetCode}
                                                             className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-400 px-2 py-1 rounded flex items-center gap-1 text-sm transition-colors"
-                                                        >
-                                                            {copySuccess ===
-                                                            snippetId ? (
-                                                                <>
-                                                                    <CheckCircleIcon className="w-4 h-4" />{" "}
-                                                                    Copied!
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <ClipboardIcon className="w-4 h-4" />{" "}
-                                                                    Copy Code
-                                                                </>
-                                                            )}
-                                                        </button>
+                                                            iconClassName="w-4 h-4"
+                                                            showText={true}
+                                                            defaultText="Copy Code"
+                                                            successText="Copied!"
+                                                        />
                                                     </div>
 
                                                     <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">

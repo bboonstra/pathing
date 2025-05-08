@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import WidgetDashboard from "@/components/WidgetDashboard";
+import WidgetDashboard from "@/components/analytica/WidgetDashboard";
 import { EventData } from "@/types/widgets";
 import { useSearchParams } from "next/navigation";
 

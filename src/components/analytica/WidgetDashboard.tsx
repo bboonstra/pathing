@@ -14,15 +14,15 @@ import { registerAllWidgets } from "@/utils";
 import widgetRegistry from "@/utils/widgetRegistry";
 
 // Import widget components
-import TimelineWidget from "./widgets/TimelineWidget";
-import EventCountWidget from "./widgets/EventCountWidget";
-import UniquePageWidget from "./widgets/UniquePageWidget";
-import RecentEventsWidget from "./widgets/RecentEventsWidget";
-import TopReferrersWidget from "./widgets/TopReferrersWidget";
-import ConversionMetricsWidget from "./widgets/ConversionMetricsWidget";
-import CorrelationInsightWidget from "./widgets/CorrelationInsightWidget";
-import UserFlowWidget from "./widgets/UserFlowWidget";
-import TracebackWidget from "./widgets/TracebackWidget";
+import TimelineWidget from "../widgets/TimelineWidget";
+import EventCountWidget from "../widgets/EventCountWidget";
+import UniquePageWidget from "../widgets/UniquePageWidget";
+import RecentEventsWidget from "../widgets/RecentEventsWidget";
+import TopReferrersWidget from "../widgets/TopReferrersWidget";
+import ConversionMetricsWidget from "../widgets/ConversionMetricsWidget";
+import CorrelationInsightWidget from "../widgets/CorrelationInsightWidget";
+import UserFlowWidget from "../widgets/UserFlowWidget";
+import TracebackWidget from "../widgets/TracebackWidget";
 import WidgetCreationManager from "./WidgetCreationManager";
 
 // Create a responsive grid layout

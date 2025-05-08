@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WidgetProps, EventData, WidgetType } from "@/types/widgets";
 import BaseWidget from "./BaseWidget";
 import widgetRegistry from "@/utils/widgetRegistry";
-import { TimeFrame } from "@/components/EventTimelineChart";
+import { TimeFrame } from "@/components/analytica/EventTimelineChart";
 
 // Register widget definition
 widgetRegistry.register({

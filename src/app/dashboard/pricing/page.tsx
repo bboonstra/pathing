@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { pathing } from "pathingjs";
-import EventTimelineChart from "@/components/EventTimelineChart";
-import type { EventData, TimeFrame } from "@/components/EventTimelineChart";
+import EventTimelineChart from "@/components/analytica/EventTimelineChart";
+import type {
+    EventData,
+    TimeFrame,
+} from "@/components/analytica/EventTimelineChart";
 
 type DailyEvent = {
     date: string;

@@ -1,7 +1,7 @@
 import {
     TimeFrame,
     EventData as ChartEventData,
-} from "@/components/EventTimelineChart";
+} from "@/components/analytica/EventTimelineChart";
 
 // Basic layout information for widgets
 export interface WidgetLayout {

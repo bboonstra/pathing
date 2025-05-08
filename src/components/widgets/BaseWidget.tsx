@@ -1,6 +1,6 @@
 import React, { useState, ReactNode } from "react";
 import { WidgetProps, WidgetSettings, ConfigField } from "@/types/widgets";
-import { TimeFrame } from "@/components/EventTimelineChart";
+import { TimeFrame } from "@/components/analytica/EventTimelineChart";
 import widgetRegistry from "@/utils/widgetRegistry";
 
 interface BaseWidgetProps extends WidgetProps {

@@ -8,7 +8,10 @@ import {
     Area,
     AreaChart,
 } from "recharts";
-import type { EventsChartData, TimeFrame } from "./EventTimelineChart";
+import type {
+    EventsChartData,
+    TimeFrame,
+} from "@/components/analytica/EventTimelineChart";
 
 interface EventTimelineAreaChartProps {
     chartData: EventsChartData[];

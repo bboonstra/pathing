@@ -1,5 +1,5 @@
 import { render, screen, act, waitFor } from "@testing-library/react";
-import HomepageAnalytics from "../HomepageAnalytics";
+import HomepageAnalytics from "../analytica/HomepageAnalytics";
 import { ReactNode } from "react";
 
 // Define interface for props with children

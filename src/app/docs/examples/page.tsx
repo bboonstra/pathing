@@ -1,20 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ClipboardIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import CopyButton from "@/components/CopyButton";
 
 export default function ExamplesPage() {
-    const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
-
-    const copyToClipboard = (text: string, snippetId: string) => {
-        navigator.clipboard.writeText(text);
-        setCopiedSnippet(snippetId);
-        setTimeout(() => setCopiedSnippet(null), 2000);
-    };
-
     return (
         <>
-            <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-8 mt-20 text-center bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
                 Code Examples
             </h1>
 
@@ -48,11 +39,8 @@ document.getElementById('checkout-button').addEventListener('click', async () =>
 });`}
                                 </code>
                             </pre>
-                            <button
-                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `document.getElementById('checkout-button').addEventListener('click', async () => {
+                            <CopyButton
+                                text={`document.getElementById('checkout-button').addEventListener('click', async () => {
   await pathing.send.purchase({
     product: "Pro Subscription",
     price: 99.99,
@@ -62,18 +50,11 @@ document.getElementById('checkout-button').addEventListener('click', async () =>
   
   // Continue with checkout process
   completeCheckout();
-});`,
-                                        "purchase-example"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "purchase-example" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+});`}
+                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                iconClassName="h-5 w-5"
+                                showText={false}
+                            />
                         </div>
                     </div>
 
@@ -112,11 +93,8 @@ document.getElementById('contact-form').addEventListener('submit', (event) => {
 });`}
                                 </code>
                             </pre>
-                            <button
-                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `document.getElementById('contact-form').addEventListener('submit', (event) => {
+                            <CopyButton
+                                text={`document.getElementById('contact-form').addEventListener('submit', (event) => {
   // Prevent default form submission
   event.preventDefault();
   
@@ -136,18 +114,11 @@ document.getElementById('contact-form').addEventListener('submit', (event) => {
     // Submit the form after tracking
     form.submit();
   });
-});`,
-                                        "form-example"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "form-example" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+});`}
+                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                iconClassName="h-5 w-5"
+                                showText={false}
+                            />
                         </div>
                     </div>
 
@@ -196,11 +167,9 @@ video.addEventListener('ended', () => {
 });`}
                                 </code>
                             </pre>
-                            <button
-                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `const video = document.getElementById('product-demo');
+                            <CopyButton
+                                text={`// Track video playback
+const video = document.getElementById('product-demo');
 
 // Track play events
 video.addEventListener('play', () => {
@@ -230,18 +199,11 @@ video.addEventListener('ended', () => {
     progress: 1.0,
     action: 'complete'
   });
-});`,
-                                        "video-example"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "video-example" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+});`}
+                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                iconClassName="h-5 w-5"
+                                showText={false}
+                            />
                         </div>
                     </div>
                 </div>
@@ -297,11 +259,8 @@ video.addEventListener('ended', () => {
 </script>`}
                                 </code>
                             </pre>
-                            <button
-                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `<!-- HTML -->
+                            <CopyButton
+                                text={`<!-- HTML -->
 <button 
   id="signup-button"
   data-pathing-event="signup_click"
@@ -332,18 +291,11 @@ video.addEventListener('ended', () => {
       pathing.send.raw(event, payload);
     });
   });
-</script>`,
-                                        "declarative-example"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "declarative-example" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+</script>`}
+                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                iconClassName="h-5 w-5"
+                                showText={false}
+                            />
                         </div>
                     </div>
 
@@ -384,11 +336,8 @@ pathing.addMiddleware(event => {
 });`}
                                 </code>
                             </pre>
-                            <button
-                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `// Set user identity after login
+                            <CopyButton
+                                text={`// Set user identity after login
 function onUserLogin(user) {
   // Store user ID in local storage for persistence
   localStorage.setItem('pathing_user_id', user.id);
@@ -410,18 +359,11 @@ pathing.addMiddleware(event => {
     event.payload.user_id = userId;
   }
   return event;
-});`,
-                                        "user-id-example"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "user-id-example" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+});`}
+                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                iconClassName="h-5 w-5"
+                                showText={false}
+                            />
                         </div>
                     </div>
 
@@ -473,11 +415,8 @@ function PathroutingTracker() {
 }`}
                                 </code>
                             </pre>
-                            <button
-                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `// Vue Router example
+                            <CopyButton
+                                text={`// Vue Router example
 import { createRouter } from 'vue-router';
 
 const router = createRouter({
@@ -511,18 +450,11 @@ function PathroutingTracker() {
   }, [location]);
   
   return null;
-}`,
-                                        "spa-example"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "spa-example" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+}`}
+                                className="absolute top-4 right-4 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                iconClassName="h-5 w-5"
+                                showText={false}
+                            />
                         </div>
                     </div>
                 </div>

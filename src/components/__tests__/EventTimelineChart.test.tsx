@@ -42,7 +42,7 @@ jest.mock("../EventTimelineChart", () => {
 });
 
 // Import the mocked component
-import EventTimelineChart from "../EventTimelineChart";
+import EventTimelineChart from "../analytica/EventTimelineChart";
 
 describe("EventTimelineChart", () => {
     const mockEvents: EventData[] = [

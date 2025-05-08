@@ -1,20 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ClipboardIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import CopyButton from "@/components/CopyButton";
 
 export default function ApiReference() {
-    const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
-
-    const copyToClipboard = (text: string, snippetId: string) => {
-        navigator.clipboard.writeText(text);
-        setCopiedSnippet(snippetId);
-        setTimeout(() => setCopiedSnippet(null), 2000);
-    };
-
     return (
         <>
-            <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-8 mt-20 text-center bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
                 API Reference
             </h1>
 
@@ -39,26 +30,15 @@ export default function ApiReference() {
   value: any
 )`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `new pathing.Parameter(
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`new pathing.Parameter(
   label: string, 
   key: string, 
   value: any
-)`,
-                                        "parameter-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "parameter-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+)`}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -79,27 +59,16 @@ export default function ApiReference() {
   respectDNT: boolean
 })`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.config({
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.config({
   trackPageviews: boolean,
   trackClicks: boolean,
   trackForms: boolean,
   respectDNT: boolean
-})`,
-                                        "config-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "config-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+})`}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,28 +97,17 @@ export default function ApiReference() {
   category?: string | Parameter
 }): Promise<void>`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.send.purchase({
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.send.purchase({
   product: string | Parameter,
   price: number | Parameter,
   currency?: string | Parameter,
   quantity?: number | Parameter,
   category?: string | Parameter
-}): Promise<void>`,
-                                        "purchase-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "purchase-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+}): Promise<void>`}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -165,31 +123,20 @@ export default function ApiReference() {
                                 {`pathing.send.playback({
   content: string | Parameter,
   duration: number | Parameter,
-  progress: number | Parameter, // 0-1 ratio
+  progress: number | Parameter, // 0-1 ratio,
   action?: 'play' | 'pause' | 'seek' | 'complete' | string | Parameter
 }): Promise<void>`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.send.playback({
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.send.playback({
   content: string | Parameter,
   duration: number | Parameter,
-  progress: number | Parameter, // 0-1 ratio
+  progress: number | Parameter, // 0-1 ratio,
   action?: 'play' | 'pause' | 'seek' | 'complete' | string | Parameter
-}): Promise<void>`,
-                                        "playback-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "playback-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+}): Promise<void>`}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -205,25 +152,14 @@ export default function ApiReference() {
   data: Record<string, any>
 ): Promise<void>`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.send.raw(
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.send.raw(
   type: string, 
   data: Record<string, any>
-): Promise<void>`,
-                                        "raw-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "raw-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+): Promise<void>`}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -251,26 +187,15 @@ export default function ApiReference() {
   options?: { preventDefault?: boolean }
 ): HTMLElement`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.link.purchase(
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.link.purchase(
   element: HTMLElement,
   data: Record<string, any>,
   options?: { preventDefault?: boolean }
-): HTMLElement`,
-                                        "link-purchase-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "link-purchase-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+): HTMLElement`}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -288,25 +213,14 @@ export default function ApiReference() {
   data: Record<string, any>
 ): HTMLMediaElement`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.link.playback(
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.link.playback(
   element: HTMLMediaElement,
   data: Record<string, any>
-): HTMLMediaElement`,
-                                        "link-playback-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "link-playback-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+): HTMLMediaElement`}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -324,27 +238,16 @@ export default function ApiReference() {
   options?: { preventDefault?: boolean }
 ): HTMLElement`}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `pathing.link.raw(
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`pathing.link.raw(
   element: HTMLElement,
   type: string,
   data: Record<string, any>,
   options?: { preventDefault?: boolean }
-): HTMLElement`,
-                                        "link-raw-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "link-raw-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+): HTMLElement`}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -388,11 +291,9 @@ export function PathingTracker() {
 // Add <PathingTracker /> to your layout.tsx
 `}
                             </pre>
-                            <button
-                                className="absolute top-2 right-2 p-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                                onClick={() =>
-                                    copyToClipboard(
-                                        `// components/PathingTracker.tsx
+                            <div className="absolute top-2 right-2">
+                                <CopyButton
+                                    text={`// components/PathingTracker.tsx
 'use client';
   
 import { useEffect } from 'react';
@@ -414,18 +315,9 @@ export function PathingTracker() {
   return null;
 }
 
-// Add <PathingTracker /> to your layout.tsx`,
-                                        "react-code"
-                                    )
-                                }
-                                aria-label="Copy code"
-                            >
-                                {copiedSnippet === "react-code" ? (
-                                    <CheckCircleIcon className="h-5 w-5" />
-                                ) : (
-                                    <ClipboardIcon className="h-5 w-5" />
-                                )}
-                            </button>
+// Add <PathingTracker /> to your layout.tsx`}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
