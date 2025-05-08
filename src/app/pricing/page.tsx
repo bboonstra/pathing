@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import { pathing } from "pathingjs";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
@@ -128,14 +128,14 @@ export default function Pricing() {
             <section className="max-w-7xl mx-auto px-4 mb-20">
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Free Tier */}
-                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl border border-white/40 dark:border-white/10">
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl border border-white/40 dark:border-white/10 flex flex-col h-full">
                         <div className="text-center mb-8">
                             <h3 className="text-2xl font-bold mb-2">Free</h3>
                             <p className="text-gray-600 dark:text-gray-400">
                                 Perfect for small projects
                             </p>
                         </div>
-                        <ul className="space-y-4 mb-8">
+                        <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
                                 <span>Full API access</span>
@@ -146,7 +146,18 @@ export default function Pricing() {
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
-                                <span>1,000 events</span>
+                                <span>1,000 free events per month</span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>
+                                    Latest 3,000 events stored (max 1,000 per
+                                    month)
+                                </span>
+                            </li>
+                            <li className="flex items-center">
+                                <XCircleIcon className="w-5 h-5 text-red-500 mr-2" />
+                                <span>No usage-based pricing</span>
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
@@ -156,14 +167,14 @@ export default function Pricing() {
                         <button
                             data-tier="free"
                             onClick={() => router.push("/dashboard")}
-                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
                         >
                             Start Free
                         </button>
                     </div>
 
                     {/* Usage-Based Tier */}
-                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl border border-white/40 dark:border-white/10 relative">
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl border border-white/40 dark:border-white/10 relative flex flex-col h-full">
                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                             <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
                                 Most Popular
@@ -177,7 +188,7 @@ export default function Pricing() {
                                 Pay per event
                             </p>
                         </div>
-                        <ul className="space-y-4 mb-8">
+                        <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
                                 <span>All Free tier features</span>
@@ -185,6 +196,18 @@ export default function Pricing() {
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
                                 <span>Unlimited event storage</span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>12 months guaranteed event history</span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>1,000 free events per month</span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>$0.0001 per event</span>
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
@@ -198,26 +221,40 @@ export default function Pricing() {
                         <button
                             data-tier="usage-based"
                             onClick={() => router.push("/dashboard/pricing")}
-                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
                         >
                             Get Started
                         </button>
                     </div>
 
-                    {/* Usage-Based Plus Tier */}
-                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl border border-white/40 dark:border-white/10">
+                    {/* Enterprise Tier */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-8 shadow-xl border border-white/40 dark:border-white/10 flex flex-col h-full">
                         <div className="text-center mb-8">
                             <h3 className="text-2xl font-bold mb-2">
-                                Usage-Based Plus
+                                Enterprise
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400">
-                                Enterprise features
+                                Tailored for your needs
                             </p>
                         </div>
-                        <ul className="space-y-4 mb-8">
+                        <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
                                 <span>All Usage-Based features</span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>
+                                    Configurable event history (1-10 years)
+                                </span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>1,000 free events per month</span>
+                            </li>
+                            <li className="flex items-center">
+                                <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
+                                <span>Scalable per-enterprise pricing</span>
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
@@ -238,7 +275,7 @@ export default function Pricing() {
                                 (window.location.href =
                                     "mailto:sales@bboonstra.dev")
                             }
-                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-full shadow-xl transition-all text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300 mt-auto"
                         >
                             Contact Sales
                         </button>
@@ -390,7 +427,7 @@ export default function Pricing() {
                                     Usage-Based
                                 </th>
                                 <th className="px-6 py-4 text-center">
-                                    Usage-Based Plus
+                                    Enterprise
                                 </th>
                             </tr>
                         </thead>
@@ -398,13 +435,49 @@ export default function Pricing() {
                             <tr className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-6 py-4">Event Storage</td>
                                 <td className="px-6 py-4 text-center">
-                                    1,000 events
+                                    Up to 3,000 events
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     Unlimited
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     Unlimited
+                                </td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-gray-700">
+                                <td className="px-6 py-4">Event History</td>
+                                <td className="px-6 py-4 text-center">
+                                    Up to 3,000 events (min. 3 months history)
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    12 months guaranteed
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    Configurable (1-10 years)
+                                </td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-gray-700">
+                                <td className="px-6 py-4">Free Events</td>
+                                <td className="px-6 py-4 text-center">
+                                    1,000 per month
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    1,000 per month
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    1,000 per month
+                                </td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-gray-700">
+                                <td className="px-6 py-4">Pricing</td>
+                                <td className="px-6 py-4 text-center">
+                                    No usage-based pricing
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    $0.0001 per event
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                    Per-enterprise pricing
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -457,7 +530,7 @@ export default function Pricing() {
                         <div className="space-y-3">
                             <div className="flex justify-between">
                                 <span className="font-medium">Free:</span>
-                                <span>1,000 events</span>
+                                <span>Up to 3,000 events</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="font-medium">
@@ -466,10 +539,33 @@ export default function Pricing() {
                                 <span>Unlimited</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="font-medium">
-                                    Usage-Based Plus:
-                                </span>
+                                <span className="font-medium">Enterprise:</span>
                                 <span>Unlimited</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Event History */}
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-4">
+                            Event History
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="font-medium">Free:</span>
+                                <span>
+                                    Up to 3,000 events (min. 3 months history)
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">
+                                    Usage-Based:
+                                </span>
+                                <span>12 months guaranteed</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium">Enterprise:</span>
+                                <span>Configurable (1-10 years)</span>
                             </div>
                         </div>
                     </div>
@@ -491,9 +587,7 @@ export default function Pricing() {
                                 <span>Full</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="font-medium">
-                                    Usage-Based Plus:
-                                </span>
+                                <span className="font-medium">Enterprise:</span>
                                 <span>Full</span>
                             </div>
                         </div>
@@ -516,9 +610,7 @@ export default function Pricing() {
                                 <span>Advanced</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="font-medium">
-                                    Usage-Based Plus:
-                                </span>
+                                <span className="font-medium">Enterprise:</span>
                                 <span>Enterprise</span>
                             </div>
                         </div>
@@ -539,9 +631,7 @@ export default function Pricing() {
                                 <span>Email</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="font-medium">
-                                    Usage-Based Plus:
-                                </span>
+                                <span className="font-medium">Enterprise:</span>
                                 <span>Priority</span>
                             </div>
                         </div>
@@ -564,9 +654,7 @@ export default function Pricing() {
                                 <span>-</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="font-medium">
-                                    Usage-Based Plus:
-                                </span>
+                                <span className="font-medium">Enterprise:</span>
                                 <span>✓</span>
                             </div>
                         </div>
@@ -587,12 +675,38 @@ export default function Pricing() {
                 <div className="space-y-6">
                     <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
                         <h3 className="text-xl font-semibold mb-2">
+                            How is billing handled?
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            We bill on the first Monday of each month for all
+                            events tracked in the previous month. Your first
+                            1,000 events each month are always free, regardless
+                            of your plan.
+                        </p>
+                    </div>
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-2">
+                            How does event history work on the Free tier?
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            With the Free tier, you can track 1,000 events
+                            monthly and maintain a rolling history of up to
+                            3,000 total events. This ensures you have at least 3
+                            months of historical data of event history. If you
+                            track fewer than 1,000 events monthly, your history
+                            can span longer, up to the 3,000 event storage
+                            limit.
+                        </p>
+                    </div>
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-2">
                             How is usage calculated?
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400">
                             Usage is calculated based on the number of events
                             tracked across your domains. Each page view, click,
-                            or custom event counts as one event.
+                            or custom event counts as one event. After your
+                            first 1,000 free events, you pay $0.0001 per event.
                         </p>
                     </div>
                     <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
@@ -602,7 +716,11 @@ export default function Pricing() {
                         <p className="text-gray-600 dark:text-gray-400">
                             Yes, you can change your plan at any time. Your
                             billing will be adjusted accordingly based on your
-                            actual usage.
+                            actual usage. If you upgrade from free to
+                            usage-based, we may be able to restore missing
+                            events for the current month if desired. This
+                            service cost is based on the number of events
+                            recovered, with an additional 20% recovery fee.
                         </p>
                     </div>
                     <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
@@ -610,10 +728,62 @@ export default function Pricing() {
                             What happens if I exceed my free tier limits?
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400">
-                            If you exceed the free tier limits, you&apos;ll be
-                            automatically upgraded to the Usage-Based plan.
-                            You&apos;ll only be charged for the additional
-                            events beyond the free tier limit.
+                            If you exceed the free tier limits for the current
+                            month, you won&apos;t be charged, but you won&apos;t
+                            be able to track more events until the next month.
+                            You can upgrade to a higher plan at any time to
+                            continue tracking events.
+                        </p>
+                    </div>
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-2">
+                            Are there any long-term contracts?
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            No, there are no long-term contracts. Our service
+                            operates on a rolling monthly schedule, offering you
+                            flexibility.
+                        </p>
+                    </div>
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-2">
+                            What payment methods are accepted and what is the
+                            billing currency?
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            We are in the process of integrating with Paddle for
+                            secure and seamless payments. More details on
+                            accepted payment methods will be available soon. All
+                            billing is conducted in USD.
+                        </p>
+                    </div>
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-2">
+                            How is a &apos;domain&apos; defined for billing
+                            purposes?
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            A domain includes all subdomains and pages
+                            associated with one apex domain. For example,
+                            tracking &quot;yourcompany.com&quot; would cover
+                            events on yourcompany.com/pricing,
+                            blog.yourcompany.com, and app.yourcompany.com.
+                            However, &quot;anothercompany.com&quot; would be
+                            considered a separate domain.
+                        </p>
+                    </div>
+                    <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">
+                        <h3 className="text-xl font-semibold mb-2">
+                            Have more questions?
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            Contact us at{" "}
+                            <a
+                                href="mailto:questions@pathing.cc"
+                                className="text-blue-600 dark:text-blue-400 hover:underline"
+                            >
+                                questions@pathing.cc
+                            </a>
                         </p>
                     </div>
                 </div>
