@@ -20,7 +20,7 @@ import CopyButton from "@/components/CopyButton";
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
     const [codeSnippet, setCodeSnippet] = useState(
-        '<script src="/pathing.js"></script>'
+        '<script src="/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>'
     );
     // Reference to the button
     const [demoButtonRef, setDemoButtonRef] =
@@ -43,15 +43,18 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
+        // Only run on client side
+        const updateCodeSnippet = () => {
             setCodeSnippet(
                 `<script src="${window.location.origin}/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>`
             );
-            // Check login state
-            supabase.auth.getUser().then(({ data }) => {
-                setIsLoggedIn(!!data.user);
-            });
-        }
+        };
+        updateCodeSnippet();
+
+        // Check login state
+        supabase.auth.getUser().then(({ data }) => {
+            setIsLoggedIn(!!data.user);
+        });
     }, []);
 
     useEffect(() => {
