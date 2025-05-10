@@ -31,6 +31,13 @@ export default function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
     // Add state for dummy events
     const [dummyEvents, setDummyEvents] = useState<EventData[]>([]);
+    // Add state for current year
+    const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+    useEffect(() => {
+        // Set the current year on client side only
+        setCurrentYear(new Date().getFullYear());
+    }, []);
 
     useEffect(() => {
         // Fetch dummy events from API
@@ -469,11 +476,8 @@ export default function Home() {
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-2">
                     <div>
-                        &copy;{" "}
-                        <span suppressHydrationWarning>
-                            {new Date().getFullYear()}
-                        </span>{" "}
-                        pathing.cc &mdash; Built by{" "}
+                        &copy; <span>{currentYear || "2025"}</span> pathing.cc
+                        &mdash; Built by{" "}
                         <a
                             href="https://github.com/bboonstra"
                             className="text-blue-600 dark:text-blue-400"
