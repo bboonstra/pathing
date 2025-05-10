@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { EventData } from "@/types/widgets";
 
 // Mock the actual EventTimelineChart component instead of modifying React's createElement
-jest.mock("../EventTimelineChart", () => {
+jest.mock("../analytica/EventTimelineChart", () => {
     return {
         __esModule: true,
         default: (props: { events: EventData[]; timeFrame?: string }) => {
