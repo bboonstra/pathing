@@ -39,6 +39,17 @@ export default function HomepageAnalytics() {
     );
     const [error, setError] = useState<string | null>(null);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+    const [clientLoaded, setClientLoaded] = useState(false);
+    const [hourlyData, setHourlyData] = useState<number[]>(Array(24).fill(0));
+    const [currentHour, setCurrentHour] = useState<number>(0);
+    const [maxEvents, setMaxEvents] = useState<number>(1);
+
+    useEffect(() => {
+        // Mark that we're now client-side
+        setClientLoaded(true);
+        // Set current hour only on client
+        setCurrentHour(new Date().getHours());
+    }, []);
 
     // Function to fetch events from our cached API endpoint
     const fetchEvents = async () => {
@@ -76,6 +87,29 @@ export default function HomepageAnalytics() {
     useEffect(() => {
         fetchEvents();
     }, []);
+
+    // Calculate hourly distribution when events or currentHour changes
+    useEffect(() => {
+        if (!clientLoaded) return;
+
+        const hourlyDataTemp = Array(24).fill(0);
+        const hour = new Date().getHours();
+
+        events.forEach((event) => {
+            const eventDate = new Date(event.created_at);
+            const eventHour = eventDate.getHours();
+            // Calculate relative position with latest hour on the right
+            const hourIndex = (24 + eventHour - hour - 1) % 24;
+            hourlyDataTemp[hourIndex]++;
+        });
+
+        // Find max for scaling
+        const max = Math.max(...hourlyDataTemp, 1);
+
+        setHourlyData(hourlyDataTemp);
+        setCurrentHour(hour);
+        setMaxEvents(max);
+    }, [events, clientLoaded]);
 
     // Countdown timer effect
     useEffect(() => {
@@ -116,24 +150,6 @@ export default function HomepageAnalytics() {
         return sessionIds.size;
     };
 
-    // Calculate hourly distribution of events
-    const hourlyData = Array(24).fill(0);
-    const currentHour = new Date().getHours();
-
-    events.forEach((event) => {
-        const eventDate = new Date(event.created_at);
-        const eventHour = eventDate.getHours();
-        // Calculate relative position with latest hour on the right
-        const hourIndex = (24 + eventHour - currentHour - 1) % 24;
-        hourlyData[hourIndex]++;
-    });
-
-    // Find max for scaling
-    const maxEvents = Math.max(...hourlyData, 1);
-
-    // Determine if refresh is available
-    const canRefresh = refreshCountdown === 0 || refreshCountdown === null;
-
     // Format relative hour label
     const formatRelativeHour = (hoursAgo: number): string => {
         if (hoursAgo === 0) {
@@ -147,40 +163,36 @@ export default function HomepageAnalytics() {
         }
     };
 
+    // Determine if refresh is available
+    const canRefresh = refreshCountdown === 0 || refreshCountdown === null;
+
     return (
         <div className="w-full bg-white/70 dark:bg-[#23233a]/70 rounded-xl shadow-lg p-8 border border-white/20 dark:border-white/5 mb-8">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center items-center text-center md:text-left mb-6 gap-3">
                 <h2 className="text-xl font-bold">Live Demo Analytics</h2>
                 <div className="flex flex-col items-center md:items-end gap-2">
-                    <div className="text-xs text-gray-500 max-w-[300px] text-center md:text-right">
-                        {lastUpdated ? (
-                            <>
-                                {refreshCountdown !== null &&
-                                refreshCountdown > 0 ? (
+                    {clientLoaded && lastUpdated && (
+                        <div className="text-xs text-gray-500 max-w-[300px] text-center md:text-right">
+                            {refreshCountdown !== null &&
+                            refreshCountdown > 0 ? (
+                                <div>
                                     <div>
-                                        <div>
-                                            Updated at{" "}
-                                            {lastUpdated.toLocaleTimeString(
-                                                [],
-                                                {
-                                                    hour: "numeric",
-                                                    minute: "2-digit",
-                                                }
-                                            )}
-                                        </div>
-                                        <div>
-                                            New data available in{" "}
-                                            {formatTime(refreshCountdown)}
-                                        </div>
+                                        Updated at{" "}
+                                        {lastUpdated.toLocaleTimeString([], {
+                                            hour: "numeric",
+                                            minute: "2-digit",
+                                        })}
                                     </div>
-                                ) : (
-                                    <span>Refresh available</span>
-                                )}
-                            </>
-                        ) : (
-                            "Not yet updated"
-                        )}
-                    </div>
+                                    <div>
+                                        New data available in{" "}
+                                        {formatTime(refreshCountdown)}
+                                    </div>
+                                </div>
+                            ) : (
+                                <span>Refresh available</span>
+                            )}
+                        </div>
+                    )}
                     {canRefresh && (
                         <button
                             onClick={fetchEvents}
@@ -221,26 +233,30 @@ export default function HomepageAnalytics() {
                                 <p className="text-green-800 dark:text-green-300 text-sm mb-1">
                                     Peak Hour
                                 </p>
-                                <p className="text-2xl font-bold">
-                                    {hourlyData.every((val) => val === 0)
-                                        ? "N/A"
-                                        : new Date(
-                                              new Date().setHours(
-                                                  (24 +
-                                                      new Date().getHours() -
-                                                      (23 -
-                                                          hourlyData.indexOf(
-                                                              Math.max(
-                                                                  ...hourlyData
-                                                              )
-                                                          ))) %
-                                                      24
-                                              )
-                                          ).toLocaleTimeString("en-US", {
-                                              hour: "numeric",
-                                              hour12: true,
-                                          })}
-                                </p>
+                                {clientLoaded ? (
+                                    <p className="text-2xl font-bold">
+                                        {hourlyData.every((val) => val === 0)
+                                            ? "N/A"
+                                            : new Date(
+                                                  new Date().setHours(
+                                                      (24 +
+                                                          currentHour -
+                                                          (23 -
+                                                              hourlyData.indexOf(
+                                                                  Math.max(
+                                                                      ...hourlyData
+                                                                  )
+                                                              ))) %
+                                                          24
+                                                  )
+                                              ).toLocaleTimeString("en-US", {
+                                                  hour: "numeric",
+                                                  hour12: true,
+                                              })}
+                                    </p>
+                                ) : (
+                                    <p className="text-2xl font-bold">-</p>
+                                )}
                             </div>
                             <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-100 dark:border-purple-800 flex flex-col justify-center h-[100px]">
                                 <p className="text-purple-800 dark:text-purple-300 text-sm mb-1">
@@ -262,53 +278,65 @@ export default function HomepageAnalytics() {
                                 {/* Could add timeframe selector buttons here like in DomainAnalytics if needed */}
                             </div>
                         </div>
-                        <div className="h-32 flex items-end space-x-1 mt-4">
-                            {hourlyData.map((count, hour) => (
-                                <div
-                                    key={hour}
-                                    className={`flex-1 rounded-t transition-all duration-500 relative group ${
-                                        hour === 23
-                                            ? "bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] dark:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] hover:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] dark:hover:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)]"
-                                            : "bg-blue-500/80 dark:bg-blue-600/80 hover:bg-blue-600 dark:hover:bg-blue-500"
-                                    }`}
-                                    style={{
-                                        height: `${Math.max(
-                                            (count / maxEvents) * 100,
-                                            4
-                                        )}%`,
-                                    }}
-                                >
-                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
-                                        {(() => {
-                                            const actualHour =
-                                                (24 +
-                                                    new Date().getHours() -
-                                                    (23 - hour)) %
-                                                24;
-                                            const hour12 =
-                                                actualHour === 0
-                                                    ? 12
-                                                    : actualHour > 12
-                                                    ? actualHour - 12
-                                                    : actualHour;
-                                            const ampm =
-                                                actualHour >= 12 ? "PM" : "AM";
-                                            return `${hour12} ${ampm}`;
-                                        })()}{" "}
-                                        - {count} clicks
-                                        {hour === 23 && " (incomplete)"}
-                                    </div>
+                        {clientLoaded ? (
+                            <>
+                                <div className="h-32 flex items-end space-x-1 mt-4">
+                                    {hourlyData.map((count, hour) => (
+                                        <div
+                                            key={hour}
+                                            className={`flex-1 rounded-t transition-all duration-500 relative group ${
+                                                hour === 23
+                                                    ? "bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] dark:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] hover:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)] dark:hover:bg-[repeating-linear-gradient(-45deg,rgba(27,80,212,1.0),rgba(27,80,212,1.0)_10px,rgba(27,80,212,0.5)_10px,rgba(27,80,212,0.5)_20px)]"
+                                                    : "bg-blue-500/80 dark:bg-blue-600/80 hover:bg-blue-600 dark:hover:bg-blue-500"
+                                            }`}
+                                            style={{
+                                                height: `${Math.max(
+                                                    (count / maxEvents) * 100,
+                                                    4
+                                                )}%`,
+                                            }}
+                                        >
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
+                                                {(() => {
+                                                    const actualHour =
+                                                        (24 +
+                                                            currentHour -
+                                                            (23 - hour)) %
+                                                        24;
+                                                    const hour12 =
+                                                        actualHour === 0
+                                                            ? 12
+                                                            : actualHour > 12
+                                                            ? actualHour - 12
+                                                            : actualHour;
+                                                    const ampm =
+                                                        actualHour >= 12
+                                                            ? "PM"
+                                                            : "AM";
+                                                    return `${hour12} ${ampm}`;
+                                                })()}{" "}
+                                                - {count} clicks
+                                                {hour === 23 && " (incomplete)"}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-500 mt-2">
-                            {/* Generate 5 evenly spaced hour markers for the last 24 hours */}
-                            {[24, 18, 12, 6, 0].map((hoursAgo) => (
-                                <span key={hoursAgo}>
-                                    {formatRelativeHour(hoursAgo)}
-                                </span>
-                            ))}
-                        </div>
+                                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                                    {/* Generate 5 evenly spaced hour markers for the last 24 hours */}
+                                    {[24, 18, 12, 6, 0].map((hoursAgo) => (
+                                        <span key={hoursAgo}>
+                                            {formatRelativeHour(hoursAgo)}
+                                        </span>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="h-32 flex items-center justify-center">
+                                <p className="text-gray-500 dark:text-gray-400">
+                                    Loading chart...
+                                </p>
+                            </div>
+                        )}
                         <div className="text-xs text-gray-500 mt-2 text-center">
                             All times shown in local time zone
                         </div>
@@ -317,7 +345,7 @@ export default function HomepageAnalytics() {
             )}
 
             {/* Event Details Popup */}
-            {selectedEvent && (
+            {selectedEvent && clientLoaded && (
                 <div
                     className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
                     onClick={() => setSelectedEvent(null)}
