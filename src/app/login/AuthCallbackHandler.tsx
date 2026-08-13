@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from "@supabase/auth-helpers-nextjs";
 
 export default function AuthCallbackHandler() {
     const router = useRouter();
@@ -12,7 +12,10 @@ export default function AuthCallbackHandler() {
             const code = searchParams.get("code");
             if (code) {
                 try {
-                    const supabase = createClientComponentClient();
+                    const supabase = createBrowserClient(
+                        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                    );
                     await supabase.auth.exchangeCodeForSession(code);
                     window.close();
                 } catch (error) {
