@@ -10,7 +10,7 @@
         "copy": "cd sdk && npm run copy",
         "sandbox": "cd sdk && npm run sandbox",
         "start": "next start",
-        "lint": "next lint",
+        "lint": "next lint .",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage"
