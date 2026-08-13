@@ -31,7 +31,7 @@ const sora = Sora({
 export const metadata: Metadata = {
     title: "Pathing",
     description: "See analytics in your user's shoes.",
-    metadataBase: new URL("https://www.pathing.cc"),
+    metadataBase: new URL("https://www.pathing.bboonstra.dev"),
     alternates: {
         canonical: "/",
     },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     ],
     authors: [{ name: "bboonstra", url: "https://github.com/bboonstra" }],
     creator: "bboonstra",
-    publisher: "pathing.cc",
+    publisher: "pathing.bboonstra.dev",
     robots: {
         index: true,
         follow: true,
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     openGraph: {
         type: "website",
         locale: "en",
-        url: "https://www.pathing.cc",
+        url: "https://www.pathing.bboonstra.dev",
         title: "Pathing - See analytics in your user's shoes",
         description:
             "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no popups, just clarity.",

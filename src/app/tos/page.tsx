@@ -152,8 +152,9 @@ export default function TermsOfService() {
                             <p>
                                 <strong>&quot;Service&quot;</strong> refers to
                                 the web analytics services provided by
-                                pathing.cc, which allow Service Users to track
-                                and analyze End User behavior on their Websites.
+                                pathing.bboonstra.dev, which allow Service Users
+                                to track and analyze End User behavior on their
+                                Websites.
                             </p>
                             <p>
                                 <strong>&quot;Service User&quot;</strong> (or
@@ -208,7 +209,7 @@ export default function TermsOfService() {
                                     1.2 Description of Service
                                 </h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Pathing.cc provides the{" "}
+                                    pathing.bboonstra.dev provides the{" "}
                                     <strong>Service</strong>, web analytics
                                     services that allow{" "}
                                     <strong>Service Users</strong> to track and
@@ -299,7 +300,8 @@ export default function TermsOfService() {
                                 </h3>
                                 <p className="text-gray-700 dark:text-gray-300">
                                     <strong>Service Users</strong> must be at
-                                    least 16 years old to use the pathing.cc{" "}
+                                    least 16 years old to use the
+                                    pathing.bboonstra.dev{" "}
                                     <strong>Service</strong>. By using our{" "}
                                     <strong>Service</strong>, you (the{" "}
                                     <strong>Service User</strong>) represent and
@@ -324,10 +326,10 @@ export default function TermsOfService() {
                                     2.1 Data Collection
                                 </h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Pathing.cc collects anonymous usage data
-                                    from <strong>Websites</strong> that
-                                    implement our tracking script. This data
-                                    includes page views, clicks,{" "}
+                                    pathing.bboonstra.dev collects anonymous
+                                    usage data from <strong>Websites</strong>{" "}
+                                    that implement our tracking script. This
+                                    data includes page views, clicks,{" "}
                                     <strong>End User</strong> paths, browser
                                     information, and device information. We do
                                     not collect personally identifiable
@@ -492,15 +494,16 @@ export default function TermsOfService() {
                                 <p className="text-gray-700 dark:text-gray-300">
                                     To request a refund,{" "}
                                     <strong>Service Users</strong> should
-                                    contact us at refunds@pathing.cc with their
-                                    account information and reason for the
-                                    refund request. Refunds, which will take the
-                                    form of a cancellation of all billing for
-                                    the previous cycle, will typically be
-                                    processed within 7 business days of
-                                    approval. The cancellation will be applied
-                                    before your next billing date if the request
-                                    is approved and processed prior to it.
+                                    contact us at refunds@pathing.bboonstra.dev
+                                    with their account information and reason
+                                    for the refund request. Refunds, which will
+                                    take the form of a cancellation of all
+                                    billing for the previous cycle, will
+                                    typically be processed within 7 business
+                                    days of approval. The cancellation will be
+                                    applied before your next billing date if the
+                                    request is approved and processed prior to
+                                    it.
                                 </p>
                             </div>
 
@@ -539,20 +542,20 @@ export default function TermsOfService() {
                                 limited to all software, technology, code, user
                                 interfaces, designs, trademarks, logos, and
                                 other intellectual property rights, are and will
-                                remain the exclusive property of pathing.cc and
-                                its licensors. These <strong>Terms</strong> do
-                                not grant you (the <strong>Service User</strong>
-                                ) any rights to use pathing.cc&apos;s
-                                trademarks, logos, domain names, or other
-                                distinctive brand features without our prior
-                                written consent.
+                                remain the exclusive property of
+                                pathing.bboonstra.dev and its licensors. These{" "}
+                                <strong>Terms</strong> do not grant you (the{" "}
+                                <strong>Service User</strong>) any rights to use
+                                pathing.bboonstra.dev&apos;s trademarks, logos,
+                                domain names, or other distinctive brand
+                                features without our prior written consent.
                             </p>
                             <p>
                                 Notwithstanding the above,{" "}
                                 <strong>Service Users</strong> are permitted to
-                                use pathing.cc&apos;s logo and branding solely
-                                for the purpose of advertising our{" "}
-                                <strong>Service</strong> or notifying their{" "}
+                                use pathing.bboonstra.dev&apos;s logo and
+                                branding solely for the purpose of advertising
+                                our <strong>Service</strong> or notifying their{" "}
                                 <strong>End Users</strong> about the use of our
                                 analytics tools. This includes, but is not
                                 limited to, displaying our logo in privacy
@@ -570,9 +573,9 @@ export default function TermsOfService() {
                                 <strong>Website(s)</strong> through the use of
                                 the <strong>Service</strong> (&quot;
                                 <strong>User Data</strong>&quot;). You grant
-                                pathing.cc a worldwide, non-exclusive,
-                                royalty-free license to use, reproduce, modify,
-                                display, and distribute{" "}
+                                pathing.bboonstra.dev a worldwide,
+                                non-exclusive, royalty-free license to use,
+                                reproduce, modify, display, and distribute{" "}
                                 <strong>User Data</strong> solely for the
                                 purpose of providing, maintaining, and improving
                                 the <strong>Service</strong>, and as otherwise
@@ -618,9 +621,9 @@ export default function TermsOfService() {
                             </p>
                             <p>
                                 <strong>
-                                    You agree that you and pathing.cc are each
-                                    waiving the right to a trial by jury or to
-                                    participate in a class action.
+                                    You agree that you and pathing.bboonstra.dev
+                                    are each waiving the right to a trial by
+                                    jury or to participate in a class action.
                                 </strong>{" "}
                                 This arbitration provision shall survive
                                 termination of these <strong>Terms</strong>.
@@ -651,16 +654,17 @@ export default function TermsOfService() {
                                 accordance with the AAA Rules.
                             </p>
                             <p>
-                                Unless you and pathing.cc otherwise agree, the
-                                arbitration will be conducted in the county
-                                where you reside. If your claim does not exceed
-                                $10,000, then the arbitration will be conducted
-                                solely on the basis of documents you and
-                                pathing.cc submit to the arbitrator, unless you
-                                request a hearing or the arbitrator determines
-                                that a hearing is necessary. If your claim
-                                exceeds $10,000, your right to a hearing will be
-                                determined by the AAA Rules.
+                                Unless you and pathing.bboonstra.dev otherwise
+                                agree, the arbitration will be conducted in the
+                                county where you reside. If your claim does not
+                                exceed $10,000, then the arbitration will be
+                                conducted solely on the basis of documents you
+                                and pathing.bboonstra.dev submit to the
+                                arbitrator, unless you request a hearing or the
+                                arbitrator determines that a hearing is
+                                necessary. If your claim exceeds $10,000, your
+                                right to a hearing will be determined by the AAA
+                                Rules.
                             </p>
                             <p>
                                 The arbitrator will render an award within the
@@ -681,10 +685,10 @@ export default function TermsOfService() {
                                 resolution before arbitration, please contact us
                                 at{" "}
                                 <a
-                                    href="mailto:tos@pathing.cc"
+                                    href="mailto:tos@pathing.bboonstra.dev"
                                     className="text-blue-600 dark:text-blue-400 hover:underline"
                                 >
-                                    tos@pathing.cc
+                                    tos@pathing.bboonstra.dev
                                 </a>
                                 .
                             </p>
@@ -700,9 +704,9 @@ export default function TermsOfService() {
                         </h2>
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             To the fullest extent permitted by applicable law,
-                            pathing.cc and its affiliates, officers, employees,
-                            agents, partners, and licensors shall not be liable
-                            for any indirect, incidental, special,
+                            pathing.bboonstra.dev and its affiliates, officers,
+                            employees, agents, partners, and licensors shall not
+                            be liable for any indirect, incidental, special,
                             consequential, or punitive damages, or any loss of
                             profits or revenues, whether incurred directly or
                             indirectly, or any loss of data, use, goodwill, or
@@ -722,18 +726,20 @@ export default function TermsOfService() {
                             any content posted, emailed, transmitted, or
                             otherwise made available through the{" "}
                             <strong>Service</strong>. In no event shall
-                            pathing.cc&apos;s aggregate liability for all claims
-                            relating to the <strong>Service</strong> exceed the
-                            amount paid by the <strong>Service User</strong> to
-                            pathing.cc in the 12 months preceding the claim.
+                            pathing.bboonstra.dev&apos;s aggregate liability for
+                            all claims relating to the <strong>Service</strong>{" "}
+                            exceed the amount paid by the{" "}
+                            <strong>Service User</strong> to
+                            pathing.bboonstra.dev in the 12 months preceding the
+                            claim.
                         </p>
                         <p className="text-gray-700 dark:text-gray-300">
                             <strong>Service Users</strong> agree to indemnify
-                            and hold harmless pathing.cc and its affiliates from
-                            and against any claims, liabilities, damages,
-                            losses, and expenses, including reasonable legal and
-                            accounting fees, arising out of or in any way
-                            connected with their access to or use of the{" "}
+                            and hold harmless pathing.bboonstra.dev and its
+                            affiliates from and against any claims, liabilities,
+                            damages, losses, and expenses, including reasonable
+                            legal and accounting fees, arising out of or in any
+                            way connected with their access to or use of the{" "}
                             <strong>Service</strong>, their{" "}
                             <strong>Websites</strong>, or their violation of
                             these <strong>Terms</strong>.
@@ -794,16 +800,17 @@ export default function TermsOfService() {
                             <p>
                                 These <strong>Terms</strong>, together with our
                                 Privacy Policy and any other legal notices
-                                published by pathing.cc on the{" "}
+                                published by pathing.bboonstra.dev on the{" "}
                                 <strong>Service</strong>, shall constitute the
                                 entire agreement between you (the{" "}
-                                <strong>Service User</strong>) and pathing.cc
-                                concerning the <strong>Service</strong>. These{" "}
+                                <strong>Service User</strong>) and
+                                pathing.bboonstra.dev concerning the{" "}
+                                <strong>Service</strong>. These{" "}
                                 <strong>Terms</strong> supersede all prior or
                                 contemporaneous communications and proposals,
                                 whether electronic, oral, or written, between
-                                you and pathing.cc with respect to the{" "}
-                                <strong>Service</strong>.
+                                you and pathing.bboonstra.dev with respect to
+                                the <strong>Service</strong>.
                             </p>
                         </div>
                     </div>
@@ -815,14 +822,15 @@ export default function TermsOfService() {
                         <h2 className="text-2xl font-bold mb-5">10. Waiver</h2>
                         <div className="space-y-6 text-gray-700 dark:text-gray-300">
                             <p>
-                                The failure of pathing.cc to enforce any right
-                                or provision of these <strong>Terms</strong>{" "}
-                                will not be deemed a waiver of such right or
-                                provision. Any waiver of any provision of these{" "}
-                                <strong>Terms</strong> will be effective only if
-                                in writing and signed by an authorized
-                                representative of pathing.cc. The waiver of any
-                                such right or provision will not be considered a
+                                The failure of pathing.bboonstra.dev to enforce
+                                any right or provision of these{" "}
+                                <strong>Terms</strong> will not be deemed a
+                                waiver of such right or provision. Any waiver of
+                                any provision of these <strong>Terms</strong>{" "}
+                                will be effective only if in writing and signed
+                                by an authorized representative of
+                                pathing.bboonstra.dev. The waiver of any such
+                                right or provision will not be considered a
                                 waiver of any subsequent breach or default.
                             </p>
                         </div>
@@ -846,10 +854,10 @@ export default function TermsOfService() {
                                 <p className="font-medium">
                                     Email:{" "}
                                     <a
-                                        href="mailto:tos@pathing.cc"
+                                        href="mailto:tos@pathing.bboonstra.dev"
                                         className="text-blue-600 dark:text-blue-400"
                                     >
-                                        tos@pathing.cc
+                                        tos@pathing.bboonstra.dev
                                     </a>
                                 </p>
                             </div>
@@ -867,8 +875,8 @@ export default function TermsOfService() {
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
                     <div>
-                        &copy; {new Date().getFullYear()} pathing.cc &mdash;
-                        Built by{" "}
+                        &copy; {new Date().getFullYear()} pathing.bboonstra.dev
+                        &mdash; Built by{" "}
                         <a
                             href="https://github.com/bboonstra"
                             className="text-blue-600 dark:text-blue-400 hover:underline"

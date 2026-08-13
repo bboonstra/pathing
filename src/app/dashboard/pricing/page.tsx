@@ -66,7 +66,7 @@ export default function PricingDashboard() {
                     return acc;
                 }, [])
                 .sort((a: DailyEvent, b: DailyEvent) =>
-                    a.date.localeCompare(b.date)
+                    a.date.localeCompare(b.date),
                 );
 
             // Get total domains
@@ -283,7 +283,7 @@ export default function PricingDashboard() {
                                 contact our sales team.
                             </p>
                             <a
-                                href="mailto:enterprise@pathing.cc"
+                                href="mailto:enterprise@pathing.bboonstra.dev"
                                 className="inline-flex items-center text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300"
                             >
                                 Contact Sales

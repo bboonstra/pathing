@@ -1,4 +1,4 @@
-# Pathing.cc
+# pathing.bboonstra.dev
 
 A privacy-first web analytics platform that helps you understand user journeys without sacrificing user privacy. No popups, no tracking pixels, just clarity.
 
@@ -11,12 +11,12 @@ A privacy-first web analytics platform that helps you understand user journeys w
 
 ## Getting Started
 
-1. Create an account at [pathing.cc](https://pathing.cc)
+1. Create an account at [pathing.bboonstra.dev](https://pathing.bboonstra.dev)
 2. Get an API key from the dashboard
 3. Add the JavaScript snippet to your website:
 
 ```html
-<script src="https://pathing.cc/pathing.js" pathing-api-key="YOUR_API_KEY"></script>
+<script src="https://pathing.bboonstra.dev/pathing.js" pathing-api-key="YOUR_API_KEY"></script>
 ```
 
 Page views are tracked automatically. Track custom events with:

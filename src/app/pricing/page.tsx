@@ -59,13 +59,13 @@ export default function Pricing() {
 
         // Track pricing tier buttons
         const freeTierButton = document.querySelector(
-            '[data-tier="free"]'
+            '[data-tier="free"]',
         ) as HTMLButtonElement;
         const usageBasedButton = document.querySelector(
-            '[data-tier="usage-based"]'
+            '[data-tier="usage-based"]',
         ) as HTMLButtonElement;
         const enterpriseButton = document.querySelector(
-            '[data-tier="enterprise"]'
+            '[data-tier="enterprise"]',
         ) as HTMLButtonElement;
 
         if (freeTierButton) {
@@ -273,7 +273,7 @@ export default function Pricing() {
                             data-tier="enterprise"
                             onClick={() =>
                                 (window.location.href =
-                                    "mailto:enterprise@pathing.cc")
+                                    "mailto:enterprise@pathing.bboonstra.dev")
                             }
                             className="w-full px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 animated-gradient text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-500 text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-orange-300/50 mt-auto"
                         >
@@ -330,8 +330,8 @@ export default function Pricing() {
                                     onChange={(e) =>
                                         setEventVolume(
                                             linearToExponential(
-                                                Number(e.target.value)
-                                            )
+                                                Number(e.target.value),
+                                            ),
                                         )
                                     }
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer relative z-10"
@@ -345,7 +345,7 @@ export default function Pricing() {
                                             className="absolute w-px h-2 bg-gray-400"
                                             style={{
                                                 left: `${exponentialToLinear(
-                                                    value
+                                                    value,
                                                 )}%`,
                                             }}
                                         >
@@ -777,10 +777,10 @@ export default function Pricing() {
                         <p className="text-gray-600 dark:text-gray-400">
                             Contact us at{" "}
                             <a
-                                href="mailto:questions@pathing.cc"
+                                href="mailto:questions@pathing.bboonstra.dev"
                                 className="text-blue-600 dark:text-blue-400 hover:underline"
                             >
-                                questions@pathing.cc
+                                questions@pathing.bboonstra.dev
                             </a>
                         </p>
                     </div>
@@ -789,8 +789,8 @@ export default function Pricing() {
 
             {/* Footer */}
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
-                &copy; {new Date().getFullYear()} pathing.cc &mdash; Easy
-                analytics for humans.
+                &copy; {new Date().getFullYear()} pathing.bboonstra.dev &mdash;
+                Easy analytics for humans.
             </footer>
             <style jsx global>{`
                 .animated-gradient {

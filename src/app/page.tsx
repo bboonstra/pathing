@@ -20,7 +20,7 @@ import CopyButton from "@/components/CopyButton";
 export default function Home() {
     const [eventSent, setEventSent] = useState(false);
     const [codeSnippet, setCodeSnippet] = useState(
-        '<script src="/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>'
+        '<script src="/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>',
     );
     // Reference to the button
     const [demoButtonRef, setDemoButtonRef] =
@@ -53,7 +53,7 @@ export default function Home() {
         // Only run on client side
         const updateCodeSnippet = () => {
             setCodeSnippet(
-                `<script src="${window.location.origin}/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>`
+                `<script src="${window.location.origin}/pathing.js" pathing-api-key="pk_[YOUR_API_KEY]"></script>`,
             );
         };
         updateCodeSnippet();
@@ -124,9 +124,7 @@ export default function Home() {
                         />
                         <h1 className="font-headline text-5xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent ml-3 pb-1">
                             pathing
-                            <span className="text-indigo-600 dark:text-purple-400 opacity-90 font-semibold">
-                                .cc
-                            </span>
+                            <span className="text-indigo-600 dark:text-purple-400 opacity-90 font-semibold"></span>
                         </h1>
                     </div>
                     <h2 className="font-headline text-2xl sm:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200 w-full">
@@ -144,8 +142,8 @@ export default function Home() {
                         {isLoggedIn === null
                             ? "Get Started Free"
                             : isLoggedIn
-                            ? "Go to Dashboard"
-                            : "Get Started Free"}
+                              ? "Go to Dashboard"
+                              : "Get Started Free"}
                     </a>
                 </div>
 
@@ -254,8 +252,8 @@ export default function Home() {
                                         {isLoggedIn === null
                                             ? "Get started for free"
                                             : isLoggedIn
-                                            ? "Go to Dashboard"
-                                            : "Get started for free"}
+                                              ? "Go to Dashboard"
+                                              : "Get started for free"}
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             className="h-4 w-4 ml-1"
@@ -476,8 +474,8 @@ export default function Home() {
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-8 text-center text-gray-400 text-base bg-white/60 dark:bg-black/20 backdrop-blur-md">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-2">
                     <div>
-                        &copy; <span>{currentYear || "2025"}</span> pathing.cc
-                        &mdash; Built by{" "}
+                        &copy; <span>{currentYear || "2025"}</span>{" "}
+                        pathing.bboonstra.dev &mdash; Built by{" "}
                         <a
                             href="https://github.com/bboonstra"
                             className="text-blue-600 dark:text-blue-400"

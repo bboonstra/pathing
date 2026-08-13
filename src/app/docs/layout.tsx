@@ -23,8 +23,8 @@ export default function DocsLayout({
 
             {/* Footer */}
             <footer className="w-full border-t border-gray-200 dark:border-gray-800 py-6 text-center text-gray-400 text-sm bg-white/60 dark:bg-black/20 backdrop-blur-md">
-                &copy; {new Date().getFullYear()} pathing.cc &mdash; Easy
-                analytics for humans.
+                &copy; {new Date().getFullYear()} pathing.bboonstra.dev &mdash;
+                Easy analytics for humans.
             </footer>
         </div>
     );

@@ -10,7 +10,7 @@ export async function sendEvent(type: string, payload: Record<string, any>) {
             "Pathing: No API key available for tracking events. " +
                 "If you're using the npm package, please initialize with your API key: " +
                 "pathing.init('your-api-key'). " +
-                'If running via script tag, make sure to include pathing-api-key="pk_[YOUR_API_KEY]" in your script tag.'
+                'If running via script tag, make sure to include pathing-api-key="pk_[YOUR_API_KEY]" in your script tag.',
         );
         return { success: false, error: "No API key provided" };
     }
@@ -44,14 +44,17 @@ export async function sendEvent(type: string, payload: Record<string, any>) {
     };
 
     try {
-        const res = await fetch("https://www.pathing.cc/api/collect", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Pathing-API-Key": config.publicKey,
+        const res = await fetch(
+            "https://www.pathing.bboonstra.dev/api/collect",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Pathing-API-Key": config.publicKey,
+                },
+                body: JSON.stringify(body),
             },
-            body: JSON.stringify(body),
-        });
+        );
 
         const data = await res.json();
 
