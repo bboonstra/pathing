@@ -44,17 +44,14 @@ export async function sendEvent(type: string, payload: Record<string, any>) {
     };
 
     try {
-        const res = await fetch(
-            "https://www.pathing.bboonstra.dev/api/collect",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Pathing-API-Key": config.publicKey,
-                },
-                body: JSON.stringify(body),
+        const res = await fetch("https://pathing.bboonstra.dev/api/collect", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Pathing-API-Key": config.publicKey,
             },
-        );
+            body: JSON.stringify(body),
+        });
 
         const data = await res.json();
 

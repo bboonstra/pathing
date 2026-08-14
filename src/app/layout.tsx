@@ -31,7 +31,7 @@ const sora = Sora({
 export const metadata: Metadata = {
     title: "Pathing",
     description: "See analytics in your user's shoes.",
-    metadataBase: new URL("https://www.pathing.bboonstra.dev"),
+    metadataBase: new URL("https://pathing.bboonstra.dev"),
     alternates: {
         canonical: "/",
     },
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     openGraph: {
         type: "website",
         locale: "en",
-        url: "https://www.pathing.bboonstra.dev",
+        url: "https://pathing.bboonstra.dev",
         title: "Pathing - See analytics in your user's shoes",
         description:
             "Effortless, privacy-first analytics that instantly help you understand user journeys—no bloat, no popups, just clarity.",
