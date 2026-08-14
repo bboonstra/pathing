@@ -24,7 +24,7 @@ export default function Pricing() {
     // Calculate estimated cost based on event volume and domain count
     useEffect(() => {
         const baseRate = 0.0001; // $0.0001 per event
-        const freeEvents = 1000;
+        const freeEvents = 10000;
         const billableEvents = Math.max(0, eventVolume - freeEvents);
         const cost = billableEvents * baseRate * domainCount;
         setEstimatedCost(cost);
@@ -146,12 +146,12 @@ export default function Pricing() {
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
-                                <span>1,000 free events per month</span>
+                                <span>10,000 free events per month</span>
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
                                 <span>
-                                    Latest 3,000 events stored (max 1,000 per
+                                    Latest 30,000 events stored (max 10,000 per
                                     month)
                                 </span>
                             </li>
@@ -203,7 +203,7 @@ export default function Pricing() {
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
-                                <span>1,000 free events per month</span>
+                                <span>10,000 free events per month</span>
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
@@ -250,7 +250,7 @@ export default function Pricing() {
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
-                                <span>1,000 free events per month</span>
+                                <span>10,000 free events per month</span>
                             </li>
                             <li className="flex items-center">
                                 <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2" />
@@ -393,9 +393,9 @@ export default function Pricing() {
                                 Based on {eventVolume.toLocaleString()} events
                                 across {domainCount}{" "}
                                 {domainCount === 1 ? "domain" : "domains"}
-                                {eventVolume > 1000 && (
+                                {eventVolume > 10000 && (
                                     <span className="block mt-1">
-                                        (First 1,000 events are free)
+                                        (First 10,000 events are free)
                                     </span>
                                 )}
                             </p>
@@ -433,7 +433,7 @@ export default function Pricing() {
                             <tr className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-6 py-4">Event Storage</td>
                                 <td className="px-6 py-4 text-center">
-                                    Up to 3,000 events
+                                    Up to 30,000 events
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     Unlimited
@@ -445,7 +445,7 @@ export default function Pricing() {
                             <tr className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-6 py-4">Event History</td>
                                 <td className="px-6 py-4 text-center">
-                                    Up to 3,000 events (min. 3 months history)
+                                    Up to 30,000 events (min. 3 months history)
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     12 months guaranteed
@@ -457,13 +457,13 @@ export default function Pricing() {
                             <tr className="border-b border-gray-200 dark:border-gray-700">
                                 <td className="px-6 py-4">Free Events</td>
                                 <td className="px-6 py-4 text-center">
-                                    1,000 per month
+                                    10,000 per month
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    1,000 per month
+                                    10,000 per month
                                 </td>
                                 <td className="px-6 py-4 text-center">
-                                    1,000 per month
+                                    10,000 per month
                                 </td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -528,7 +528,7 @@ export default function Pricing() {
                         <div className="space-y-3">
                             <div className="flex justify-between">
                                 <span className="font-medium">Free:</span>
-                                <span>Up to 3,000 events</span>
+                                <span>Up to 30,000 events</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="font-medium">
@@ -552,7 +552,7 @@ export default function Pricing() {
                             <div className="flex justify-between">
                                 <span className="font-medium">Free:</span>
                                 <span>
-                                    Up to 3,000 events (min. 3 months history)
+                                    Up to 30,000 events (min. 3 months history)
                                 </span>
                             </div>
                             <div className="flex justify-between">
@@ -678,7 +678,7 @@ export default function Pricing() {
                         <p className="text-gray-600 dark:text-gray-400">
                             We bill on the first Monday of each month for all
                             events tracked in the previous month. Your first
-                            1,000 events each month are always free, regardless
+                            10,000 events each month are always free, regardless
                             of your plan.
                         </p>
                     </div>
@@ -687,12 +687,12 @@ export default function Pricing() {
                             How does event history work on the Free tier?
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400">
-                            With the Free tier, you can track 1,000 events
+                            With the Free tier, you can track 10,000 events
                             monthly and maintain a rolling history of up to
-                            3,000 total events. This ensures you have at least 3
-                            months of historical data of event history. If you
-                            track fewer than 1,000 events monthly, your history
-                            can span longer, up to the 3,000 event storage
+                            30,000 total events. This ensures you have at least
+                            3 months of historical data of event history. If you
+                            track fewer than 10,000 events monthly, your history
+                            can span longer, up to the 30,000 event storage
                             limit.
                         </p>
                     </div>
@@ -704,7 +704,7 @@ export default function Pricing() {
                             Usage is calculated based on the number of events
                             tracked across your domains. Each page view, click,
                             or custom event counts as one event. After your
-                            first 1,000 free events, you pay $0.0001 per event.
+                            first 10,000 free events, you pay $0.0001 per event.
                         </p>
                     </div>
                     <div className="backdrop-blur-lg bg-white/60 dark:bg-white/10 rounded-2xl p-6 shadow-xl border border-white/40 dark:border-white/10">

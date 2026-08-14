@@ -78,7 +78,7 @@ export default function PricingDashboard() {
 
             const totalEvents = eventsData?.length || 0;
             const totalDomains = domainsData?.length || 0;
-            const freeEvents = 1000; // Free tier limit
+            const freeEvents = 10000; // Free tier limit
             const freeEventsRemaining = Math.max(0, freeEvents - totalEvents);
             const billableEvents = Math.max(0, totalEvents - freeEvents);
             const currentCost = billableEvents * 0.0001; // $0.0001 per event
@@ -257,7 +257,7 @@ export default function PricingDashboard() {
                             Free Tier
                         </h3>
                         <ul className="list-disc list-inside mb-4">
-                            <li>1,000 events per month</li>
+                            <li>10,000 events per month</li>
                             <li>Unlimited domains</li>
                             <li>Basic analytics</li>
                             <li>Community support</li>
